@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  background-color: #0A0A0B;
+}
+
+/* 标题统一使用 Space Grotesk + 思源黑体，字重大、字距宽 */
+h1, h2, h3, h4, .font-display {
+  font-family: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* 自定义滚动条：暗色 + 电光蓝点缀 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0B;
+}
+::-webkit-scrollbar-thumb {
+  background: #2E2E33;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2DE2FF55;
+}
+
+/* 选中文字配色 */
+::selection {
+  background: #2DE2FF;
+  color: #0A0A0B;
+}
+
+/* 通用毛玻璃卡片样式 */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 网格背景纹理（科技感） */
+.bg-tech-grid {
+  background-image:
+    linear-gradient(rgba(45, 226, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 226, 255, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* 文字渐变（霓虹高定/IP 板块点缀使用） */
+.text-gradient {
+  background: linear-gradient(120deg, #2DE2FF 0%, #7C5CFF 55%, #FF5CA8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 悬停微交互：轻微上浮 + 发光描边 */
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px -20px rgba(45, 226, 255, 0.35);
+  border-color: rgba(45, 226, 255, 0.4);
+}
+
+/* 表单输入框统一风格 */
+.input-field {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  color: white;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  width: 100%;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #2DE2FF;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 3px rgba(45, 226, 255, 0.15);
+}
+.input-field::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
