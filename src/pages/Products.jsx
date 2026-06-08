@@ -66,7 +66,7 @@ const lines = [
         nameZh: '高定奢华系列', nameEn: 'Haute Couture Series',
         sceneZh: '高端家庭、展览展示、社交媒体打卡', sceneEn: 'High-end households, exhibitions, social-media moments',
         materialZh: '与顶级面料供应商合作，采用真丝、羊绒、皮革等奢华材料结合功能性涂层；与国际知名设计师（Dior / Hermès / D&G 等）联名，每季限量', materialEn: 'Luxury silk, cashmere & leather with functional coatings, sourced from top mills; seasonal limited collaborations with名designers like Dior, Hermès, D&G',
-        price: '$2,000 – $20,000+', tone: 'rose', filename: 'product-couture.webp'
+        price: '$2,000 – $20,000+', tone: 'rose', filename: 'subseries-haute-couture.jpeg'
       },
       {
         nameZh: 'IP 联名系列', nameEn: 'Collaboration Series',
@@ -102,6 +102,7 @@ const lines = [
       { filename: 'product-face-black-male.webp', labelZh: '黑色青年男模', labelEn: 'Young Black Male' },
       { filename: 'product-face-anime-middle.webp', labelZh: '中年动漫感卡通', labelEn: 'Middle-Aged Anime Style' }
     ],
+    galleryHideCaptions: true,
     variantTable: [
       { zh: '科技极简 Tech-Minimal', en: 'Tech-Minimal', descZh: '光滑金属质感面具，LED 灯带点缀', descEn: 'Smooth metallic mask accented with LED light strips', price: '$299 – $599' },
       { zh: '超写实人脸 Realistic-Human', en: 'Realistic-Human', descZh: '医疗级硅胶制作，高度仿真', descEn: 'Medical-grade silicone, hyper-realistic finish', price: '$1,500 – $5,000' },
@@ -206,10 +207,10 @@ export default function Products() {
             <span className="text-xs font-semibold uppercase tracking-widest2 text-electric-400">
               {T('产品中心', 'Product Center')}
             </span>
-            <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight sm:text-5xl">
+            <h1 className="mt-3 max-w-5xl font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
               {T('五大产品线，重新定义机器人的"穿衣自由"', 'Five Product Lines Redefining a Robot’s “Freedom to Dress”')}
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/50">
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/50">
               {T(
                 '从第二皮肤到日常服装，从面具到假发与配件——RoboWear 用材料科学 × 机器人工程学 × 时尚美学，构建了一套完整的机器人外观解决方案。所有产品均已适配 Tesla Optimus、Figure 03、小鹏 Iron 三大主流机型。',
                 'From a second skin to everyday wear, masks to hair and accessories — RoboWear fuses materials science, robotics engineering, and fashion to deliver a complete robot-appearance solution. Every line is compatible with Tesla Optimus, Figure 03, and XPeng Iron.'
@@ -329,12 +330,14 @@ export default function Products() {
                     {line.subSeries.map((sub, i) => (
                       <Reveal key={sub.nameZh} delay={i * 90}>
                         <div className="group h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] hover-lift">
-                          <img
-                            src={`/images/robowear/${sub.filename}`}
-                            alt={T(`${sub.nameZh}产品图`, `${sub.nameEn} product visual`)}
-                            loading="lazy"
-                            className="aspect-[16/9] w-full border-b border-white/10 object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                          />
+                          <div className="overflow-hidden border-b border-white/10">
+                            <img
+                              src={`/images/robowear/${sub.filename}`}
+                              alt={T(`${sub.nameZh}产品图`, `${sub.nameEn} product visual`)}
+                              loading="lazy"
+                              className="aspect-[4/3] w-full object-cover [animation-play-state:running] motion-safe:animate-kenBurns group-hover:[animation-play-state:paused] group-hover:scale-[1.02] transition-transform duration-700"
+                            />
+                          </div>
                           <div className="p-6">
                             <div className="flex items-center justify-between gap-3">
                               <h4 className="font-display text-base font-bold text-white">{T(sub.nameZh, sub.nameEn)}</h4>
@@ -377,7 +380,9 @@ export default function Products() {
                             loading="lazy"
                             className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                           />
-                          <p className="px-3 py-2.5 text-center text-xs font-medium text-white/55">{T(g.labelZh, g.labelEn)}</p>
+                          {!line.galleryHideCaptions && (
+                            <p className="px-3 py-2.5 text-center text-xs font-medium text-white/55">{T(g.labelZh, g.labelEn)}</p>
+                          )}
                         </div>
                       </Reveal>
                     ))}

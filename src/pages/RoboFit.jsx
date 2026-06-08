@@ -11,6 +11,15 @@ import {
   MASK_PRESETS,
   ROBOT_SCALE
 } from '../three/robotBuilder.js'
+import {
+  IconRobotSilhouette,
+  IconApparelTag,
+  IconMaskFace,
+  IconHairWisp,
+  IconBackpack,
+  IconSneaker,
+  IconSwatchOff
+} from '../components/icons.jsx'
 
 // ============================================================
 // 配置数据 — 全部为纯前端常量，所有选择状态均通过 React useState
@@ -23,11 +32,18 @@ const ROBOTS = [
   { id: 'iron', nameZh: '小鹏 Iron', nameEn: 'XPeng Iron', subZh: '宽肩高大 · 力量型机身', subEn: 'Broad-shouldered, power-oriented frame' }
 ]
 
+// 机型切换卡片中的轮廓剪影尺寸：用宽高比直观传达体型差异（修长 / 均衡 / 宽厚）
+const ROBOT_ICON_SIZE = {
+  optimus: { w: 20, h: 42 },
+  figure: { w: 16, h: 44 },
+  iron: { w: 25, h: 46 }
+}
+
 const SERIES = [
-  { id: 'home', nameZh: '家居系列', nameEn: 'Home Series', subZh: '柔软亲肤，日常陪伴首选', subEn: 'Soft & cozy for everyday companionship', price: 199 },
-  { id: 'professional', nameZh: '职业系列', nameEn: 'Professional Series', subZh: '挺括利落，办公服务场景', subEn: 'Sharp tailoring for work & service roles', price: 599 },
-  { id: 'couture', nameZh: '高定系列', nameEn: 'Haute Couture', subZh: '设计师联名，限量定制', subEn: 'Limited designer collabs, made to order', price: 2000 },
-  { id: 'collab', nameZh: '联名系列', nameEn: 'Collaboration Series', subZh: 'IP 跨界联名，彰显个性', subEn: 'IP crossover drops with bold attitude', price: 499 }
+  { id: 'home', nameZh: '家居系列', nameEn: 'Home Series', subZh: '柔软亲肤，日常陪伴首选', subEn: 'Soft & cozy for everyday companionship', price: 199, tone: 'silver' },
+  { id: 'professional', nameZh: '职业系列', nameEn: 'Professional Series', subZh: '挺括利落，办公服务场景', subEn: 'Sharp tailoring for work & service roles', price: 599, tone: 'electric', badgeZh: '人气推荐', badgeEn: 'Most popular' },
+  { id: 'couture', nameZh: '高定系列', nameEn: 'Haute Couture', subZh: '设计师联名，限量定制', subEn: 'Limited designer collabs, made to order', price: 2000, tone: 'rose' },
+  { id: 'collab', nameZh: '联名系列', nameEn: 'Collaboration Series', subZh: 'IP 跨界联名，彰显个性', subEn: 'IP crossover drops with bold attitude', price: 499, tone: 'cyber' }
 ]
 
 const COLORS = [
@@ -42,24 +58,24 @@ const COLORS = [
 ]
 
 const MATERIAL_STYLES = [
-  { id: 'smooth', nameZh: '光滑面料', nameEn: 'Smooth', subZh: '低粗糙度 · 细腻光泽', subEn: 'Low roughness, refined sheen', addon: 0 },
-  { id: 'matte', nameZh: '磨砂哑光', nameEn: 'Matte / Frosted', subZh: '高粗糙度 · 低调质感', subEn: 'High roughness, understated finish', addon: 0 },
-  { id: 'metal', nameZh: '金属质感', nameEn: 'Metallic', subZh: '高金属度 · 工业气息', subEn: 'High metalness, industrial edge', addon: 150 },
-  { id: 'leather', nameZh: '皮革质感', nameEn: 'Leather', subZh: '复合涂层 · 醇厚质地', subEn: 'Layered coating, rich texture', addon: 300 }
+  { id: 'smooth', nameZh: '光滑面料', nameEn: 'Smooth', subZh: '低粗糙度 · 细腻光泽', subEn: 'Low roughness, refined sheen', addon: 0, swatch: 'bg-gradient-to-br from-white/85 via-white/35 to-white/10' },
+  { id: 'matte', nameZh: '磨砂哑光', nameEn: 'Matte / Frosted', subZh: '高粗糙度 · 低调质感', subEn: 'High roughness, understated finish', addon: 0, swatch: 'bg-gradient-to-br from-white/30 via-white/12 to-white/[0.03]' },
+  { id: 'metal', nameZh: '金属质感', nameEn: 'Metallic', subZh: '高金属度 · 工业气息', subEn: 'High metalness, industrial edge', addon: 150, swatch: 'bg-[linear-gradient(135deg,#f4f6f9_0%,#9aa3b2_38%,#eef1f5_58%,#7b8494_100%)]' },
+  { id: 'leather', nameZh: '皮革质感', nameEn: 'Leather', subZh: '复合涂层 · 醇厚质地', subEn: 'Layered coating, rich texture', addon: 300, swatch: 'bg-gradient-to-br from-amber-200/70 via-amber-700/50 to-amber-950/60' }
 ]
 
 const MASKS = [
-  { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0 },
-  { id: 'tech-minimal', nameZh: '科技极简', nameEn: 'Tech-Minimal', price: 299 },
-  { id: 'realistic', nameZh: '超写实', nameEn: 'Hyper-Realistic', price: 1500 },
-  { id: 'anime', nameZh: '动漫风', nameEn: 'Anime', price: 399 }
+  { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
+  { id: 'tech-minimal', nameZh: '科技极简', nameEn: 'Tech-Minimal', price: 299, tone: 'electric' },
+  { id: 'realistic', nameZh: '超写实', nameEn: 'Hyper-Realistic', price: 1500, tone: 'rose' },
+  { id: 'anime', nameZh: '动漫风', nameEn: 'Anime', price: 399, tone: 'cyber' }
 ]
 
 const HAIRS = [
-  { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0 },
-  { id: 'short', nameZh: '短发', nameEn: 'Short', price: 99 },
-  { id: 'long', nameZh: '长发', nameEn: 'Long', price: 199 },
-  { id: 'curly', nameZh: '卷发', nameEn: 'Curly', price: 249 }
+  { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
+  { id: 'short', nameZh: '短发', nameEn: 'Short', price: 99, tone: 'electric' },
+  { id: 'long', nameZh: '长发', nameEn: 'Long', price: 199, tone: 'rose' },
+  { id: 'curly', nameZh: '卷发', nameEn: 'Curly', price: 249, tone: 'cyber' }
 ]
 
 const ACCESSORIES = [
@@ -73,34 +89,79 @@ const formatPrice = (n) => `$${n.toLocaleString('en-US')}`
 // 展示型子组件
 // ============================================================
 
-function ConfigSection({ title, hint, children }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-carbon-800/40 p-5">
-      <div className="mb-4 flex items-baseline justify-between gap-3">
-        <h3 className="font-display text-xs font-semibold uppercase tracking-widest2 text-white/75">{title}</h3>
-        {hint && <span className="text-[11px] text-white/35">{hint}</span>}
-      </div>
-      <div className="space-y-2.5">{children}</div>
-    </div>
-  )
+// 选配卡片配色基调（与品牌色板呼应，用于区分不同分组/选项的视觉个性）
+const TONE_STYLES = {
+  electric: {
+    active: 'border-electric-400/70 bg-electric-500/[0.09] shadow-[0_0_26px_-6px_rgba(45,226,255,0.4)]',
+    icon: 'border-electric-400/40 bg-electric-500/10 text-electric-300',
+    dot: 'bg-electric-400',
+    text: 'text-electric-300'
+  },
+  cyber: {
+    active: 'border-cyber-400/70 bg-cyber-500/[0.09] shadow-[0_0_26px_-6px_rgba(124,92,255,0.4)]',
+    icon: 'border-cyber-400/40 bg-cyber-500/10 text-cyber-300',
+    dot: 'bg-cyber-400',
+    text: 'text-cyber-300'
+  },
+  rose: {
+    active: 'border-pink-400/60 bg-pink-400/[0.08] shadow-[0_0_26px_-6px_rgba(255,92,168,0.4)]',
+    icon: 'border-pink-400/35 bg-pink-400/10 text-pink-300',
+    dot: 'bg-pink-400',
+    text: 'text-pink-300'
+  },
+  silver: {
+    active: 'border-white/45 bg-white/[0.08] shadow-[0_0_22px_-6px_rgba(255,255,255,0.28)]',
+    icon: 'border-white/30 bg-white/[0.06] text-white/70',
+    dot: 'bg-white/80',
+    text: 'text-white/80'
+  }
 }
 
-function OptionRow({ active, onClick, title, subtitle, price }) {
+// Tesla 选配页风格的可视化选项卡片：图标徽标 + 标题/说明 + 价格 + 选中态对勾
+function VisualOptionCard({ active, onClick, Icon, tone = 'electric', title, subtitle, price, badge }) {
+  const t = TONE_STYLES[tone] ?? TONE_STYLES.electric
   return (
     <button
       onClick={onClick}
-      className={`group flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-300 ${
-        active
-          ? 'border-electric-400/70 bg-electric-500/10 shadow-[0_0_22px_rgba(45,226,255,0.16)]'
-          : 'border-white/10 bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04]'
+      className={`group relative flex h-full flex-col gap-3 rounded-2xl border p-4 text-left transition-all duration-300 ${
+        active ? t.active : 'border-white/10 bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04]'
       }`}
     >
-      <span className="min-w-0">
-        <span className={`block truncate text-sm font-semibold ${active ? 'text-electric-200' : 'text-white/85'}`}>{title}</span>
-        {subtitle && <span className="mt-0.5 block truncate text-xs text-white/40">{subtitle}</span>}
+      {badge && (
+        <span className="absolute right-3 top-3 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-carbon-900">
+          {badge}
+        </span>
+      )}
+      <span className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors duration-300 ${active ? t.icon : 'border-white/12 bg-white/[0.03] text-white/40'}`}>
+        <Icon width={20} height={20} />
       </span>
-      <span className={`shrink-0 font-mono text-xs ${active ? 'text-electric-300' : 'text-white/35'}`}>{price}</span>
+      <span className="min-w-0 flex-1">
+        <span className={`block text-sm font-semibold ${active ? 'text-white' : 'text-white/80'}`}>{title}</span>
+        {subtitle && <span className="mt-0.5 block text-xs leading-snug text-white/40">{subtitle}</span>}
+      </span>
+      <span className={`font-mono text-xs ${active ? t.text : 'text-white/35'}`}>{price}</span>
+      {active && (
+        <span className={`absolute right-3 bottom-3 flex h-5 w-5 items-center justify-center rounded-full ${t.dot}`}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0A0A0B" strokeWidth="3"><path d="M5 12l4 4L19 6" /></svg>
+        </span>
+      )}
     </button>
+  )
+}
+
+// 选配分组容器：步骤序号 + 标题 + 提示语，统一包裹各类可视化选择网格
+function OptionGroup({ index, title, hint, children }) {
+  return (
+    <div>
+      <div className="mb-3.5 flex items-baseline justify-between gap-3">
+        <h3 className="flex items-center gap-2.5 font-display text-sm font-semibold text-white/85">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/15 font-mono text-[11px] text-white/45">{index}</span>
+          {title}
+        </h3>
+        {hint && <span className="text-[11px] text-white/35">{hint}</span>}
+      </div>
+      {children}
+    </div>
   )
 }
 
@@ -222,6 +283,8 @@ export default function RoboFit() {
   const [hairId, setHairId] = useState('none')
   const [accessoryState, setAccessoryState] = useState({ backpack: false, shoes: false })
   const [savedLook, setSavedLook] = useState(null)
+  // 仅用于左侧预览区的"实时渲染中"视觉反馈脉冲（纯 UI 状态，同样通过 useState 管理）
+  const [isRendering, setIsRendering] = useState(false)
 
   const mountRef = useRef(null)
   const sceneRef = useRef(null)
@@ -387,6 +450,13 @@ export default function RoboFit() {
     ctx.group.scale.setScalar(scale)
   }, [robotId])
 
+  // ---------------- 选配变更时的"实时渲染中"提示脉冲（纯视觉反馈，状态同样经由 useState 管理） ----------------
+  useEffect(() => {
+    setIsRendering(true)
+    const timer = window.setTimeout(() => setIsRendering(false), 620)
+    return () => window.clearTimeout(timer)
+  }, [robotId, seriesId, colorId, materialId, maskId, hairId, accessoryState])
+
   // ---------------- 实时价格计算引擎 ----------------
   const priceBreakdown = useMemo(() => {
     const series = SERIES.find((s) => s.id === seriesId)
@@ -477,17 +547,16 @@ export default function RoboFit() {
             </span>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-4xl font-display text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 max-w-6xl font-display text-3xl font-bold leading-[1.12] tracking-tight sm:text-4xl lg:text-5xl">
               {T('RoboFit', 'RoboFit')}
               <span className="text-gradient">™</span>
-              <br />
-              {T('机器人时尚界的', 'The ')}
+              {T(' 机器人时尚界的', ' — The ')}
               <span className="text-gradient">{T('Roblox × Shopify', 'Roblox × Shopify')}</span>
-              {T('', ' of robot fashion')}
+              {T('', ' of Robot Fashion')}
             </h1>
           </Reveal>
           <Reveal delay={160}>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
+            <p className="mt-6 max-w-3xl text-base leading-relaxed text-white/55 sm:text-lg">
               {T(
                 'RoboFit 是 RoboWear 旗下的实时 3D 虚拟试衣与创作平台：像 Roblox 一样自由创作与分享，像 Shopify 一样轻松交易与变现。在这里，每个人都能为自己的机器人设计独一无二的"皮肤"。',
                 'RoboFit is RoboWear’s real-time 3D virtual fitting and creation platform — create and share as freely as on Roblox, trade and monetize as easily as on Shopify. Here, anyone can design a one-of-a-kind “skin” for their robot.'
@@ -525,164 +594,256 @@ export default function RoboFit() {
         </div>
       </section>
 
-      {/* ---------------- 配置器主体 ---------------- */}
+      {/* ---------------- 配置器主体（参考 Tesla Model Y 选配页：左侧实时预览常驻吸顶，右侧卡片化动态选配） ---------------- */}
       <section className="relative pb-20">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          {/* 机型切换 */}
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-8 lg:px-10">
           <Reveal>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs font-semibold uppercase tracking-widest2 text-white/35">{T('选择机型', 'Select model')}</span>
-              <div className="flex flex-wrap gap-2.5">
-                {ROBOTS.map((robot) => (
-                  <button
-                    key={robot.id}
-                    onClick={() => setRobotId(robot.id)}
-                    className={`group rounded-full border px-4 py-2 text-left transition-all duration-300 ${
-                      robotId === robot.id
-                        ? 'border-electric-400/70 bg-electric-500/10 shadow-[0_0_22px_rgba(45,226,255,0.18)]'
-                        : 'border-white/12 bg-white/[0.02] hover:border-white/30'
-                    }`}
-                  >
-                    <span className={`block text-sm font-semibold ${robotId === robot.id ? 'text-electric-200' : 'text-white/80'}`}>
-                      {T(robot.nameZh, robot.nameEn)}
-                    </span>
-                    <span className="block text-[11px] text-white/35">{T(robot.subZh, robot.subEn)}</span>
-                  </button>
-                ))}
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-6">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-widest2 text-electric-400">
+                  {T('搭配工坊 · 所见即所得', 'Build studio · what you see is what you get')}
+                </span>
+                <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-[28px]">
+                  {T('像选配一台特斯拉一样，搭建你的机器人', 'Configure your robot the way you’d configure a Tesla')}
+                </h2>
               </div>
+              <p className="max-w-md text-sm leading-relaxed text-white/40">
+                {T(
+                  '右侧每一次点选都会实时渲染到左侧 3D 预览上 — 机型、系列、配色、材质、面具、假发与配件，全部支持动态切换、即时比价，逐项展开挑选。',
+                  'Every tap on the right renders instantly on the 3D preview to the left — model, series, color, material, mask, hair and accessories all switch live with instant price comparison, laid out step by step.'
+                )}
+              </p>
             </div>
           </Reveal>
 
-          <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[1.32fr_1fr]">
-            {/* 左：3D 视窗 */}
-            <Reveal direction="left" className="relative">
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-carbon-800/70 to-carbon-900 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
-                <div ref={mountRef} className="h-[440px] w-full sm:h-[520px] lg:h-[640px]" />
-
-                <div className="pointer-events-none absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/12 bg-carbon-900/60 px-3 py-1.5 text-[11px] text-white/55 backdrop-blur-md">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2DE2FF" strokeWidth="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z" /><path d="M3 12h18M12 3a14 14 0 010 18 14 14 0 010-18z" /></svg>
-                  {T('拖拽旋转视角 · 滚轮缩放距离', 'Drag to orbit · Scroll to zoom')}
-                </div>
-
-                <div className="pointer-events-none absolute right-5 top-5 rounded-full border border-white/12 bg-carbon-900/60 px-3 py-1.5 text-[11px] text-white/45 backdrop-blur-md">
-                  {T(`${activeRobot.nameZh} · 占位渲染`, `${activeRobot.nameEn} · Placeholder render`)}
-                </div>
-
-                <div className="pointer-events-none absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-carbon-900/55 px-4 py-3 text-[11px] text-white/45 backdrop-blur-md">
-                  <span>{T('当前模型由几何基本体实时拼接渲染，便于后续替换为高精度扫描模型', 'Model assembled live from primitive geometries — ready to be swapped for a high-fidelity scan later')}</span>
-                  <span className="inline-flex items-center gap-1.5 text-electric-300">
-                    <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
-                    Three.js · WebGL
-                  </span>
-                </div>
-              </div>
-            </Reveal>
-
-            {/* 右：配置面板 */}
-            <Reveal direction="right" delay={80}>
-              <div className="flex flex-col gap-5">
-                <ConfigSection title={T('服装系列', 'Apparel Series')} hint={T('决定基础价格', 'Sets base price')}>
-                  {SERIES.map((s) => (
-                    <OptionRow
-                      key={s.id}
-                      active={seriesId === s.id}
-                      onClick={() => setSeriesId(s.id)}
-                      title={T(s.nameZh, s.nameEn)}
-                      subtitle={T(s.subZh, s.subEn)}
-                      price={formatPrice(s.price)}
-                    />
-                  ))}
-                </ConfigSection>
-
-                <ConfigSection title={T('配色', 'Color')} hint={T(activeColor.nameZh, activeColor.nameEn)}>
-                  <div className="grid grid-cols-4 gap-3">
-                    {COLORS.map((c) => (
+          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] xl:gap-12">
+            {/* 左：3D 实时预览（吸顶常驻，模拟 Tesla 选配页车辆预览区随滚动保持可见的体验） */}
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <Reveal direction="left">
+                {/* 机型切换：卡片式 Tab 置于预览区顶部，类似 Tesla 车型切换条 */}
+                <div className="mb-4 grid grid-cols-3 gap-2.5">
+                  {ROBOTS.map((robot) => {
+                    const size = ROBOT_ICON_SIZE[robot.id] ?? { w: 20, h: 42 }
+                    const isActive = robotId === robot.id
+                    return (
                       <button
-                        key={c.id}
-                        onClick={() => setColorId(c.id)}
-                        title={T(c.nameZh, c.nameEn)}
-                        aria-label={T(c.nameZh, c.nameEn)}
-                        className={`relative aspect-square rounded-xl border-2 transition-all duration-300 ${
-                          colorId === c.id ? 'scale-105 border-electric-400 shadow-[0_0_18px_rgba(45,226,255,0.35)]' : 'border-white/10 hover:border-white/35'
+                        key={robot.id}
+                        onClick={() => setRobotId(robot.id)}
+                        className={`group flex flex-col items-center gap-1.5 rounded-2xl border px-3 py-3 text-center transition-all duration-300 ${
+                          isActive
+                            ? 'border-electric-400/70 bg-electric-500/[0.08] shadow-[0_0_24px_-6px_rgba(45,226,255,0.32)]'
+                            : 'border-white/10 bg-white/[0.02] hover:border-white/25'
                         }`}
-                        style={{ backgroundColor: c.hex }}
                       >
-                        {colorId === c.id && (
-                          <span className="absolute inset-0 flex items-center justify-center">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.id === 'pearl' || c.id === 'silver' ? '#0A0A0B' : '#fff'} strokeWidth="2.6">
-                              <path d="M5 12l4 4L19 6" />
-                            </svg>
-                          </span>
-                        )}
+                        <span className="flex h-11 items-end justify-center">
+                          <IconRobotSilhouette
+                            width={size.w}
+                            height={size.h}
+                            className={`transition-colors duration-300 ${isActive ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}
+                          />
+                        </span>
+                        <span className={`block truncate text-[13px] font-semibold ${isActive ? 'text-electric-200' : 'text-white/75'}`}>
+                          {T(robot.nameZh, robot.nameEn)}
+                        </span>
+                        <span className="block w-full truncate text-[10px] leading-tight text-white/35">{T(robot.subZh, robot.subEn)}</span>
                       </button>
+                    )
+                  })}
+                </div>
+
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-carbon-800/70 to-carbon-900 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
+                  <div ref={mountRef} className="h-[420px] w-full sm:h-[480px] lg:h-[560px] xl:h-[600px]" />
+
+                  <div className="pointer-events-none absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/12 bg-carbon-900/60 px-3 py-1.5 text-[11px] text-white/55 backdrop-blur-md">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2DE2FF" strokeWidth="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z" /><path d="M3 12h18M12 3a14 14 0 010 18 14 14 0 010-18z" /></svg>
+                    {T('拖拽旋转视角 · 滚轮缩放距离', 'Drag to orbit · Scroll to zoom')}
+                  </div>
+
+                  <div
+                    className={`pointer-events-none absolute right-5 top-5 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] backdrop-blur-md transition-all duration-300 ${
+                      isRendering ? 'border-electric-400/50 bg-electric-500/15 text-electric-200' : 'border-white/12 bg-carbon-900/60 text-white/45'
+                    }`}
+                  >
+                    <span className={`h-1.5 w-1.5 rounded-full ${isRendering ? 'bg-electric-400 animate-pulseGlow' : 'bg-white/30'}`} />
+                    {isRendering
+                      ? T('实时渲染中…', 'Rendering live…')
+                      : T(`${activeRobot.nameZh} · 占位渲染`, `${activeRobot.nameEn} · Placeholder render`)}
+                  </div>
+
+                  <div className="pointer-events-none absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-carbon-900/55 px-4 py-3 text-[11px] text-white/45 backdrop-blur-md">
+                    <span>{T('当前模型由几何基本体实时拼接渲染，便于后续替换为高精度扫描模型', 'Model assembled live from primitive geometries — ready to be swapped for a high-fidelity scan later')}</span>
+                    <span className="inline-flex items-center gap-1.5 text-electric-300">
+                      <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
+                      Three.js · WebGL
+                    </span>
+                  </div>
+                </div>
+
+                {/* 预估总价 + 保存搭配 CTA：吸附在预览区下方，随滚动常驻可见（参考 Tesla 选配页底部价格条） */}
+                <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-electric-500/25 bg-gradient-to-r from-electric-500/[0.07] via-cyber-500/[0.04] to-transparent p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest2 text-white/35">{T('预估总价 · 当前搭配', 'Estimated total · current build')}</p>
+                    <p className="mt-1 font-display text-3xl font-bold text-gradient">{formatPrice(priceBreakdown.total)}</p>
+                    <p className="mt-1 text-[11px] text-white/30">{T('价格仅供参考演示，不构成最终报价', 'Prices are illustrative only — not a final quote')}</p>
+                  </div>
+                  <button
+                    onClick={handleSaveLook}
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3 text-sm font-semibold text-carbon-900 shadow-[0_0_28px_rgba(45,226,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(45,226,255,0.5)]"
+                  >
+                    {T('保存我的搭配', 'Save my look')}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </button>
+                </div>
+              </Reveal>
+            </div>
+
+            {/* 右：动态选配卡片网格（Tesla 选配页风格 — 大卡片 / 色板 / 材质预览，逐项分组展开挑选） */}
+            <Reveal direction="right" delay={80}>
+              <div className="space-y-9">
+                <OptionGroup index="01" title={T('服装系列', 'Apparel Series')} hint={T('决定搭配基础价格', 'Sets your base price')}>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {SERIES.map((s) => (
+                      <VisualOptionCard
+                        key={s.id}
+                        active={seriesId === s.id}
+                        onClick={() => setSeriesId(s.id)}
+                        Icon={IconApparelTag}
+                        tone={s.tone}
+                        title={T(s.nameZh, s.nameEn)}
+                        subtitle={T(s.subZh, s.subEn)}
+                        price={formatPrice(s.price)}
+                        badge={s.badgeZh ? T(s.badgeZh, s.badgeEn) : null}
+                      />
                     ))}
                   </div>
-                </ConfigSection>
+                </OptionGroup>
 
-                <ConfigSection title={T('材质风格', 'Material Style')}>
-                  {MATERIAL_STYLES.map((m) => (
-                    <OptionRow
-                      key={m.id}
-                      active={materialId === m.id}
-                      onClick={() => setMaterialId(m.id)}
-                      title={T(m.nameZh, m.nameEn)}
-                      subtitle={T(m.subZh, m.subEn)}
-                      price={m.addon > 0 ? `+${formatPrice(m.addon)}` : T('included', '含')}
-                    />
-                  ))}
-                </ConfigSection>
+                <OptionGroup index="02" title={T('配色', 'Color')} hint={T(activeColor.nameZh, activeColor.nameEn)}>
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                    <div className="flex flex-wrap gap-4">
+                      {COLORS.map((c) => (
+                        <button key={c.id} onClick={() => setColorId(c.id)} title={T(c.nameZh, c.nameEn)} aria-label={T(c.nameZh, c.nameEn)} className="group flex flex-col items-center gap-2">
+                          <span
+                            className={`relative flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                              colorId === c.id
+                                ? 'scale-110 border-electric-400 shadow-[0_0_22px_rgba(45,226,255,0.4)]'
+                                : 'border-white/15 group-hover:scale-105 group-hover:border-white/40'
+                            }`}
+                            style={{ backgroundColor: c.hex }}
+                          >
+                            {colorId === c.id && (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.id === 'pearl' || c.id === 'silver' ? '#0A0A0B' : '#fff'} strokeWidth="2.6">
+                                <path d="M5 12l4 4L19 6" />
+                              </svg>
+                            )}
+                          </span>
+                          <span className={`text-[11px] transition-colors duration-300 ${colorId === c.id ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}>
+                            {T(c.nameZh, c.nameEn)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </OptionGroup>
 
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <ConfigSection title={T('面具', 'Mask')}>
+                <OptionGroup index="03" title={T('材质风格', 'Material Style')} hint={T('影响表面反光与质感', 'Shapes surface finish & sheen')}>
+                  <div className="grid grid-cols-2 gap-3">
+                    {MATERIAL_STYLES.map((m) => {
+                      const isActive = materialId === m.id
+                      return (
+                        <button
+                          key={m.id}
+                          onClick={() => setMaterialId(m.id)}
+                          className={`group relative overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ${
+                            isActive
+                              ? 'border-electric-400/70 bg-electric-500/[0.08] shadow-[0_0_24px_-6px_rgba(45,226,255,0.32)]'
+                              : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                          }`}
+                        >
+                          <span className={`block h-14 w-full rounded-xl border border-white/10 ${m.swatch}`} />
+                          <span className="mt-3 block text-sm font-semibold text-white/85">{T(m.nameZh, m.nameEn)}</span>
+                          <span className="mt-0.5 block text-xs leading-snug text-white/40">{T(m.subZh, m.subEn)}</span>
+                          <span className={`mt-2 block font-mono text-xs ${isActive ? 'text-electric-300' : 'text-white/35'}`}>
+                            {m.addon > 0 ? `+${formatPrice(m.addon)}` : T('已包含', 'Included')}
+                          </span>
+                          {isActive && (
+                            <span className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-electric-400">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0A0A0B" strokeWidth="3"><path d="M5 12l4 4L19 6" /></svg>
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </OptionGroup>
+
+                <OptionGroup index="04" title={T('面具', 'Mask')} hint={T('可选 · 塑造表情个性', 'Optional · gives your robot a face')}>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {MASKS.map((m) => (
-                      <OptionRow
+                      <VisualOptionCard
                         key={m.id}
                         active={maskId === m.id}
                         onClick={() => setMaskId(m.id)}
+                        Icon={m.id === 'none' ? IconSwatchOff : IconMaskFace}
+                        tone={m.tone}
                         title={T(m.nameZh, m.nameEn)}
                         price={m.price > 0 ? `+${formatPrice(m.price)}` : T('免费', 'Free')}
                       />
                     ))}
-                  </ConfigSection>
+                  </div>
+                </OptionGroup>
 
-                  <ConfigSection title={T('假发', 'Hair')}>
+                <OptionGroup index="05" title={T('假发', 'Hair')} hint={T('可选 · 个性化造型', 'Optional · personalize the look')}>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {HAIRS.map((h) => (
-                      <OptionRow
+                      <VisualOptionCard
                         key={h.id}
                         active={hairId === h.id}
                         onClick={() => setHairId(h.id)}
+                        Icon={h.id === 'none' ? IconSwatchOff : IconHairWisp}
+                        tone={h.tone}
                         title={T(h.nameZh, h.nameEn)}
                         price={h.price > 0 ? `+${formatPrice(h.price)}` : T('免费', 'Free')}
                       />
                     ))}
-                  </ConfigSection>
-                </div>
+                  </div>
+                </OptionGroup>
 
-                <ConfigSection title={T('配件', 'Accessories')} hint={T('可多选', 'Multiple allowed')}>
-                  {ACCESSORIES.map((a) => (
-                    <label
-                      key={a.id}
-                      className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 transition-colors duration-300 hover:border-white/25"
-                    >
-                      <span className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={accessoryState[a.id]}
-                          onChange={() => setAccessoryState((prev) => ({ ...prev, [a.id]: !prev[a.id] }))}
-                          className="h-4 w-4 rounded border-white/30 bg-transparent accent-electric-400"
-                        />
-                        <span className="text-sm text-white/80">{T(a.nameZh, a.nameEn)}</span>
-                      </span>
-                      <span className="font-mono text-xs text-white/40">+{formatPrice(a.price)}</span>
-                    </label>
-                  ))}
-                </ConfigSection>
+                <OptionGroup index="06" title={T('配件', 'Accessories')} hint={T('可多选叠加', 'Mix & match freely')}>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {ACCESSORIES.map((a) => {
+                      const Icon = a.id === 'backpack' ? IconBackpack : IconSneaker
+                      const isActive = accessoryState[a.id]
+                      return (
+                        <button
+                          key={a.id}
+                          onClick={() => setAccessoryState((prev) => ({ ...prev, [a.id]: !prev[a.id] }))}
+                          aria-pressed={isActive}
+                          className={`group relative flex items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-300 ${
+                            isActive
+                              ? 'border-electric-400/70 bg-electric-500/[0.08] shadow-[0_0_24px_-6px_rgba(45,226,255,0.3)]'
+                              : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                          }`}
+                        >
+                          <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300 ${isActive ? 'border-electric-400/40 bg-electric-500/10 text-electric-300' : 'border-white/12 bg-white/[0.03] text-white/40'}`}>
+                            <Icon width={22} height={22} />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className={`block text-sm font-semibold ${isActive ? 'text-white' : 'text-white/80'}`}>{T(a.nameZh, a.nameEn)}</span>
+                            <span className="mt-0.5 block font-mono text-xs text-white/35">+{formatPrice(a.price)}</span>
+                          </span>
+                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 ${isActive ? 'border-electric-400 bg-electric-400' : 'border-white/20 bg-transparent group-hover:border-white/40'}`}>
+                            {isActive && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A0A0B" strokeWidth="3"><path d="M5 12l4 4L19 6" /></svg>}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </OptionGroup>
 
-                {/* 实时价格计算器 */}
-                <div className="rounded-2xl border border-electric-500/30 bg-gradient-to-b from-electric-500/[0.07] to-transparent p-5">
-                  <h3 className="font-display text-xs font-semibold uppercase tracking-widest2 text-electric-300">
-                    {T('实时报价', 'Live Estimate')}
-                  </h3>
+                {/* 报价明细：与左侧吸顶总价呼应，展开列出每一项加成 */}
+                <div className="rounded-2xl border border-white/10 bg-carbon-800/40 p-5">
+                  <h3 className="font-display text-xs font-semibold uppercase tracking-widest2 text-white/60">{T('报价明细', 'Price breakdown')}</h3>
                   <div className="mt-3 space-y-1.5 text-sm">
                     {priceBreakdown.items.map((item) => (
                       <div key={item.key} className="flex items-center justify-between text-white/50">
@@ -695,13 +856,6 @@ export default function RoboFit() {
                     <span className="text-sm font-medium text-white/70">{T('预估总价', 'Estimated total')}</span>
                     <span className="font-display text-2xl font-bold text-gradient">{formatPrice(priceBreakdown.total)}</span>
                   </div>
-                  <button
-                    onClick={handleSaveLook}
-                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-5 py-3 text-sm font-semibold text-carbon-900 shadow-[0_0_28px_rgba(45,226,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(45,226,255,0.5)]"
-                  >
-                    {T('保存我的搭配', 'Save my look')}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-                  </button>
                   <p className="mt-3 text-center text-[11px] text-white/30">
                     {T('价格仅供参考演示，不构成最终报价 · 状态仅保存于当前会话内存', 'Prices are illustrative only · all state lives in this session’s memory')}
                   </p>

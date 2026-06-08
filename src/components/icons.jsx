@@ -246,3 +246,62 @@ export function IconRobotSilhouette(props) {
     </svg>
   )
 }
+
+/* ---------- RoboFit 配置器 · 选配可视化图标（Tesla 选配卡片风格） ---------- */
+
+export function IconApparelTag(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M24 6L9 21a4 4 0 000 6l12 12a4 4 0 006 0l15-15a4 4 0 000-6L30 6a4 4 0 00-6 0z" />
+      <circle cx="33" cy="15" r="2.6" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function IconMaskFace(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M24 6c-9 0-15 6.5-15 16 0 11 6.7 20 15 20s15-9 15-20c0-9.5-6-16-15-16z" />
+      <path d="M16 23c2-2 5-2 7 0M25 23c2-2 5-2 7 0" />
+      <path d="M19 33c1.6 1.6 3.3 2.4 5 2.4s3.4-.8 5-2.4" />
+    </svg>
+  )
+}
+
+export function IconHairWisp(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M14 20c0-7 4.5-12 10-12s10 5 10 12c0 3-1 5-1 9v9" />
+      <path d="M14 20c-1.5 4-2 9-1 17M22 17c-.6 7 0 14 0 22M30 17c.8 7 .3 14 .3 22" />
+    </svg>
+  )
+}
+
+export function IconBackpack(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M17 18v-3a7 7 0 0114 0v3" />
+      <rect x="13" y="18" width="22" height="24" rx="5" />
+      <path d="M19 26h10M19 32h7" />
+      <path d="M21 18v6M27 18v6" />
+    </svg>
+  )
+}
+
+export function IconSneaker(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M8 33c0-5 3-9 8-11l9-4 5 5 9 2c3 .8 5 2.6 5 5.5V36a2 2 0 01-2 2H10a2 2 0 01-2-2v-3z" />
+      <path d="M16 22l4 5M24 19l3.5 6M8 33h34" />
+    </svg>
+  )
+}
+
+export function IconSwatchOff(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="9" y="9" width="30" height="30" rx="8" />
+      <path d="M14 34L34 14" />
+    </svg>
+  )
+}

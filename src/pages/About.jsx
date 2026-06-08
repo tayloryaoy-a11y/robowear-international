@@ -89,9 +89,8 @@ export default function About() {
             </span>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-3xl font-display text-4xl font-bold leading-[1.15] tracking-tight sm:text-5xl">
-              {T('我们正在成为，', 'We are becoming —')}
-              <br />
+            <h1 className="mt-6 max-w-5xl font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl">
+              {T('我们正在成为', 'We are becoming ')}
               <span className="text-gradient">{T('机器人时代的 Nike', 'the Nike of the Robotic Era')}</span>
             </h1>
           </Reveal>
@@ -165,19 +164,26 @@ export default function About() {
             <p className="mt-1 text-sm font-medium text-white/40">{T('Alex Chen · 陈翊', 'Alex Chen')}</p>
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
               {T(
-                'Alex 拥有横跨时尚设计与机器人工程的双重背景：在洛杉矶 Art Center College of Design 学习产品与服装设计，毕业后在成都一家人形机器人供应链企业负责外观结构设计。一次工厂走访中，他看到上百台外形完全相同的机器人整齐排列——那一刻他意识到："如果机器人将拥有身体，它们也应该拥有自己的样子。"',
-                'Alex bridges fashion design and robotics engineering: he studied product and apparel design at Art Center College of Design in Los Angeles, then led exterior-structure design at a humanoid-robot supply chain company in Chengdu. On a factory floor, he once saw hundreds of identical robots lined up — and realized: "If robots are going to have bodies, they deserve to have a look of their own."'
+                'Alex 拥有超过 10 年的跨界企业管理经验，曾主导多家公司从零到一的创业历程，涵盖文化传媒、国际贸易、智能科技等多个领域，具备高强商业敏感度及创新能力。',
+                'Alex brings 10+ years of cross-industry management experience, having led multiple companies through their zero-to-one journeys across cultural media, international trade, and smart technology — backed by sharp commercial instinct and a drive to innovate.'
               )}
             </p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
               {T(
-                '于是他在 2026 年创立 RoboWear International，把"功能优先、规模化个性、人机和谐"写进了公司的第一行代码与第一张设计图。',
-                'In 2026 he founded RoboWear International, writing "function first, personalization at scale, and human-robot harmony" into the company’s very first lines of code and design sketches.'
+                'Alex 深刻理解中国制造业的供应链优势、全球品牌运营的核心逻辑，以及科技产品从 B 端到 C 端的市场拓展路径，具备将 RoboWear 从概念推向全球市场的完整能力。',
+                'He has a deep grasp of China’s manufacturing supply-chain strengths, the core logic of global brand operations, and how tech products move from B2B into consumer markets — giving him the full toolkit to take RoboWear from concept to a global brand.'
+              )}
+            </p>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
+              {T(
+                '他立志打造一个令世人铭记的可传承品牌，坚信机器人将彻底改变人类社会的运转方式——于是他在 2026 年创立 RoboWear International，把"功能优先、规模化个性、人机和谐"写进了公司的第一行代码与第一张设计图。',
+                'Driven by the ambition to build a brand the world will remember and pass on — and a conviction that robots will fundamentally reshape how human society runs — he founded RoboWear International in 2026, writing "function first, personalization at scale, and human-robot harmony" into the company’s very first lines of code and design sketches.'
               )}
             </p>
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-white/40">
-              <span className="rounded-full border border-white/10 px-3 py-1.5">{T('Art Center College of Design · 产品设计', 'Art Center College of Design — Product Design')}</span>
-              <span className="rounded-full border border-white/10 px-3 py-1.5">{T('前人形机器人供应链外观结构负责人', 'Former Exterior Structure Lead, Humanoid Robotics Supply Chain')}</span>
+              <span className="rounded-full border border-white/10 px-3 py-1.5">{T('10+ 年跨界企业管理经验', '10+ Years Cross-Industry Management Experience')}</span>
+              <span className="rounded-full border border-white/10 px-3 py-1.5">{T('文化传媒 · 国际贸易 · 智能科技', 'Cultural Media · International Trade · Smart Tech')}</span>
+              <span className="rounded-full border border-white/10 px-3 py-1.5">{T('多家公司从 0 到 1 创业操盘手', 'Zero-to-One Founder Across Multiple Ventures')}</span>
             </div>
           </Reveal>
         </div>

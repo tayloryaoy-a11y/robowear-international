@@ -197,12 +197,12 @@ export default function Home() {
               <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-electric-500/20 via-transparent to-cyber-500/20 blur-2xl animate-pulseGlow" />
               <div className="relative animate-floaty overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_30px_90px_-25px_rgba(45,226,255,0.35)]">
                 <img
-                  src="/images/robowear/hero-main.webp"
+                  src="/images/robowear/hero-couture.png"
                   alt={T(
-                    '穿高定服装的人形机器人，四分之三站姿，黑背景蓝色轮廓光',
-                    'Humanoid robot in haute-couture apparel, three-quarter stance, black backdrop with electric-blue rim light'
+                    '身着高定白色风衣套装的人形机器人，冷调影棚灯光，全身站姿',
+                    'Humanoid robot in a haute-couture white trench-coat ensemble, cool studio lighting, full-body stance'
                   )}
-                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full object-cover"
+                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full object-cover object-[center_18%]"
                 />
               </div>
             </div>
@@ -238,12 +238,11 @@ export default function Home() {
                 source: 'Morgan Stanley'
               },
               {
-                value: 76.9,
-                decimals: 1,
-                suffix: '%',
-                labelZh: 'RoboWear 综合毛利率',
-                labelEn: 'RoboWear Blended Gross Margin',
-                source: T('财务测算', 'Financial Model')
+                value: 12500000,
+                suffix: T(' 台', ' units'),
+                labelZh: '2035 年人形机器人预估保有量',
+                labelEn: 'Est. Humanoid Robots in Service by 2035',
+                source: T('行业测算', 'Industry Estimate')
               },
               {
                 value: 3,
@@ -337,12 +336,17 @@ export default function Home() {
                     p.flagship ? 'lg:col-span-2 lg:row-span-1' : ''
                   }`}
                 >
-                  <img
-                    src={`/images/robowear/${p.image}`}
-                    alt={T(`${p.nameZh} ${p.subZh} 产品视觉`, `${p.nameZh} ${p.subEn} product visual`)}
-                    loading="lazy"
-                    className="aspect-[16/10] w-full border-b border-white/10 object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                  />
+                  <div className="relative overflow-hidden border-b border-white/10">
+                    <img
+                      src={`/images/robowear/${p.image}`}
+                      alt={T(`${p.nameZh} ${p.subZh} 产品视觉`, `${p.nameZh} ${p.subEn} product visual`)}
+                      loading="lazy"
+                      className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                    {/* 角落柔光遮罩：统一视觉层次，避免素材自带文字与卡片信息互相干扰 */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-carbon-900/65 via-carbon-900/0 to-transparent" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-carbon-900/35 via-transparent to-transparent" />
+                  </div>
                   <div className="flex flex-1 flex-col p-6">
                     <div className="flex items-center gap-2">
                       <h3 className="font-display text-xl font-bold text-white">{p.nameZh}</h3>

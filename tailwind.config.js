@@ -60,12 +60,17 @@ export default {
         marquee: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' }
+        },
+        kenBurns: {
+          '0%, 100%': { transform: 'scale(1) translate3d(0, 0, 0)' },
+          '50%': { transform: 'scale(1.07) translate3d(-1.2%, -1%, 0)' }
         }
       },
       animation: {
         floaty: 'floaty 6s ease-in-out infinite',
         pulseGlow: 'pulseGlow 3s ease-in-out infinite',
-        marquee: 'marquee 30s linear infinite'
+        marquee: 'marquee 30s linear infinite',
+        kenBurns: 'kenBurns 16s ease-in-out infinite'
       }
     }
   },

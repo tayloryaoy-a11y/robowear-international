@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { IconX, IconYouTube, IconTikTok, IconDouyin, IconInstagram } from '../components/icons.jsx'
@@ -56,6 +56,67 @@ const officeTone = {
   electric: 'border-electric-500/25 bg-electric-500/[0.05]',
   cyber: 'border-cyber-500/25 bg-cyber-500/[0.06]',
   rose: 'border-pink-400/20 bg-pink-400/[0.05]'
+}
+
+// 品牌信条轮播文案 —— 用于"直接联系"卡片旁的动态大字板块（参考苹果官网式的大字企业价值观滚动展示）
+const BRAND_PULSES = [
+  { zh: '功能优先', en: 'Function First' },
+  { zh: '规模化个性', en: 'Personalization at Scale' },
+  { zh: '人机和谐', en: 'Human-Robot Harmony' },
+  { zh: '为硅基文明，穿上它应有的样子', en: 'Dressing the silicon civilization in the identity it deserves' },
+  { zh: '机器人时代的 Nike', en: 'The Nike of the robotic era' }
+]
+
+/**
+ * 品牌信条动态大字板块
+ * 纯前端实现：仅用 useState/useEffect 管理轮播索引与淡出过渡状态，
+ * 不依赖 localStorage / sessionStorage，组件卸载时清理定时器。
+ */
+function BrandPulse({ T }) {
+  const [index, setIndex] = useState(0)
+  const [fading, setFading] = useState(false)
+
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setFading(true)
+      const swap = setTimeout(() => {
+        setIndex((i) => (i + 1) % BRAND_PULSES.length)
+        setFading(false)
+      }, 420)
+      return () => clearTimeout(swap)
+    }, 3800)
+    return () => clearInterval(cycle)
+  }, [])
+
+  const current = BRAND_PULSES[index]
+
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-carbon-800/60 to-carbon-800/20 p-6 sm:p-8">
+      <div className="absolute inset-0 -z-10 bg-hero-glow opacity-25" />
+      <div className="absolute inset-0 -z-10 bg-tech-grid opacity-[0.04]" />
+      <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest2 text-white/35">
+        <span className="h-1.5 w-1.5 rounded-full bg-electric-500 animate-pulseGlow" />
+        {T('品牌信条', 'Brand Ethos')}
+      </span>
+      <p
+        className={`mt-5 min-h-[5.5rem] font-display text-2xl font-bold leading-tight tracking-tight transition-all duration-500 ease-out sm:text-[1.75rem] ${
+          fading ? 'translate-y-3 opacity-0' : 'translate-y-0 opacity-100'
+        }`}
+      >
+        <span className="text-gradient">{T(current.zh, current.en)}</span>
+      </p>
+      <div className="mt-6 flex items-center gap-2">
+        {BRAND_PULSES.map((_, i) => (
+          <span
+            key={i}
+            className={`h-1 rounded-full transition-all duration-500 ${
+              i === index ? 'w-8 bg-electric-400' : 'w-2.5 bg-white/15'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
 }
 
 const initialForm = { name: '', company: '', email: '', phone: '', inquiryType: 'general', message: '' }
@@ -132,14 +193,12 @@ export default function Contact() {
             </span>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-2xl font-display text-4xl font-bold leading-[1.15] tracking-tight sm:text-5xl">
-              {T('无论是合作、采购，', 'Whether it’s a partnership, an order,')}
-              <br />
-              {T('还是一个想法 —— 我们都想听听', 'or just an idea — we want to hear it')}
+            <h1 className="mt-6 max-w-6xl font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl">
+              {T('无论是合作、采购，还是一个想法——我们都想听听', 'Partnership, order, or just an idea — we want to hear it')}
             </h1>
           </Reveal>
           <Reveal delay={160}>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/55">
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55">
               {T(
                 '填写下方表单，或直接通过邮箱与我们的全球团队取得联系。我们通常会在 1–2 个工作日内回复。',
                 'Fill out the form below or reach our global team directly by email. We typically reply within 1–2 business days.'
@@ -248,15 +307,15 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* 联系信息 + 全球办公室 */}
+          {/* 联系信息 + 品牌信条 */}
           <Reveal direction="right" delay={80}>
             <div className="space-y-6">
               <div className="rounded-3xl border border-white/10 bg-carbon-800/40 p-6">
                 <h3 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/70">{T('直接联系', 'Direct Contact')}</h3>
-                <a href="mailto:business@robowear.tech" className="mt-4 block text-base font-semibold text-electric-300 transition-colors hover:text-electric-200">
-                  business@robowear.tech
+                <a href="mailto:tayloryaoy@gmail.com" className="mt-4 block text-base font-semibold text-electric-300 transition-colors hover:text-electric-200">
+                  tayloryaoy@gmail.com
                 </a>
-                <p className="mt-1.5 text-sm text-white/45">+1 (323) 555-0142</p>
+                <p className="mt-1.5 text-sm text-white/45">+86 13458670416</p>
                 <div className="mt-5 flex items-center gap-2.5">
                   {social.map(({ Icon, label }) => (
                     <a
@@ -272,22 +331,68 @@ export default function Contact() {
                 </div>
               </div>
 
-              {OFFICES.map((office) => (
-                <div key={office.cityZh} className={`overflow-hidden rounded-2xl border ${officeTone[office.tone]}`}>
-                  <div className="relative">
+              {/* Apple 风格动态大字品牌信条轮播 —— 填充原本因办公室卡片堆叠而产生的左侧留白 */}
+              <BrandPulse T={T} />
+
+              <div className="rounded-3xl border border-white/10 bg-carbon-800/40 p-6">
+                <h3 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/70">{T('全球版图', 'Global Footprint')}</h3>
+                <div className="mt-5 grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <p className="font-display text-2xl font-bold text-white">{OFFICES.length}</p>
+                    <p className="mt-1 text-[11px] leading-snug text-white/40">{T('城市据点', 'City hubs')}</p>
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl font-bold text-white">2</p>
+                    <p className="mt-1 text-[11px] leading-snug text-white/40">{T('国家 / 地区', 'Countries & regions')}</p>
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl font-bold text-white">2026</p>
+                    <p className="mt-1 text-[11px] leading-snug text-white/40">{T('品牌创立', 'Founded')}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* ---------------- 全球据点：横向一排展示，避免与表单高度错位造成的留白 ---------------- */}
+        <div className="mx-auto mt-16 max-w-7xl px-5 sm:px-8 lg:px-10">
+          <Reveal>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="font-display text-xl font-bold text-white sm:text-2xl">{T('全球据点', 'Global Offices')}</h3>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/45">
+                  {T(
+                    '从供应链到品牌，从研发到资本——三座城市，一个统一的全球团队。',
+                    'From supply chain to brand, from R&D to capital — three cities, one unified global team.'
+                  )}
+                </p>
+              </div>
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/12 px-4 py-1.5 text-xs font-medium text-white/45">
+                <span className="h-1.5 w-1.5 rounded-full bg-electric-500 animate-pulseGlow" />
+                {T('总部：洛杉矶 ｜ 成都 ｜ 香港', 'HQ: Los Angeles · Chengdu · Hong Kong')}
+              </span>
+            </div>
+          </Reveal>
+
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {OFFICES.map((office, i) => (
+              <Reveal key={office.cityZh} delay={i * 90}>
+                <div className={`group h-full overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${officeTone[office.tone]}`}>
+                  <div className="relative overflow-hidden">
                     <img
                       src={`/images/robowear/${office.image}`}
                       alt={T(`${office.cityZh}办公室所在城市天际线`, `${office.cityEn} office — city skyline`)}
                       loading="lazy"
-                      className="aspect-[10/7] w-full object-cover"
+                      className="aspect-[16/11] w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/85 via-transparent to-transparent" />
+                    <span className="absolute bottom-3 left-4 text-xs font-semibold uppercase tracking-widest2 text-white/70">
+                      {T(office.roleZh, office.roleEn)}
+                    </span>
                   </div>
                   <div className="p-6">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-display text-lg font-semibold text-white">{T(office.cityZh, office.cityEn)}</h4>
-                      <span className="text-xs font-medium uppercase tracking-widest2 text-white/40">{T(office.roleZh, office.roleEn)}</span>
-                    </div>
+                    <h4 className="font-display text-lg font-semibold text-white">{T(office.cityZh, office.cityEn)}</h4>
                     <p className="mt-2.5 flex items-start gap-2 text-sm text-white/45">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0 text-white/30">
                         <path d="M12 22s8-7 8-12a8 8 0 10-16 0c0 5 8 12 8 12z" />
@@ -297,9 +402,9 @@ export default function Contact() {
                     </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </Reveal>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
     </div>
