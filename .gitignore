@@ -1,0 +1,5 @@
+node_modules/
+dist/
+asset-package/
+.DS_Store
+*.log

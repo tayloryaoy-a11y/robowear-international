@@ -510,6 +510,18 @@ export default function RoboFit() {
               </span>
             </div>
           </Reveal>
+
+          <Reveal delay={300}>
+            <div className="group relative mt-10 overflow-hidden rounded-3xl border border-white/10">
+              <img
+                src="/images/robowear/robofit-hero.webp"
+                alt={T('左侧实拍机器人，右侧 3D 数字孪生试衣系统界面', 'A real robot on the left, paired with the 3D digital-twin fitting interface on the right')}
+                loading="lazy"
+                className="aspect-[16/7] w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/70 via-transparent to-transparent" />
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -727,6 +739,39 @@ export default function RoboFit() {
                   <span className="font-display text-2xl font-bold">0{idx + 1}</span>
                   <h3 className="mt-4 font-display text-lg font-semibold text-white">{T(pillar.titleZh, pillar.titleEn)}</h3>
                   <p className="mt-2.5 text-sm leading-relaxed text-white/55">{T(pillar.descZh, pillar.descEn)}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* 设计师 / 社区实景 */}
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {[
+              {
+                filename: 'robofit-community-designer.webp',
+                labelZh: '设计师与机器人在未来服装工作室协作打版设计',
+                labelEn: 'A designer collaborating with a robot in a future-forward apparel design studio',
+                capZh: '设计师工作室',
+                capEn: 'Designer Studio'
+              },
+              {
+                filename: 'robofit-community-group.webp',
+                labelZh: '多台机器人穿着不同 RoboWear 服装合影，社区感与品牌大秀感',
+                labelEn: 'A group of robots in different RoboWear looks — community spirit meets runway energy',
+                capZh: '社区穿搭合影',
+                capEn: 'Community Lineup'
+              }
+            ].map((item, idx) => (
+              <Reveal key={item.filename} delay={idx * 100}>
+                <div className="group relative overflow-hidden rounded-2xl border border-white/10">
+                  <img
+                    src={`/images/robowear/${item.filename}`}
+                    alt={T(item.labelZh, item.labelEn)}
+                    loading="lazy"
+                    className="aspect-[3/2] w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/85 via-carbon-900/5 to-transparent" />
+                  <p className="absolute bottom-4 left-4 text-sm font-semibold text-white">{T(item.capZh, item.capEn)}</p>
                 </div>
               </Reveal>
             ))}

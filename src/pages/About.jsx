@@ -1,6 +1,5 @@
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
-import PlaceholderImage from '../components/PlaceholderImage.jsx'
 import { IconSeed, IconLaunch, IconExpand, IconGlobal } from '../components/icons.jsx'
 
 const pillars = [
@@ -121,26 +120,49 @@ export default function About() {
         </div>
       </section>
 
+      {/* ---------------- 品牌愿景大图 ---------------- */}
+      <section className="px-5 sm:px-8 lg:px-10">
+        <Reveal>
+          <div className="group relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10">
+            <img
+              src="/images/robowear/about-runway.webp"
+              alt={T('一排机器人穿着不同 RoboWear 服装走上机器人时装周 T 台', 'A lineup of robots in different RoboWear looks walking the runway at Robot Fashion Week')}
+              loading="lazy"
+              className="aspect-[8/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/80 via-carbon-900/10 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-widest2 text-electric-300">{T('品牌愿景', 'Brand Vision')}</p>
+              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base">
+                {T('当机器人穿上自己的服装走上 T 台——那便是 RoboWear 想象中的未来日常。', 'When robots walk the runway in clothes of their own — that’s the everyday future RoboWear imagines.')}
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
       {/* ---------------- 创始人 ---------------- */}
       <section className="py-16">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:px-10">
           <Reveal direction="left">
-            <PlaceholderImage
-              labelZh="创始人肖像"
-              labelEn="Founder portrait"
-              hintZh="黑白人像 · 工作室环境 · 沉静专注"
-              hintEn="B&W portrait · studio setting · calm focus"
-              size="900 × 1100"
-              filename="founder-alex.jpg"
-              tone="silver"
-              ratio="aspect-[9/11]"
-            />
+            <div className="relative mx-auto aspect-[9/11] w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-electric-500/15 via-carbon-800 to-cyber-500/15">
+              <div className="absolute inset-0 bg-tech-grid opacity-30" />
+              <div className="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-electric-500/20 blur-[90px]" />
+              <div className="absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-cyber-500/20 blur-[90px]" />
+              <div className="relative flex h-full flex-col items-center justify-center gap-4 px-8 text-center">
+                <span className="font-display text-[7rem] font-bold leading-none text-gradient drop-shadow-[0_0_40px_rgba(45,226,255,0.35)]">A</span>
+                <span className="h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <p className="font-display text-xl font-bold tracking-wide text-white">Alex</p>
+                <p className="text-xs uppercase tracking-widest2 text-white/40">{T('创始人 & CEO · RoboWear International', 'Founder & CEO · RoboWear International')}</p>
+              </div>
+            </div>
           </Reveal>
           <Reveal direction="right" delay={80}>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-4 py-1.5 text-xs font-semibold tracking-wide text-white/50">
               {T('创始人 & CEO', 'Founder & CEO')}
             </span>
-            <h2 className="mt-5 font-display text-3xl font-bold">Alex Chen · {T('陈翊', 'Yi “Alex” Chen')}</h2>
+            <h2 className="mt-5 font-display text-3xl font-bold">Alex</h2>
+            <p className="mt-1 text-sm font-medium text-white/40">{T('Alex Chen · 陈翊', 'Alex Chen')}</p>
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
               {T(
                 'Alex 拥有横跨时尚设计与机器人工程的双重背景：在洛杉矶 Art Center College of Design 学习产品与服装设计，毕业后在成都一家人形机器人供应链企业负责外观结构设计。一次工厂走访中，他看到上百台外形完全相同的机器人整齐排列——那一刻他意识到："如果机器人将拥有身体，它们也应该拥有自己的样子。"',
@@ -192,6 +214,17 @@ export default function About() {
               </Reveal>
             ))}
           </div>
+
+          <Reveal delay={120}>
+            <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-carbon-900/40 p-2 sm:p-4">
+              <img
+                src="/images/robowear/business-model.svg"
+                alt={T('硬件 + 数字平台 + IP 生态三位一体商业模式示意图', 'Infographic of the hardware + digital platform + IP ecosystem business-model flywheel')}
+                loading="lazy"
+                className="aspect-[5/3] w-full rounded-2xl object-contain"
+              />
+            </div>
+          </Reveal>
         </div>
       </section>
 

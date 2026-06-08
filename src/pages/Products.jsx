@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
-import PlaceholderImage from '../components/PlaceholderImage.jsx'
 
 const ROBOTS = ['Tesla Optimus', 'Figure 03', 'XPeng Iron / 小鹏 Iron']
 
@@ -49,7 +48,7 @@ const lines = [
       { zh: '腰部设计散热网格区，兼顾功能与版型美感', en: 'Ventilated mesh zone at the waist balances function with silhouette' },
       { zh: '支持企业 Logo 印制与批量定制（B2B 折扣）', en: 'Supports enterprise logo printing and bulk customization (B2B pricing)' }
     ],
-    image: { labelZh: '机器人服装系列产品视觉', labelEn: 'Robo-Wear apparel series visual', hintZh: '同子系列分场景拍摄', hintEn: 'Scene-matched shots per sub-line', size: '800×600', filename: 'product-robowear.webp' },
+    image: { labelZh: '高定机器人形象，霓虹渐变背景，奢华简洁', labelEn: 'Couture robot styling against a neon gradient backdrop — luxe and clean', hintZh: '同子系列分场景拍摄', hintEn: 'Scene-matched shots per sub-line', size: '800×600', filename: 'product-couture.webp' },
     subSeries: [
       {
         nameZh: '居家系列', nameEn: 'Home Series',
@@ -96,7 +95,13 @@ const lines = [
       { zh: '安装方式：磁吸快拆设计，10 秒内完成更换', en: 'Install: magnetic quick-release — swap in under 10 seconds' },
       { zh: '定制化：支持 3D 扫描主人面孔，定制"主人的机器人版本"面具（限量服务）', en: 'Customization: 3D-scan the owner’s face for a “robot twin” portrait mask (limited service)' }
     ],
-    image: { labelZh: '科技极简 / 超写实 / 动漫 / 定制肖像 四款面具', labelEn: 'Tech-Minimal / Realistic / Anime / Custom Portrait — four mask styles', hintZh: '黑底产品图，悬浮聚光', hintEn: 'Black backdrop, spotlighted floating product shot', size: '600×600', filename: 'product-face.webp' },
+    image: { labelZh: '拟真人年轻亚洲帅气男生脸，成熟真实产品样式', labelEn: 'Lifelike young Asian-male face mask — mature, realistic product styling', hintZh: '黑底产品图，悬浮聚光', hintEn: 'Black backdrop, spotlighted floating product shot', size: '600×600', filename: 'product-face-asian-male.webp' },
+    gallery: [
+      { filename: 'product-face-asian-male.webp', labelZh: '年轻亚洲帅气男生', labelEn: 'Young Asian Male' },
+      { filename: 'product-face-white-female.webp', labelZh: '年轻欧美白人女性', labelEn: 'Young Western Female' },
+      { filename: 'product-face-black-male.webp', labelZh: '黑色青年男模', labelEn: 'Young Black Male' },
+      { filename: 'product-face-anime-middle.webp', labelZh: '中年动漫感卡通', labelEn: 'Middle-Aged Anime Style' }
+    ],
     variantTable: [
       { zh: '科技极简 Tech-Minimal', en: 'Tech-Minimal', descZh: '光滑金属质感面具，LED 灯带点缀', descEn: 'Smooth metallic mask accented with LED light strips', price: '$299 – $599' },
       { zh: '超写实人脸 Realistic-Human', en: 'Realistic-Human', descZh: '医疗级硅胶制作，高度仿真', descEn: 'Medical-grade silicone, hyper-realistic finish', price: '$1,500 – $5,000' },
@@ -122,7 +127,12 @@ const lines = [
       { zh: '安装方式：专为机器人头部曲率设计的卡扣系统，牢固不脱落同时支持快速更换', en: 'Install: a snap-fit system tailored to robot head curvature — secure, yet quick to change' },
       { zh: '散热设计：发丝间距与密度经工程计算，确保头部散热效率不低于裸机的 80%', en: 'Thermal design: strand spacing and density are engineered so head dissipation stays above 80% of a bare chassis' }
     ],
-    image: { labelZh: '短发 / 长发 / 卷发 戴在机器人头部', labelEn: 'Short / long / curly wigs worn on a robot head', hintZh: '干净背景产品图', hintEn: 'Clean-background product shots', size: '600×600', filename: 'product-hair.webp' },
+    image: { labelZh: '长直发造型，戴在机器人头部，干净黑底产品图', labelEn: 'Long straight wig styled on a robot head — clean black-backdrop product shot', hintZh: '干净背景产品图', hintEn: 'Clean-background product shots', size: '600×600', filename: 'product-hair-long.webp' },
+    gallery: [
+      { filename: 'product-hair-short.webp', labelZh: '短发', labelEn: 'Short' },
+      { filename: 'product-hair-long.webp', labelZh: '长直发', labelEn: 'Long Straight' },
+      { filename: 'product-hair-curly.webp', labelZh: '卷发', labelEn: 'Curly' }
+    ],
     variantTable: [
       { zh: '基础款', en: 'Basic', descZh: '常见发型（短发、长发、卷发）', descEn: 'Common styles — short, long, curly', price: '$99 – $299' },
       { zh: '精品款', en: 'Premium', descZh: '高品质真人发丝', descEn: 'Premium real human hair', price: '$499 – $1,499' },
@@ -148,7 +158,13 @@ const lines = [
       { zh: 'Robo-Jewelry 机器人首饰：项链、手环等，采用不影响传感器的非金属材料', en: 'Robo-Jewelry: necklaces & bracelets in non-metallic, sensor-safe materials' },
       { zh: 'Seasonal & Holiday Kits：圣诞、万圣节、春节等节日主题限时套装', en: 'Seasonal & Holiday Kits: limited-run themes for Christmas, Halloween, Lunar New Year' }
     ],
-    image: { labelZh: '背包 / 鞋 / 首饰 / 节日套装（圣诞）', labelEn: 'Backpack / shoes / jewelry / holiday (Christmas) set', hintZh: '产品悬浮图，统一灯光', hintEn: 'Floating product shots, unified lighting', size: '500×500', filename: 'product-accessories.webp' }
+    image: { labelZh: '模块化机能背包，黑紫科技悬浮产品图', labelEn: 'Modular utility backpack — floating product shot in black-violet tech tones', hintZh: '产品悬浮图，统一灯光', hintEn: 'Floating product shots, unified lighting', size: '500×500', filename: 'product-acc-backpack.webp' },
+    gallery: [
+      { filename: 'product-acc-backpack.webp', labelZh: '机能背包', labelEn: 'Utility Backpack' },
+      { filename: 'product-acc-shoes.webp', labelZh: '智能机能鞋', labelEn: 'Performance Shoes' },
+      { filename: 'product-acc-jewelry.webp', labelZh: '钛钢首饰套装', labelEn: 'Titanium Jewelry Set' },
+      { filename: 'product-acc-festive.webp', labelZh: '节日限定套装', labelEn: 'Festive Limited Set' }
+    ]
   }
 ]
 
@@ -237,15 +253,11 @@ export default function Products() {
               <div className={`grid grid-cols-1 items-start gap-10 lg:grid-cols-2 ${idx % 2 === 1 ? 'lg:[&>*:first-child]:order-2' : ''}`}>
                 {/* 图片占位 */}
                 <Reveal direction={idx % 2 === 1 ? 'right' : 'left'}>
-                  <PlaceholderImage
-                    labelZh={line.image.labelZh}
-                    labelEn={line.image.labelEn}
-                    hintZh={line.image.hintZh}
-                    hintEn={line.image.hintEn}
-                    size={line.image.size}
-                    filename={line.image.filename}
-                    tone={line.tone}
-                    ratio="aspect-[4/3]"
+                  <img
+                    src={`/images/robowear/${line.image.filename}`}
+                    alt={T(line.image.labelZh, line.image.labelEn)}
+                    loading="lazy"
+                    className="aspect-[4/3] w-full rounded-2xl border border-white/10 object-cover"
                   />
                 </Reveal>
 
@@ -317,15 +329,11 @@ export default function Products() {
                     {line.subSeries.map((sub, i) => (
                       <Reveal key={sub.nameZh} delay={i * 90}>
                         <div className="group h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] hover-lift">
-                          <PlaceholderImage
-                            labelZh={`${sub.nameZh}产品图`}
-                            labelEn={`${sub.nameEn} product visual`}
-                            size="800×600"
-                            filename={sub.filename}
-                            tone={sub.tone}
-                            ratio="aspect-[16/9]"
-                            compact
-                            className="rounded-none border-0 border-b border-white/10"
+                          <img
+                            src={`/images/robowear/${sub.filename}`}
+                            alt={T(`${sub.nameZh}产品图`, `${sub.nameEn} product visual`)}
+                            loading="lazy"
+                            className="aspect-[16/9] w-full border-b border-white/10 object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                           />
                           <div className="p-6">
                             <div className="flex items-center justify-between gap-3">
@@ -344,6 +352,32 @@ export default function Products() {
                               <p className="mt-3 text-xs text-white/30">{T(sub.priceNoteZh, sub.priceNoteEn)}</p>
                             )}
                           </div>
+                        </div>
+                      </Reveal>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 实拍画廊：单品实景照片 */}
+              {line.gallery && (
+                <div className="mt-14">
+                  <Reveal>
+                    <h3 className="font-display text-xl font-bold text-white/85">
+                      {T('单品实拍', 'Product Photography')}
+                    </h3>
+                  </Reveal>
+                  <div className={`mt-6 grid grid-cols-2 gap-4 ${line.gallery.length > 3 ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
+                    {line.gallery.map((g, i) => (
+                      <Reveal key={g.filename} delay={i * 80}>
+                        <div className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] hover-lift">
+                          <img
+                            src={`/images/robowear/${g.filename}`}
+                            alt={T(g.labelZh, g.labelEn)}
+                            loading="lazy"
+                            className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                          />
+                          <p className="px-3 py-2.5 text-center text-xs font-medium text-white/55">{T(g.labelZh, g.labelEn)}</p>
                         </div>
                       </Reveal>
                     ))}

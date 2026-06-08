@@ -28,16 +28,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* 公司信息 */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-electric-500/50 bg-carbon-800">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2DE2FF" strokeWidth="1.8">
-                  <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" />
-                  <circle cx="12" cy="12" r="2.6" fill="#2DE2FF" stroke="none" />
-                </svg>
-              </span>
-              <span className="font-display text-lg font-bold tracking-wide">
-                Robo<span className="text-electric-400">Wear</span>
-              </span>
+            <Link to="/" className="inline-flex items-center">
+              <img src="/images/robowear/logo.svg" alt="RoboWear International" className="h-9 w-auto invert" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
               {T(

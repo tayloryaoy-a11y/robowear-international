@@ -1,6 +1,5 @@
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
-import PlaceholderImage from '../components/PlaceholderImage.jsx'
 import { IconThermal, IconSensor, IconMotion, IconCharge, IconCube3D } from '../components/icons.jsx'
 
 // 五项核心专利技术数据
@@ -8,6 +7,7 @@ const PATENTS = [
   {
     id: 'thermal-weave',
     name: 'Thermal-Weave™',
+    image: 'patent-thermal-weave.webp',
     Icon: IconThermal,
     tone: 'electric',
     titleZh: '热感自适应纺织技术',
@@ -20,6 +20,7 @@ const PATENTS = [
   {
     id: 'sensor-pass',
     name: 'Sensor-Pass™',
+    image: 'patent-sensor-pass.webp',
     Icon: IconSensor,
     tone: 'cyber',
     titleZh: '传感器穿透层技术',
@@ -32,6 +33,7 @@ const PATENTS = [
   {
     id: 'flexjoint',
     name: 'FlexJoint™',
+    image: 'patent-flexjoint.webp',
     Icon: IconMotion,
     tone: 'rose',
     titleZh: '关节自适应剪裁系统',
@@ -44,6 +46,7 @@ const PATENTS = [
   {
     id: 'magcharge-port',
     name: 'MagCharge-Port™',
+    image: 'patent-magcharge.webp',
     Icon: IconCharge,
     tone: 'electric',
     titleZh: '磁吸式充电接口兼容设计',
@@ -56,6 +59,7 @@ const PATENTS = [
   {
     id: 'robofit-3d',
     name: 'RoboFit-3D™',
+    image: 'patent-robofit-3d.webp',
     Icon: IconCube3D,
     tone: 'cyber',
     titleZh: '实时 3D 虚拟试衣引擎',
@@ -131,21 +135,30 @@ export default function Technology() {
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {PATENTS.map((patent, idx) => (
               <Reveal key={patent.id} delay={idx * 80} className={idx === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}>
-                <div className={`hover-lift h-full rounded-2xl border p-6 ${toneClass[patent.tone]}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${iconBg[patent.tone]}`}>
-                      <patent.Icon width={22} height={22} />
+                <div className={`hover-lift group h-full overflow-hidden rounded-2xl border ${toneClass[patent.tone]}`}>
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={`/images/robowear/${patent.image}`}
+                      alt={T(patent.titleZh, patent.titleEn)}
+                      loading="lazy"
+                      className="aspect-[5/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/90 via-carbon-900/10 to-transparent" />
+                    <span className={`absolute bottom-3 left-3 flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 backdrop-blur-sm ${iconBg[patent.tone]}`}>
+                      <patent.Icon width={20} height={20} />
                     </span>
-                    <span className="rounded-full border border-white/12 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest2 text-white/35">
+                    <span className="absolute right-3 top-3 rounded-full border border-white/15 bg-carbon-900/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest2 text-white/60 backdrop-blur-sm">
                       {T('专利技术', 'Patented')}
                     </span>
                   </div>
-                  <h3 className="mt-5 font-display text-lg font-bold text-white">{patent.name}</h3>
+                  <div className="p-6">
+                  <h3 className="mt-0 font-display text-lg font-bold text-white">{patent.name}</h3>
                   <p className="mt-0.5 text-sm font-medium text-white/50">{T(patent.titleZh, patent.titleEn)}</p>
                   <p className="mt-3 text-sm leading-relaxed text-white/50">{T(patent.descZh, patent.descEn)}</p>
                   <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-carbon-900/50 px-3 py-1.5 text-xs font-mono text-white/60">
                     <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
                     {T(patent.statZh, patent.statEn)}
+                  </div>
                   </div>
                 </div>
               </Reveal>
@@ -221,16 +234,18 @@ export default function Technology() {
       <section className="py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:px-10">
           <Reveal direction="left">
-            <PlaceholderImage
-              labelZh="材料实验室实景"
-              labelEn="Materials R&D lab"
-              hintZh="深色调 · 设备特写 · 科技感"
-              hintEn="Dark tones · equipment close-ups · high-tech mood"
-              size="1200 × 900"
-              filename="tech-lab.jpg"
-              tone="violet"
-              ratio="aspect-[4/3]"
-            />
+            <div className="group relative overflow-hidden rounded-2xl border border-white/10">
+              <img
+                src="/images/robowear/thermal-test.webp"
+                alt={T('红外热成像散热对比测试：左侧未穿 RoboWear，右侧穿着后温度更稳定', 'Infrared thermal-imaging comparison — without RoboWear (left) vs. with RoboWear, showing more stable cooling (right)')}
+                loading="lazy"
+                className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-carbon-900/85 to-transparent p-5">
+                <p className="text-xs font-semibold uppercase tracking-widest2 text-electric-300">{T('散热测试实拍', 'Thermal Dissipation Test')}</p>
+                <p className="mt-1 text-sm text-white/60">{T('红外热成像对比：未穿 RoboWear vs. 穿着后降温更稳定', 'Infrared comparison: without RoboWear vs. more stable cooling while wearing it')}</p>
+              </div>
+            </div>
           </Reveal>
           <Reveal direction="right" delay={80}>
             <span className="inline-flex items-center gap-2 rounded-full border border-electric-500/30 bg-electric-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-electric-300">

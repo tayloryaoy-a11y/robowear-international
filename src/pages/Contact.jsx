@@ -19,7 +19,8 @@ const OFFICES = [
     roleEn: 'Supply chain & operations hub',
     addrZh: '中国四川省成都市高新区天府大道中段',
     addrEn: 'Tianfu Ave, Hi-Tech Zone, Chengdu, Sichuan, China',
-    tone: 'electric'
+    tone: 'electric',
+    image: 'office-chengdu.webp'
   },
   {
     cityZh: '洛杉矶',
@@ -28,7 +29,8 @@ const OFFICES = [
     roleEn: 'R&D & brand center',
     addrZh: '美国加利福尼亚州洛杉矶市艺术区',
     addrEn: 'Arts District, Los Angeles, California, USA',
-    tone: 'cyber'
+    tone: 'cyber',
+    image: 'office-losangeles.webp'
   },
   {
     cityZh: '香港',
@@ -37,7 +39,8 @@ const OFFICES = [
     roleEn: 'International financing & capital ops',
     addrZh: '中国香港特别行政区中环金融街',
     addrEn: 'Central Financial District, Hong Kong SAR, China',
-    tone: 'rose'
+    tone: 'rose',
+    image: 'office-hongkong.webp'
   }
 ]
 
@@ -112,6 +115,14 @@ export default function Contact() {
     <div className="bg-carbon-900">
       {/* ---------------- Hero ---------------- */}
       <section className="relative overflow-hidden pb-14 pt-32 sm:pt-36">
+        <img
+          src="/images/robowear/contact-bg.webp"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 -z-20 bg-gradient-to-b from-carbon-900/75 via-carbon-900/85 to-carbon-900" />
         <div className="absolute inset-0 -z-10 bg-hero-glow opacity-60" />
         <div className="absolute inset-0 -z-10 bg-tech-grid opacity-[0.05]" />
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
@@ -262,18 +273,29 @@ export default function Contact() {
               </div>
 
               {OFFICES.map((office) => (
-                <div key={office.cityZh} className={`rounded-2xl border p-6 ${officeTone[office.tone]}`}>
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-display text-lg font-semibold text-white">{T(office.cityZh, office.cityEn)}</h4>
-                    <span className="text-xs font-medium uppercase tracking-widest2 text-white/40">{T(office.roleZh, office.roleEn)}</span>
+                <div key={office.cityZh} className={`overflow-hidden rounded-2xl border ${officeTone[office.tone]}`}>
+                  <div className="relative">
+                    <img
+                      src={`/images/robowear/${office.image}`}
+                      alt={T(`${office.cityZh}办公室所在城市天际线`, `${office.cityEn} office — city skyline`)}
+                      loading="lazy"
+                      className="aspect-[10/7] w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/80 via-transparent to-transparent" />
                   </div>
-                  <p className="mt-2.5 flex items-start gap-2 text-sm text-white/45">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0 text-white/30">
-                      <path d="M12 22s8-7 8-12a8 8 0 10-16 0c0 5 8 12 8 12z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    {T(office.addrZh, office.addrEn)}
-                  </p>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-display text-lg font-semibold text-white">{T(office.cityZh, office.cityEn)}</h4>
+                      <span className="text-xs font-medium uppercase tracking-widest2 text-white/40">{T(office.roleZh, office.roleEn)}</span>
+                    </div>
+                    <p className="mt-2.5 flex items-start gap-2 text-sm text-white/45">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0 text-white/30">
+                        <path d="M12 22s8-7 8-12a8 8 0 10-16 0c0 5 8 12 8 12z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                      {T(office.addrZh, office.addrEn)}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>

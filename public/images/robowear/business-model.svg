@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#10213a"/>
+      <stop offset="55%" stop-color="#07111f"/>
+      <stop offset="100%" stop-color="#02060b"/>
+    </radialGradient>
+    <linearGradient id="bluePurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#35c9ff"/>
+      <stop offset="55%" stop-color="#4d7cff"/>
+      <stop offset="100%" stop-color="#9b5cff"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#142238"/>
+      <stop offset="100%" stop-color="#090e18"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .title{font-family:Arial, Helvetica, sans-serif;font-size:30px;font-weight:700;fill:#fff;letter-spacing:2px}
+      .subtitle{font-family:Arial, Helvetica, sans-serif;font-size:14px;fill:#7fcfff;letter-spacing:4px}
+      .center{font-family:Arial, Helvetica, sans-serif;font-size:24px;font-weight:700;fill:#fff;letter-spacing:1px}
+      .small{font-family:Arial, Helvetica, sans-serif;font-size:13px;fill:#b8c9df;letter-spacing:.5px}
+      .cn{font-family:'Microsoft YaHei',Arial,sans-serif;font-size:18px;font-weight:700;fill:#fff}
+      .en{font-family:Arial, Helvetica, sans-serif;font-size:13px;fill:#7fcfff;letter-spacing:1.5px}
+      .item{font-family:'Microsoft YaHei',Arial,sans-serif;font-size:14px;fill:#d8e8ff}
+    </style>
+  </defs>
+
+  <rect width="1000" height="600" fill="url(#bg)"/>
+  <g opacity="0.16">
+    <path d="M0 90 H1000 M0 170 H1000 M0 250 H1000 M0 330 H1000 M0 410 H1000 M0 490 H1000" stroke="#5aa8ff" stroke-width="1"/>
+    <path d="M100 0 V600 M220 0 V600 M340 0 V600 M460 0 V600 M580 0 V600 M700 0 V600 M820 0 V600 M940 0 V600" stroke="#5aa8ff" stroke-width="1"/>
+  </g>
+
+  <text x="48" y="58" class="title">ROBOWEAR ECOSYSTEM</text>
+  <text x="50" y="84" class="subtitle">HARDWARE × DIGITAL PLATFORM × IP ECOSYSTEM</text>
+
+  <circle cx="500" cy="305" r="128" fill="none" stroke="url(#bluePurple)" stroke-width="2" opacity="0.75"/>
+  <circle cx="500" cy="305" r="96" fill="#08111f" stroke="#2f75ff" stroke-width="1.5" opacity="0.98"/>
+  <circle cx="500" cy="305" r="72" fill="none" stroke="#8b5cff" stroke-width="1" opacity="0.4"/>
+  <text x="500" y="290" text-anchor="middle" class="center">RoboWear</text>
+  <text x="500" y="318" text-anchor="middle" class="center" style="font-size:18px;fill:#8fd6ff">三位一体商业生态</text>
+  <text x="500" y="346" text-anchor="middle" class="small">For Silicon Civilization</text>
+
+  <g filter="url(#glow)" opacity="0.85">
+    <path d="M372 252 C310 205 270 185 221 174" stroke="url(#bluePurple)" stroke-width="3" fill="none"/>
+    <path d="M630 252 C690 205 730 185 779 174" stroke="url(#bluePurple)" stroke-width="3" fill="none"/>
+    <path d="M500 433 C500 470 500 492 500 515" stroke="url(#bluePurple)" stroke-width="3" fill="none"/>
+  </g>
+
+  <g transform="translate(55,135)">
+    <rect width="310" height="250" rx="28" fill="url(#card)" stroke="#285b92" stroke-width="1.5"/>
+    <circle cx="58" cy="58" r="28" fill="none" stroke="url(#bluePurple)" stroke-width="2"/>
+    <path d="M44 62 L58 42 L72 62 Z" fill="none" stroke="#7fcfff" stroke-width="3" stroke-linejoin="round"/>
+    <text x="105" y="50" class="cn">硬件产品</text>
+    <text x="105" y="72" class="en">HARDWARE PRODUCTS</text>
+    <text x="34" y="118" class="item">• Robo-Skin™ 智能皮肤</text>
+    <text x="34" y="148" class="item">• Robo-Wear™ 机器人服装</text>
+    <text x="34" y="178" class="item">• Robo-Face™ 面具系统</text>
+    <text x="34" y="208" class="item">• Robo-Hair™ 假发系统</text>
+    <text x="34" y="238" class="item">• Accessories 配件生态</text>
+  </g>
+
+  <g transform="translate(635,135)">
+    <rect width="310" height="250" rx="28" fill="url(#card)" stroke="#285b92" stroke-width="1.5"/>
+    <circle cx="58" cy="58" r="28" fill="none" stroke="url(#bluePurple)" stroke-width="2"/>
+    <path d="M43 57 Q58 43 73 57 Q58 73 43 57Z" fill="none" stroke="#7fcfff" stroke-width="3"/>
+    <circle cx="58" cy="57" r="7" fill="#7fcfff"/>
+    <text x="105" y="50" class="cn">数字平台</text>
+    <text x="105" y="72" class="en">ROBOFIT 3D PLATFORM</text>
+    <text x="34" y="118" class="item">• 3D扫描与身体数据建模</text>
+    <text x="34" y="148" class="item">• 数字孪生机器人模型</text>
+    <text x="34" y="178" class="item">• 虚拟试衣与在线选配</text>
+    <text x="34" y="208" class="item">• 材料 / 尺寸 / 色彩定制</text>
+    <text x="34" y="238" class="item">• 数据匹配与智能推荐</text>
+  </g>
+
+  <g transform="translate(345,410)">
+    <rect width="310" height="150" rx="28" fill="url(#card)" stroke="#285b92" stroke-width="1.5"/>
+    <circle cx="58" cy="55" r="26" fill="none" stroke="url(#bluePurple)" stroke-width="2"/>
+    <path d="M45 64 C52 42 64 42 71 64" fill="none" stroke="#7fcfff" stroke-width="3" stroke-linecap="round"/>
+    <text x="105" y="48" class="cn">IP 与社区生态</text>
+    <text x="105" y="70" class="en">IP &amp; COMMUNITY ECOSYSTEM</text>
+    <text x="34" y="112" class="item">设计师社区｜品牌联名｜潮流IP｜限量发售｜用户共创</text>
+  </g>
+
+  <g opacity="0.9">
+    <path d="M70 520 H250" stroke="#2f75ff" stroke-width="1" opacity="0.6"/>
+    <path d="M750 520 H930" stroke="#9b5cff" stroke-width="1" opacity="0.6"/>
+    <text x="50" y="555" class="small">Business Model Diagram · Editable SVG</text>
+    <text x="820" y="555" class="small">ROBOWEAR.SPACE</text>
+  </g>
+</svg>

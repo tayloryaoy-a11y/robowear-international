@@ -42,17 +42,12 @@ export default function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10 py-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setMobileOpen(false)}>
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-electric-500/50 bg-carbon-800 transition-transform duration-500 group-hover:rotate-[20deg]">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2DE2FF" strokeWidth="1.8">
-              <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" />
-              <circle cx="12" cy="12" r="2.6" fill="#2DE2FF" stroke="none" />
-            </svg>
-            <span className="absolute inset-0 rounded-lg bg-electric-500/20 blur-md opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-          </span>
-          <span className="font-display text-lg font-bold tracking-wide">
-            Robo<span className="text-electric-400">Wear</span>
-          </span>
+        <Link to="/" className="flex items-center group" onClick={() => setMobileOpen(false)}>
+          <img
+            src="/images/robowear/logo.svg"
+            alt="RoboWear International"
+            className="h-8 w-auto invert transition-transform duration-500 sm:h-9 group-hover:scale-[1.04]"
+          />
         </Link>
 
         {/* 桌面端导航 */}

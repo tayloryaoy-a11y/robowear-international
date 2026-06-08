@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
 import CountUp from '../components/CountUp.jsx'
-import PlaceholderImage from '../components/PlaceholderImage.jsx'
 import {
   IconFunctionFirst,
   IconPersonalization,
@@ -29,7 +28,8 @@ const productLines = [
     descEn: 'Medical-grade silicone + aerogel + graphene sandwich structure — a lifelike “second skin” for robots.',
     price: '$1,500 – $5,000',
     flagship: true,
-    tone: 'blue'
+    tone: 'blue',
+    image: 'product-roboskin.webp'
   },
   {
     id: 'robowear',
@@ -40,7 +40,8 @@ const productLines = [
     descEn: 'Home, Professional, Haute Couture & Collaboration sub-lines — covering everyday to luxury scenarios.',
     price: '$199 – $20,000+',
     flagship: false,
-    tone: 'violet'
+    tone: 'violet',
+    image: 'product-couture.webp'
   },
   {
     id: 'roboface',
@@ -51,7 +52,8 @@ const productLines = [
     descEn: 'Swappable mask system — from minimalist tech to hyper-real faces, magnetic quick-release in 10 seconds.',
     price: '$299 – $10,000',
     flagship: false,
-    tone: 'rose'
+    tone: 'rose',
+    image: 'product-face-asian-male.webp'
   },
   {
     id: 'robohair',
@@ -62,7 +64,8 @@ const productLines = [
     descEn: 'Premium synthetic or human hair, engineered for robot head curvature without losing heat dissipation.',
     price: '$89 – $1,499',
     flagship: false,
-    tone: 'silver'
+    tone: 'silver',
+    image: 'product-hair-long.webp'
   },
   {
     id: 'accessories',
@@ -73,7 +76,8 @@ const productLines = [
     descEn: 'Backpacks, shoes, jewelry & holiday kits — refined add-ons that never block sensors or charging ports.',
     price: '$49 – $1,299',
     flagship: false,
-    tone: 'blue'
+    tone: 'blue',
+    image: 'product-acc-backpack.webp'
   }
 ]
 
@@ -93,21 +97,24 @@ const customerTypes = [
     zh: '个人消费者',
     en: 'Individual Consumers',
     descZh: '为家庭机器人打造专属穿搭，让"新成员"拥有独一无二的外在身份。',
-    descEn: 'Bespoke looks for home robots — giving your new “family member” a one-of-a-kind identity.'
+    descEn: 'Bespoke looks for home robots — giving your new “family member” a one-of-a-kind identity.',
+    image: 'customer-home.webp'
   },
   {
     Icon: IconEnterprise,
     zh: '企业采购方',
     en: 'Enterprise Buyers',
     descZh: '餐饮 · 酒店 · 医疗 · 零售连锁批量定制制服，强化品牌形象与资产管理。',
-    descEn: 'Restaurants, hotels, healthcare & retail chains — bulk uniforms that extend brand identity.'
+    descEn: 'Restaurants, hotels, healthcare & retail chains — bulk uniforms that extend brand identity.',
+    image: 'customer-hotel.webp'
   },
   {
     Icon: IconManufacturer,
     zh: '机器人制造商',
     en: 'Robot Manufacturers',
     descZh: '官方外观生态合作伙伴，提供出厂级定制方案与数据洞察。',
-    descEn: 'Official appearance-ecosystem partner — factory-level customization & insight data.'
+    descEn: 'Official appearance-ecosystem partner — factory-level customization & insight data.',
+    image: 'customer-production.webp'
   }
 ]
 
@@ -188,16 +195,14 @@ export default function Home() {
           <Reveal delay={200} direction="right" className="order-1 lg:order-2">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-electric-500/20 via-transparent to-cyber-500/20 blur-2xl animate-pulseGlow" />
-              <div className="relative animate-floaty">
-                <PlaceholderImage
-                  labelZh="穿高定服装的人形机器人，四分之三侧身站姿，黑背景，蓝色轮廓光"
-                  labelEn="Humanoid robot in haute-couture apparel, three-quarter stance, black backdrop with electric-blue rim light"
-                  hintZh="电影感、低饱和、戏剧打光，时尚大片质感（Tesla Optimus 原型）"
-                  hintEn="Cinematic, desaturated, dramatic lighting — fashion-editorial feel (Tesla Optimus prototype)"
-                  size="1920×1080"
-                  filename="hero-main.webp"
-                  tone="blue"
-                  ratio="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5]"
+              <div className="relative animate-floaty overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_30px_90px_-25px_rgba(45,226,255,0.35)]">
+                <img
+                  src="/images/robowear/hero-main.webp"
+                  alt={T(
+                    '穿高定服装的人形机器人，四分之三站姿，黑背景蓝色轮廓光',
+                    'Humanoid robot in haute-couture apparel, three-quarter stance, black backdrop with electric-blue rim light'
+                  )}
+                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full object-cover"
                 />
               </div>
             </div>
@@ -332,17 +337,11 @@ export default function Home() {
                     p.flagship ? 'lg:col-span-2 lg:row-span-1' : ''
                   }`}
                 >
-                  <PlaceholderImage
-                    labelZh={`${p.nameZh} ${p.subZh} 产品视觉`}
-                    labelEn={`${p.nameZh} ${p.subEn} product visual`}
-                    hintZh="统一灯光，悬浮产品图风格"
-                    hintEn="Unified studio lighting, floating product-shot style"
-                    size="800×600"
-                    filename={`product-${p.id}.webp`}
-                    tone={p.tone}
-                    ratio="aspect-[16/10]"
-                    compact
-                    className="rounded-none border-0 border-b border-white/10"
+                  <img
+                    src={`/images/robowear/${p.image}`}
+                    alt={T(`${p.nameZh} ${p.subZh} 产品视觉`, `${p.nameZh} ${p.subEn} product visual`)}
+                    loading="lazy"
+                    className="aspect-[16/10] w-full border-b border-white/10 object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                   />
                   <div className="flex flex-1 flex-col p-6">
                     <div className="flex items-center gap-2">
@@ -425,14 +424,25 @@ export default function Home() {
           </Reveal>
 
           <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {customerTypes.map(({ Icon, zh, en, descZh, descEn }, i) => (
+            {customerTypes.map(({ Icon, zh, en, descZh, descEn, image }, i) => (
               <Reveal key={zh} delay={i * 110}>
-                <div className="group h-full rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:border-electric-400/30">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-electric-500/30 bg-carbon-900/60 text-electric-400 transition-transform duration-500 group-hover:scale-110">
-                    <Icon width={28} height={28} />
+                <div className="group h-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] text-center transition-all duration-500 hover:-translate-y-2 hover:border-electric-400/30">
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={`/images/robowear/${image}`}
+                      alt={T(zh, en)}
+                      loading="lazy"
+                      className="aspect-[3/2] w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900 via-carbon-900/10 to-transparent" />
+                    <div className="absolute bottom-3 left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full border border-electric-500/40 bg-carbon-900/70 text-electric-400 backdrop-blur-sm transition-transform duration-500 group-hover:scale-110">
+                      <Icon width={22} height={22} />
+                    </div>
                   </div>
-                  <h3 className="mt-6 font-display text-lg font-bold">{T(zh, en)}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/50">{T(descZh, descEn)}</p>
+                  <div className="p-8 pt-6">
+                    <h3 className="font-display text-lg font-bold">{T(zh, en)}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-white/50">{T(descZh, descEn)}</p>
+                  </div>
                 </div>
               </Reveal>
             ))}
