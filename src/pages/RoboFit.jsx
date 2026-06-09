@@ -506,10 +506,10 @@ export default function RoboFit() {
       tone: 'electric'
     },
     {
-      titleZh: '设计师市场 · 70% 分成',
-      titleEn: 'Designer Marketplace · 70% Revenue Share',
-      descZh: '独立设计师可上传原创外观方案，每完成一笔交易即可获得 70% 收益分成 — 这是属于创作者的时尚经济。',
-      descEn: 'Independent designers publish original looks and keep 70% of every sale — a creator-first fashion economy built into the platform.',
+      titleZh: '设计师市场 · 20% 分成',
+      titleEn: 'Designer Marketplace · 20% Revenue Share',
+      descZh: '独立设计师可上传原创外观方案，每完成一笔交易即可获得 20% 收益分成 — 这是属于创作者的时尚经济。',
+      descEn: 'Independent designers publish original looks and keep 20% of every sale — a creator-first fashion economy built into the platform.',
       tone: 'cyber'
     },
     {
@@ -954,7 +954,7 @@ export default function RoboFit() {
                   {T('是设计师？加入 RoboFit 创作者计划', 'A designer? Join the RoboFit Creator Program')}
                 </h3>
                 <p className="mt-2 max-w-xl text-sm text-white/50">
-                  {T('上传你的原创外观方案，每完成一笔交易即可获得 70% 收益分成。', 'Publish your original looks and keep 70% of revenue from every sale.')}
+                  {T('上传你的原创外观方案，每完成一笔交易即可获得 20% 收益分成。', 'Publish your original looks and keep 20% of revenue from every sale.')}
                 </p>
               </div>
               <Link

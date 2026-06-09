@@ -46,8 +46,8 @@ const timeline = [
     phaseZh: '引爆期',
     phaseEn: 'Ignition',
     Icon: IconLaunch,
-    descZh: 'RoboFit 3D 定制平台公开发布，开放设计师市场与 70% 收益分成机制，首批联名系列上线。',
-    descEn: 'Publicly launch the RoboFit 3D platform, open the designer marketplace with a 70% revenue share, and ship the first collab series.'
+    descZh: 'RoboFit 3D 定制平台公开发布，开放设计师市场与 20% 收益分成机制，首批联名系列上线。',
+    descEn: 'Publicly launch the RoboFit 3D platform, open the designer marketplace with a 20% revenue share, and ship the first collab series.'
   },
   {
     year: '2028',
