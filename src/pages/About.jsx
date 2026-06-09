@@ -164,7 +164,7 @@ export default function About() {
               <br />
               {T('三位一体的增长飞轮', 'A three-part growth flywheel')}
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/50 sm:text-base">
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/50 sm:max-w-5xl sm:text-base">
               {T(
                 '硬件带来现金流与用户触点，平台沉淀数据与社区网络，IP 沉淀长期品牌资产——三者相互反哺，构成了 RoboWear 的护城河。',
                 'Hardware drives cash flow and touchpoints, the platform compounds data and community, and IP builds lasting brand equity — together they reinforce one another to form RoboWear’s moat.'
