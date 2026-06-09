@@ -1,6 +1,5 @@
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
-import { IconSeed, IconLaunch, IconExpand, IconGlobal } from '../components/icons.jsx'
 
 const pillars = [
   {
@@ -31,41 +30,6 @@ const toneClass = {
   cyber: 'border-cyber-500/25 bg-cyber-500/[0.06] text-cyber-300',
   rose: 'border-pink-400/20 bg-pink-400/[0.05] text-pink-300'
 }
-
-const timeline = [
-  {
-    year: '2026',
-    phaseZh: '种子期',
-    phaseEn: 'Seed Stage',
-    Icon: IconSeed,
-    descZh: 'Robo-Wear 1.0 产品线上线，完成 Optimus / Figure 03 / 小鹏 Iron 三大机型的兼容性认证，建立成都供应链中心。',
-    descEn: 'Launch Robo-Wear 1.0, complete compatibility certification for Optimus, Figure 03 and XPeng Iron, and stand up the Chengdu supply chain hub.'
-  },
-  {
-    year: '2027',
-    phaseZh: '引爆期',
-    phaseEn: 'Ignition',
-    Icon: IconLaunch,
-    descZh: 'RoboFit 3D 定制平台公开发布，开放设计师市场与 20% 收益分成机制，首批联名系列上线。',
-    descEn: 'Publicly launch the RoboFit 3D platform, open the designer marketplace with a 20% revenue share, and ship the first collab series.'
-  },
-  {
-    year: '2028',
-    phaseZh: '扩张期',
-    phaseEn: 'Expansion',
-    Icon: IconExpand,
-    descZh: '产品矩阵扩展至五大产品线，洛杉矶研发中心全面运转，与首批线下零售伙伴展开合作。',
-    descEn: 'Expand to all five product lines, bring the Los Angeles R&D center to full capacity, and onboard the first retail partners.'
-  },
-  {
-    year: '2029–2030',
-    phaseZh: '全球化',
-    phaseEn: 'Globalization',
-    Icon: IconGlobal,
-    descZh: '全球旗舰店网络成型，IP 授权体系成熟，RoboWear 成为"机器人时代的 Nike"。',
-    descEn: 'A global flagship network matures, the IP licensing system comes of age, and RoboWear becomes "the Nike of the robotic era."'
-  }
-]
 
 const market = [
   { key: 'tam', labelZh: '总潜在市场 TAM', labelEn: 'Total Addressable Market', value: '$50B', tone: 'border-electric-500/25 text-electric-300' },
@@ -161,7 +125,6 @@ export default function About() {
               {T('创始人 & CEO', 'Founder & CEO')}
             </span>
             <h2 className="mt-5 font-display text-3xl font-bold">Alex</h2>
-            <p className="mt-1 text-sm font-medium text-white/40">{T('Alex Chen · 陈翊', 'Alex Chen')}</p>
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
               {T(
                 'Alex 拥有超过 10 年的跨界企业管理经验，曾主导多家公司从零到一的创业历程，涵盖文化传媒、国际贸易、智能科技等多个领域，具备高强商业敏感度及创新能力。',
@@ -231,40 +194,6 @@ export default function About() {
               />
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ---------------- 发展时间轴 ---------------- */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <Reveal>
-            <h2 className="font-display text-2xl font-bold sm:text-3xl">{T('发展路线图 2026 – 2030', 'Roadmap · 2026 – 2030')}</h2>
-            <p className="mt-2 max-w-2xl text-sm text-white/45">
-              {T('从种子期到全球化，每一个阶段都对应一个明确的产品与市场里程碑。', 'From seed to globalization — each stage maps to a concrete product and market milestone.')}
-            </p>
-          </Reveal>
-
-          <div className="relative mt-12">
-            <div className="absolute left-6 top-2 bottom-2 hidden w-px bg-gradient-to-b from-electric-500/60 via-cyber-500/40 to-transparent sm:block" />
-            <div className="space-y-6">
-              {timeline.map((stage, idx) => (
-                <Reveal key={stage.year} delay={idx * 90}>
-                  <div className="relative flex flex-col gap-4 rounded-2xl border border-white/10 bg-carbon-800/40 p-6 sm:flex-row sm:items-center sm:gap-7 sm:pl-16">
-                    <span className="absolute left-0 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-electric-500/40 bg-carbon-900 text-electric-300 sm:flex">
-                      <stage.Icon width={20} height={20} />
-                    </span>
-                    <div className="flex items-center gap-3 sm:w-44 sm:shrink-0">
-                      <span className="font-display text-2xl font-bold text-white">{stage.year}</span>
-                      <span className="rounded-full border border-white/12 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest2 text-white/50">
-                        {T(stage.phaseZh, stage.phaseEn)}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-relaxed text-white/55">{T(stage.descZh, stage.descEn)}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 

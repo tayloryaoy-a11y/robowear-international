@@ -26,7 +26,8 @@ export default function Navbar() {
     { to: '/robofit', label: T('RoboFit 定制平台', 'RoboFit Platform') },
     { to: '/technology', label: T('技术', 'Technology') },
     { to: '/about', label: T('关于我们', 'About') },
-    { to: '/contact', label: T('联系', 'Contact') }
+    { to: '/contact', label: T('联系', 'Contact') },
+    { to: '/community', label: T('社区', 'Community') }
   ]
 
   const linkClass = ({ isActive }) =>

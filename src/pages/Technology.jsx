@@ -241,10 +241,6 @@ export default function Technology() {
                 loading="lazy"
                 className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-carbon-900/85 to-transparent p-5">
-                <p className="text-xs font-semibold uppercase tracking-widest2 text-electric-300">{T('散热测试实拍', 'Thermal Dissipation Test')}</p>
-                <p className="mt-1 text-sm text-white/60">{T('红外热成像对比：未穿 RoboWear vs. 穿着后降温更稳定', 'Infrared comparison: without RoboWear vs. more stable cooling while wearing it')}</p>
-              </div>
             </div>
           </Reveal>
           <Reveal direction="right" delay={80}>

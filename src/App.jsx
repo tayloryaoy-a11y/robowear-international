@@ -8,6 +8,7 @@ import RoboFit from './pages/RoboFit.jsx'
 import Technology from './pages/Technology.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
+import Community from './pages/Community.jsx'
 
 // 路由切换时自动回到页面顶部
 function ScrollToTop() {
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/technology" element={<Technology />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/community" element={<Community />} />
         </Routes>
       </main>
       <Footer />

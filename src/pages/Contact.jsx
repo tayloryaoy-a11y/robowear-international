@@ -198,7 +198,7 @@ export default function Contact() {
             </h1>
           </Reveal>
           <Reveal delay={160}>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55">
+            <p className="mt-6 max-w-4xl text-base leading-relaxed text-white/55">
               {T(
                 '填写下方表单，或直接通过邮箱与我们的全球团队取得联系。我们通常会在 1–2 个工作日内回复。',
                 'Fill out the form below or reach our global team directly by email. We typically reply within 1–2 business days.'

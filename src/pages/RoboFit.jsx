@@ -523,8 +523,8 @@ export default function RoboFit() {
 
   const flowSteps = [
     { step: '01', titleZh: '选择机型', titleEn: 'Pick a model', descZh: 'Optimus / Figure 03 / 小鹏 Iron 三大主流机型任选其一', descEn: 'Choose Optimus, Figure 03, or XPeng Iron as your base frame' },
-    { step: '02', titleZh: '自由搭配', titleEn: 'Customize freely', descZh: '系列、配色、材质、面具、假发与配件实时组合，所见即所得', descEn: 'Mix series, color, material, mask, hair and accessories in real time' },
-    { step: '03', titleZh: '保存与分享', titleEn: 'Save & share', descZh: '生成搭配摘要，复制分享给好友，或联系顾问完成下单咨询', descEn: 'Generate a look summary, share it, or talk to an advisor to order' }
+    { step: '02', titleZh: '自由搭配', titleEn: 'Customize freely', descZh: '系列、配色、材质、面具、假发与配件实时组合', descEn: 'Mix series, color, material, mask, hair and accessories in real time' },
+    { step: '03', titleZh: '保存与分享', titleEn: 'Save & share', descZh: '生成搭配摘要，复制分享给好友，或联系顾问完成咨询', descEn: 'Generate a look summary, share it, or talk to an advisor to order' }
   ]
 
   const toneClass = {
