@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { loadAvatar } from '../three/avatarLoader.js'
 import { useLanguage } from '../context/LanguageContext.jsx'
+
+// 真人 avatar 模型地址（Ready Player Me 等导出的 .glb）。
+// 留空时回退到内置机器人占位模型；填入后自动加载真人模型用于深度定制。
+const AVATAR_URL = ''
 import Reveal from '../components/Reveal.jsx'
 import {
   createRobotGroup,
@@ -339,6 +344,20 @@ export default function RoboFit() {
     // 人形机器人模型（由 Box / Cylinder / Sphere 拼接，无 CapsuleGeometry）
     const { group, materials, parts } = createRobotGroup()
     scene.add(group)
+
+    // 第二阶段：若配置了真人 avatar 模型地址，则异步加载并接管定制（失败时静默回退到机器人占位模型）
+    if (AVATAR_URL) {
+      loadAvatar(AVATAR_URL)
+        .then((handle) => {
+          group.visible = false
+          handle.model.position.y = -2.0
+          scene.add(handle.model)
+          if (sceneRef.current) sceneRef.current.avatar = handle
+        })
+        .catch(() => {
+          // 加载失败：保留机器人占位模型，不影响页面
+        })
+    }
 
     // OrbitControls：拖拽旋转 + 滚轮缩放，限制极角避免穿地
     const controls = new OrbitControls(camera, renderer.domElement)
