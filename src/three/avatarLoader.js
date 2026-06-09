@@ -23,6 +23,11 @@ function isSkinMaterial(name = '') {
   return /skin|body|head|face/i.test(name)
 }
 
+// 判断一个材质是否属于「头发」区域（RPM 命名约定：Hair）
+function isHairMaterial(name = '') {
+  return /hair/i.test(name)
+}
+
 export function loadAvatar(url) {
   return new Promise((resolve, reject) => {
     if (!url) {
@@ -34,6 +39,7 @@ export function loadAvatar(url) {
       (gltf) => {
         const model = gltf.scene
         const skinMeshes = []
+        const hairMeshes = []
         const morphMeshes = []
         const morphNames = new Set()
 
@@ -43,7 +49,9 @@ export function loadAvatar(url) {
           obj.receiveShadow = true
           const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
           mats.forEach((mat) => {
-            if (mat && isSkinMaterial(mat.name)) skinMeshes.push({ mesh: obj, mat })
+            if (!mat) return
+            if (isHairMaterial(mat.name)) hairMeshes.push({ mesh: obj, mat })
+            else if (isSkinMaterial(mat.name)) skinMeshes.push({ mesh: obj, mat })
           })
           if (obj.morphTargetDictionary) {
             morphMeshes.push(obj)
@@ -51,8 +59,8 @@ export function loadAvatar(url) {
           }
         })
 
-        // 记录皮肤材质原始色，调色时在原色基础上做明度偏移，避免破坏贴图色相
-        skinMeshes.forEach(({ mat }) => {
+        // 记录皮肤/头发材质原始色，调色时在原色基础上做偏移，避免破坏贴图色相
+        ;[...skinMeshes, ...hairMeshes].forEach(({ mat }) => {
           mat.userData.baseColor = mat.color ? mat.color.clone() : new THREE.Color('#ffffff')
         })
 
@@ -79,6 +87,19 @@ export function loadAvatar(url) {
               mat.needsUpdate = true
             })
           },
+
+          // 发色：hex 为目标色，blend 控制覆盖强度（0~1）
+          setHairColor(hex, blend = 0.85) {
+            const target = new THREE.Color(hex)
+            hairMeshes.forEach(({ mat }) => {
+              if (!mat.color) return
+              const base = mat.userData.baseColor || new THREE.Color('#ffffff')
+              mat.color.copy(base).lerp(target, blend)
+              mat.needsUpdate = true
+            })
+          },
+
+          hasHair: hairMeshes.length > 0,
 
           // 捏脸/表情：按 morph 名称设置形变强度（0~1）
           setMorph(name, value) {
