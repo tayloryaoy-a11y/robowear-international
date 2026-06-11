@@ -3,11 +3,17 @@ import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { loadAvatar } from '../three/avatarLoader.js'
+import { loadRobotModel } from '../three/robotLoader.js'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
 // 真人 avatar 模型地址（Ready Player Me 等导出的 .glb）。
 // 留空时回退到内置机器人占位模型；填入后自动加载真人模型用于深度定制。
 const AVATAR_URL = '/models/avatar.glb'
+// 实体机器人模型地址（Meshy 等导出的 .glb，单网格实体）。机器人模式下展示并接受整体配色 / 工艺驱动。
+const ROBOT_MODEL_URL = '/models/robot-optimus.glb'
+// 统一落地高度与目标身高（机器人 / 真人共用，保证双脚落在地面网格、取景一致）
+const FLOOR_Y = -2.0
+const TARGET_HEIGHT = 3.4
 import Reveal from '../components/Reveal.jsx'
 import {
   createRobotGroup,
@@ -319,6 +325,9 @@ export default function RoboFit() {
   const [hairId, setHairId] = useState('none')
   const [accessoryState, setAccessoryState] = useState({ backpack: false, shoes: false })
   const [savedLook, setSavedLook] = useState(null)
+  // 预览主体模式：'robot' 展示实体机器人模型，'human' 展示真人 avatar
+  const [viewMode, setViewMode] = useState('robot')
+  const [robotReady, setRobotReady] = useState(false)
   // 真人 avatar 深度定制状态（仅在加载真人模型成功后启用对应面板）
   const [avatarReady, setAvatarReady] = useState(false)
   const [skinToneId, setSkinToneId] = useState('natural')
@@ -382,37 +391,46 @@ export default function RoboFit() {
     const { group, materials, parts } = createRobotGroup()
     scene.add(group)
 
-    // 第二阶段：若配置了真人 avatar 模型地址，则异步加载并接管定制（失败时静默回退到机器人占位模型）
-    const FLOOR_Y = -2.0
+    // 自动适配：按包围盒缩放到统一身高，双脚落在地面网格上，水平居中
+    const fitModelToFloor = (model) => {
+      const box = new THREE.Box3().setFromObject(model)
+      const size = new THREE.Vector3()
+      const center = new THREE.Vector3()
+      box.getSize(size)
+      box.getCenter(center)
+      const scale = size.y > 0 ? TARGET_HEIGHT / size.y : 1
+      model.scale.setScalar(scale)
+      model.position.x = -center.x * scale
+      model.position.z = -center.z * scale
+      model.position.y = FLOOR_Y - box.min.y * scale
+    }
+
+    // 实体机器人模型（Meshy 导出）：默认展示主体，隐藏程序化占位机器人
+    if (ROBOT_MODEL_URL) {
+      loadRobotModel(ROBOT_MODEL_URL)
+        .then((handle) => {
+          fitModelToFloor(handle.model)
+          scene.add(handle.model)
+          group.visible = false
+          ring.visible = false
+          if (sceneRef.current) sceneRef.current.robotModel = handle
+          setRobotReady(true)
+        })
+        .catch(() => {})
+    }
+
+    // 真人 avatar：加载后默认隐藏，切到「真人」模式时再显示
     if (AVATAR_URL) {
       loadAvatar(AVATAR_URL)
         .then((handle) => {
-          const model = handle.model
-          // 自动适配：按包围盒缩放到统一身高，双脚落在地面网格上，水平居中
-          const box = new THREE.Box3().setFromObject(model)
-          const size = new THREE.Vector3()
-          const center = new THREE.Vector3()
-          box.getSize(size)
-          box.getCenter(center)
-          const targetHeight = 3.4
-          const scale = size.y > 0 ? targetHeight / size.y : 1
-          model.scale.setScalar(scale)
-          model.position.x = -center.x * scale
-          model.position.z = -center.z * scale
-          model.position.y = FLOOR_Y - box.min.y * scale
-          scene.add(model)
-          // 隐藏机器人占位模型与悬浮底座光环，避免与真人重叠
-          group.visible = false
+          fitModelToFloor(handle.model)
+          handle.model.visible = false
+          scene.add(handle.model)
           ring.visible = false
-          // 取景对准站立真人的胸口高度
-          controls.target.set(0, FLOOR_Y + targetHeight * 0.62, 0)
-          controls.update()
           if (sceneRef.current) sceneRef.current.avatar = handle
           setAvatarReady(true)
         })
-        .catch(() => {
-          // 加载失败：保留机器人占位模型，不影响页面
-        })
+        .catch(() => {})
     }
 
     // OrbitControls：拖拽旋转 + 滚轮缩放，限制极角避免穿地
@@ -524,6 +542,26 @@ export default function RoboFit() {
     const scale = ROBOT_SCALE[robotId] ?? 1
     ctx.group.scale.setScalar(scale)
   }, [robotId])
+
+  // ---------------- 预览模式切换：机器人 / 真人 互斥显示 + 取景对准胸口 ----------------
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx) return
+    if (ctx.robotModel) ctx.robotModel.model.visible = viewMode === 'robot'
+    if (ctx.avatar) ctx.avatar.model.visible = viewMode === 'human'
+    ctx.controls.target.set(0, FLOOR_Y + TARGET_HEIGHT * 0.58, 0)
+    ctx.controls.update()
+  }, [viewMode, robotReady, avatarReady])
+
+  // ---------------- 实体机器人：整体配色 + 表面工艺实时驱动 ----------------
+  useEffect(() => {
+    const rm = sceneRef.current?.robotModel
+    if (!rm) return
+    const color = COLORS.find((c) => c.id === colorId)
+    const preset = MATERIAL_STYLE_PRESETS[materialId]
+    if (color) rm.setColor(color.hex)
+    if (preset) rm.setFinish({ roughness: preset.roughness, metalness: preset.metalness })
+  }, [robotReady, colorId, materialId])
 
   // ---------------- 真人 avatar：肤色 + 皮肤质感实时驱动 ----------------
   useEffect(() => {
@@ -724,32 +762,31 @@ export default function RoboFit() {
             {/* 左：3D 实时预览（吸顶常驻，模拟 Tesla 选配页车辆预览区随滚动保持可见的体验） */}
             <div className="lg:sticky lg:top-24 lg:self-start">
               <Reveal direction="left">
-                {/* 机型切换：卡片式 Tab 置于预览区顶部，类似 Tesla 车型切换条（真人模式下隐藏，机型不适用于真人） */}
-                <div className={`mb-4 grid grid-cols-3 gap-2.5 ${avatarReady ? 'hidden' : ''}`}>
-                  {ROBOTS.map((robot) => {
-                    const size = ROBOT_ICON_SIZE[robot.id] ?? { w: 20, h: 42 }
-                    const isActive = robotId === robot.id
+                {/* 预览主体切换：实体机器人 / 真人 avatar 两种模式，各自对应不同的定制面板 */}
+                <div className="mb-4 grid grid-cols-2 gap-2.5">
+                  {[
+                    { id: 'robot', nameZh: '机器人', nameEn: 'Robot', subZh: 'Optimus 实体模型 · 整体配色', subEn: 'Optimus body model · whole-body color', ready: robotReady },
+                    { id: 'human', nameZh: '真人', nameEn: 'Human', subZh: '肤色 / 五官 / 发色深度定制', subEn: 'Deep skin / face / hair customization', ready: avatarReady }
+                  ].map((m) => {
+                    const isActive = viewMode === m.id
                     return (
                       <button
-                        key={robot.id}
-                        onClick={() => setRobotId(robot.id)}
-                        className={`group flex flex-col items-center gap-1.5 rounded-2xl border px-3 py-3 text-center transition-all duration-300 ${
+                        key={m.id}
+                        onClick={() => setViewMode(m.id)}
+                        disabled={!m.ready}
+                        className={`group flex flex-col items-center gap-1 rounded-2xl border px-3 py-3 text-center transition-all duration-300 ${
                           isActive
                             ? 'border-electric-400/70 bg-electric-500/[0.08] shadow-[0_0_24px_-6px_rgba(45,226,255,0.32)]'
-                            : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                            : m.ready
+                              ? 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                              : 'cursor-not-allowed border-white/5 bg-white/[0.01] opacity-50'
                         }`}
                       >
-                        <span className="flex h-11 items-end justify-center">
-                          <IconRobotSilhouette
-                            width={size.w}
-                            height={size.h}
-                            className={`transition-colors duration-300 ${isActive ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}
-                          />
+                        <span className={`block text-[14px] font-semibold ${isActive ? 'text-electric-200' : 'text-white/75'}`}>
+                          {T(m.nameZh, m.nameEn)}
+                          {!m.ready && <span className="ml-1 text-[10px] font-normal text-white/35">{T('· 加载中', '· loading')}</span>}
                         </span>
-                        <span className={`block truncate text-[13px] font-semibold ${isActive ? 'text-electric-200' : 'text-white/75'}`}>
-                          {T(robot.nameZh, robot.nameEn)}
-                        </span>
-                        <span className="block w-full truncate text-[10px] leading-tight text-white/35">{T(robot.subZh, robot.subEn)}</span>
+                        <span className="block w-full truncate text-[10px] leading-tight text-white/35">{T(m.subZh, m.subEn)}</span>
                       </button>
                     )
                   })}
@@ -771,15 +808,15 @@ export default function RoboFit() {
                     <span className={`h-1.5 w-1.5 rounded-full ${isRendering ? 'bg-electric-400 animate-pulseGlow' : 'bg-white/30'}`} />
                     {isRendering
                       ? T('实时渲染中…', 'Rendering live…')
-                      : avatarReady
+                      : viewMode === 'human'
                         ? T('真人模型 · 实时定制', 'Real human model · Live')
-                        : T(`${activeRobot.nameZh} · 占位渲染`, `${activeRobot.nameEn} · Placeholder render`)}
+                        : T('Optimus 实体模型 · 实时配色', 'Optimus body model · Live color')}
                   </div>
 
                   <div className="pointer-events-none absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-carbon-900/55 px-4 py-3 text-[11px] text-white/45 backdrop-blur-md">
-                    <span>{avatarReady
+                    <span>{viewMode === 'human'
                       ? T('真人 3D 模型已接入，肤色 / 五官 / 发色均可实时深度定制', 'Real human 3D model loaded — skin, facial features and hair are deeply customizable in real time')
-                      : T('当前模型由几何基本体实时拼接渲染，便于后续替换为高精度扫描模型', 'Model assembled live from primitive geometries — ready to be swapped for a high-fidelity scan later')}</span>
+                      : T('Optimus 实体 3D 模型已接入，可整体配色与切换表面工艺，拖拽旋转查看任意角度', 'Optimus body 3D model loaded — recolor the whole body and switch surface finish, drag to inspect any angle')}</span>
                     <span className="inline-flex items-center gap-1.5 text-electric-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
                       Three.js · WebGL
@@ -808,7 +845,7 @@ export default function RoboFit() {
             {/* 右：动态选配卡片网格（Tesla 选配页风格 — 大卡片 / 色板 / 材质预览，逐项分组展开挑选） */}
             <Reveal direction="right" delay={80}>
               <div className="space-y-9">
-                {avatarReady && (
+                {viewMode === 'human' && avatarReady && (
                   <div className="space-y-7 rounded-3xl border border-electric-500/25 bg-gradient-to-b from-electric-500/[0.06] to-transparent p-5 sm:p-6">
                     <div>
                       <span className="inline-flex items-center gap-2 rounded-full border border-electric-400/40 bg-electric-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-electric-200">
