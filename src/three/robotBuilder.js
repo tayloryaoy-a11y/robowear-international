@@ -29,6 +29,13 @@ export function createRobotGroup() {
     metalness: 0.75
   })
 
+  // 服装撞色/点缀材质：胸条等点缀件，随配色方案的 accent 色实时变化
+  const clothingAccentMaterial = new THREE.MeshStandardMaterial({
+    color: new THREE.Color('#7C5CFF'),
+    roughness: 0.45,
+    metalness: 0.25
+  })
+
   // 关节材质：肩 / 肘 / 髋 / 膝球形关节，深灰色哑光金属
   const jointMaterial = new THREE.MeshStandardMaterial({
     color: new THREE.Color('#54585F'),
@@ -119,10 +126,10 @@ export function createRobotGroup() {
   const torso = new THREE.Mesh(new THREE.BoxGeometry(1.06, 1.18, 0.58), clothingMaterial)
   torso.position.y = 2.84
 
-  // 胸前装饰条（科技细节，常驻金属色，不随服装变化）
+  // 胸前装饰条（服装撞色点缀，随配色方案 accent 实时变化）
   const chestDetail = new THREE.Mesh(
     new THREE.BoxGeometry(0.5, 0.08, 0.04),
-    jointMaterial
+    clothingAccentMaterial
   )
   chestDetail.position.set(0, 3.08, 0.3)
 
@@ -187,6 +194,7 @@ export function createRobotGroup() {
     group,
     materials: {
       clothingMaterial,
+      clothingAccentMaterial,
       chassisMaterial,
       jointMaterial,
       headMaterial,
@@ -246,6 +254,48 @@ export function buildHairStyle(style, material) {
     }
   }
 
+  // 波波头：圆润齐肩、贴合脸颊的厚重发型
+  if (style === 'bob') {
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.35, 22, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), material)
+    dome.position.y = 0.12
+    const bodyL = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.5, 0.42), material)
+    bodyL.position.set(-0.31, -0.08, 0.02)
+    const bodyR = bodyL.clone()
+    bodyR.position.x = 0.31
+    const back = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.5, 0.18), material)
+    back.position.set(0, -0.06, -0.28)
+    const bang = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.16, 0.1), material) // 齐刘海
+    bang.position.set(0, 0.18, 0.3)
+    group.add(dome, bodyL, bodyR, back, bang)
+  }
+
+  // 马尾：贴头顶 + 脑后高束马尾
+  if (style === 'ponytail') {
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.335, 20, 14, 0, Math.PI * 2, 0, Math.PI / 2), material)
+    dome.position.y = 0.13
+    const tieBase = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 12), material)
+    tieBase.position.set(0, 0.2, -0.3)
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.07, 0.78, 14), material)
+    tail.position.set(0, -0.18, -0.38)
+    tail.rotation.x = -0.32
+    const tailTip = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.2, 12), material)
+    tailTip.position.set(0, -0.56, -0.5)
+    tailTip.rotation.x = Math.PI - 0.32
+    group.add(dome, tieBase, tail, tailTip)
+  }
+
+  // 莫西干：中央立起的尖刺造型（潮酷机能风）
+  if (style === 'mohawk') {
+    const strip = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.18, 0.5), material)
+    strip.position.y = 0.34
+    group.add(strip)
+    for (let n = 0; n < 5; n++) {
+      const spike = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.26 - Math.abs(n - 2) * 0.03, 10), material)
+      spike.position.set(0, 0.48, 0.2 - n * 0.1)
+      group.add(spike)
+    }
+  }
+
   return group
 }
 
@@ -261,12 +311,14 @@ export const MATERIAL_STYLE_PRESETS = {
 }
 
 /**
- * 面具样式预设：科技极简 / 超写实 / 动漫 / 无
+ * 面部样式预设：科技极简 / 超写实 / 动漫 / 护目镜 / 武士 / 无（≥5 款）
  */
 export const MASK_PRESETS = {
   'tech-minimal': { color: '#9FA6AE', emissive: '#2DE2FF', emissiveIntensity: 0.85, roughness: 0.25, metalness: 0.7, visible: true },
   realistic: { color: '#E8C9B0', emissive: '#000000', emissiveIntensity: 0, roughness: 0.55, metalness: 0.05, visible: true },
   anime: { color: '#FF5CA8', emissive: '#7C5CFF', emissiveIntensity: 0.35, roughness: 0.4, metalness: 0.1, visible: true },
+  visor: { color: '#14161A', emissive: '#34D399', emissiveIntensity: 0.7, roughness: 0.15, metalness: 0.85, visible: true },
+  samurai: { color: '#7A2230', emissive: '#FF4D6D', emissiveIntensity: 0.25, roughness: 0.5, metalness: 0.45, visible: true },
   none: { visible: false }
 }
 

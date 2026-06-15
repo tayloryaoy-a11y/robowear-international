@@ -2,65 +2,15 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { loadRobotModel } from '../three/robotLoader.js'
 import { useLanguage } from '../context/LanguageContext.jsx'
-
-// 统一落地高度与目标身高（保证双脚落在地面网格、取景一致）
-const FLOOR_Y = -2.0
-const TARGET_HEIGHT = 3.4
-
-// ---- 机器人造型：模块化定制原型（可逐部位独立调整） + 5 套 Meshy 生成的整身套装（一键换装） ----
-// modular（procedural）：由分体部件构成，服装/机身/头发/面容可分别独立调色与切换。
-// 其余为独立 GLB（单网格实体），整身换装；颜色 / 材质工艺在套装之上整体实时叠加。
-const SUITES = [
-  { id: 'modular', procedural: true, nameZh: '模块化定制', nameEn: 'Modular Custom', subZh: '逐部位独立 · 服装/机身/头发/面容', subEn: 'Per-part · apparel/body/hair/face', tone: 'electric' },
-  { id: 'optimus', url: '/models/robot-optimus.glb', nameZh: '经典原型', nameEn: 'Classic Prototype', subZh: '均衡仿生 · 全能基准', subEn: 'Balanced humanoid baseline', tone: 'silver' },
-  { id: 'combat', url: '/models/suites/suite-combat.glb', nameZh: '重装战甲', nameEn: 'Heavy Combat', subZh: '厚重装甲 · 力量型机身', subEn: 'Reinforced plating, power frame', tone: 'electric' },
-  { id: 'ceramic', url: '/models/suites/suite-ceramic.glb', nameZh: '陶瓷流线', nameEn: 'Ceramic Aero', subZh: '光洁陶瓷 · 空气动力外形', subEn: 'Glossy ceramic, aero contour', tone: 'cyber' },
-  { id: 'stealth', url: '/models/suites/suite-stealth.glb', nameZh: '碳纤隐袭', nameEn: 'Carbon Stealth', subZh: '碳纤维 · 低可视消光装甲', subEn: 'Carbon-fiber matte stealth shell', tone: 'silver' },
-  { id: 'royal', url: '/models/suites/suite-royal.glb', nameZh: '皇家礼甲', nameEn: 'Royal Ceremonial', subZh: '繁饰镀金 · 典礼骑士造型', subEn: 'Ornate gilded ceremonial knight', tone: 'rose' },
-  { id: 'exo', url: '/models/suites/suite-exo.glb', nameZh: '工业外骨骼', nameEn: 'Industrial Exo', subZh: '机能外骨骼 · 重工质感', subEn: 'Mechanical exo, heavy-industry feel', tone: 'electric' }
-]
-const DEFAULT_SUITE_ID = 'modular'
-
-// 镜头局部聚焦区域：选择不同选配板块时，相机平滑对准对应身体局部，凸显"局部效果"。
-// 模块化分体模型与 GLB 套装的部件世界坐标不同，各自给一套对准参数。
-const FOCUS_PROC = {
-  full: { targetY: 0.4, dist: 6.0 },
-  torso: { targetY: 0.9, dist: 4.6 },
-  head: { targetY: 2.0, dist: 3.3 },
-  feet: { targetY: -1.55, dist: 4.4 }
-}
-const FOCUS_GLB = {
-  full: { targetY: 0.2, dist: 5.4 },
-  torso: { targetY: 0.35, dist: 4.0 },
-  head: { targetY: 1.15, dist: 3.0 },
-  feet: { targetY: -1.4, dist: 3.8 }
-}
-
-// 自动适配：按包围盒缩放到统一身高，双脚落在地面网格上，水平居中（GLB 套装用）
-function fitModelToFloor(model) {
-  const box = new THREE.Box3().setFromObject(model)
-  const size = new THREE.Vector3()
-  const center = new THREE.Vector3()
-  box.getSize(size)
-  box.getCenter(center)
-  const scale = size.y > 0 ? TARGET_HEIGHT / size.y : 1
-  model.scale.setScalar(scale)
-  model.position.x = -center.x * scale
-  model.position.z = -center.z * scale
-  model.position.y = FLOOR_Y - box.min.y * scale
-}
 import Reveal from '../components/Reveal.jsx'
 import {
   createRobotGroup,
   buildHairStyle,
   MATERIAL_STYLE_PRESETS,
-  MASK_PRESETS,
-  ROBOT_SCALE
+  MASK_PRESETS
 } from '../three/robotBuilder.js'
 import {
-  IconRobotSilhouette,
   IconApparelTag,
   IconMaskFace,
   IconHairWisp,
@@ -70,39 +20,60 @@ import {
 } from '../components/icons.jsx'
 
 // ============================================================
-// 配置数据 — 全部为纯前端常量，所有选择状态均通过 React useState
-// 管理，不读写 localStorage / sessionStorage 等浏览器持久化存储
+// RoboFit 选配器 — 基于单一标准版 Optimus（分体可拆装人形）的逐部位实时定制
+// 所有选择状态均通过 React useState 管理，不读写 localStorage / sessionStorage
 // ============================================================
 
-const ROBOTS = [
-  { id: 'optimus', nameZh: 'Tesla Optimus', nameEn: 'Tesla Optimus', subZh: '紧凑均衡 · 全能基准体型', subEn: 'Balanced, compact baseline frame' },
-  { id: 'figure', nameZh: 'Figure 03', nameEn: 'Figure 03', subZh: '修长流线 · 服务场景首选', subEn: 'Slender silhouette built for service roles' },
-  { id: 'iron', nameZh: '小鹏 Iron', nameEn: 'XPeng Iron', subZh: '宽肩高大 · 力量型机身', subEn: 'Broad-shouldered, power-oriented frame' }
-]
-
-// 机型切换卡片中的轮廓剪影尺寸：用宽高比直观传达体型差异（修长 / 均衡 / 宽厚）
-const ROBOT_ICON_SIZE = {
-  optimus: { w: 20, h: 42 },
-  figure: { w: 16, h: 44 },
-  iron: { w: 25, h: 46 }
+// 镜头局部聚焦：选不同选配板块时，相机平滑对准对应身体局部，凸显"局部放大"效果
+const FOCUS = {
+  full: { targetY: 0.4, dist: 6.0 },
+  torso: { targetY: 0.9, dist: 4.4 },
+  head: { targetY: 2.0, dist: 3.1 },
+  feet: { targetY: -1.55, dist: 4.2 }
 }
 
+// ---- 服装系列：每个系列提供 5 套配色全套服装（primary 为整身服装主色，accent 为撞色点缀） ----
 const SERIES = [
-  { id: 'home', nameZh: '家居系列', nameEn: 'Home Series', subZh: '柔软亲肤，日常陪伴首选', subEn: 'Soft & cozy for everyday companionship', price: 199, tone: 'silver' },
-  { id: 'professional', nameZh: '职业系列', nameEn: 'Professional Series', subZh: '挺括利落，办公服务场景', subEn: 'Sharp tailoring for work & service roles', price: 599, tone: 'electric', badgeZh: '人气推荐', badgeEn: 'Most popular' },
-  { id: 'couture', nameZh: '高定系列', nameEn: 'Haute Couture', subZh: '设计师联名，限量定制', subEn: 'Limited designer collabs, made to order', price: 2000, tone: 'rose' },
-  { id: 'collab', nameZh: '联名系列', nameEn: 'Collaboration Series', subZh: 'IP 跨界联名，彰显个性', subEn: 'IP crossover drops with bold attitude', price: 499, tone: 'cyber' }
-]
-
-const COLORS = [
-  { id: 'electric', hex: '#2DE2FF', nameZh: '电光蓝', nameEn: 'Electric Blue' },
-  { id: 'cyber', hex: '#7C5CFF', nameZh: '赛博紫', nameEn: 'Cyber Violet' },
-  { id: 'carbon', hex: '#1B1C20', nameZh: '碳黑', nameEn: 'Carbon Black' },
-  { id: 'silver', hex: '#C8CCD4', nameZh: '金属银', nameEn: 'Metal Silver' },
-  { id: 'crimson', hex: '#FF4D6D', nameZh: '绯红', nameEn: 'Crimson Red' },
-  { id: 'jade', hex: '#34D399', nameZh: '翡翠绿', nameEn: 'Jade Green' },
-  { id: 'sunset', hex: '#FF8A4C', nameZh: '日落橙', nameEn: 'Sunset Orange' },
-  { id: 'pearl', hex: '#F2F4F7', nameZh: '珍珠白', nameEn: 'Pearl White' }
+  {
+    id: 'home', nameZh: '家居系列', nameEn: 'Home Series', subZh: '柔软亲肤，日常陪伴首选', subEn: 'Soft & cozy for everyday companionship', price: 199, tone: 'silver',
+    colorways: [
+      { id: 'mist', nameZh: '晨雾灰', nameEn: 'Morning Mist', primary: '#C8CCD4', accent: '#8A9099' },
+      { id: 'sky', nameZh: '天空蓝', nameEn: 'Sky Blue', primary: '#8FBFE8', accent: '#3E6E9E' },
+      { id: 'oat', nameZh: '燕麦杏', nameEn: 'Oat Sand', primary: '#D8C3A0', accent: '#A8895E' },
+      { id: 'sage', nameZh: '鼠尾草', nameEn: 'Sage', primary: '#A6BFA2', accent: '#5F7A5C' },
+      { id: 'blush', nameZh: '藕粉', nameEn: 'Blush', primary: '#E3B7C0', accent: '#B97E8C' }
+    ]
+  },
+  {
+    id: 'professional', nameZh: '职业系列', nameEn: 'Professional Series', subZh: '挺括利落，办公服务场景', subEn: 'Sharp tailoring for work & service roles', price: 599, tone: 'electric', badgeZh: '人气推荐', badgeEn: 'Most popular',
+    colorways: [
+      { id: 'electric', nameZh: '电光蓝', nameEn: 'Electric Blue', primary: '#2DE2FF', accent: '#0E7C8C' },
+      { id: 'graphite', nameZh: '商务灰', nameEn: 'Graphite', primary: '#5B6068', accent: '#2DE2FF' },
+      { id: 'navy', nameZh: '藏青', nameEn: 'Navy', primary: '#2C3A63', accent: '#7C5CFF' },
+      { id: 'ivory', nameZh: '象牙白', nameEn: 'Ivory', primary: '#ECEFF3', accent: '#9AA3B2' },
+      { id: 'forest', nameZh: '墨绿', nameEn: 'Forest', primary: '#2F5D4A', accent: '#34D399' }
+    ]
+  },
+  {
+    id: 'couture', nameZh: '高定系列', nameEn: 'Haute Couture', subZh: '设计师联名，限量定制', subEn: 'Limited designer collabs, made to order', price: 2000, tone: 'rose',
+    colorways: [
+      { id: 'crimson', nameZh: '绯红', nameEn: 'Crimson', primary: '#FF4D6D', accent: '#7A2230' },
+      { id: 'gold', nameZh: '香槟金', nameEn: 'Champagne Gold', primary: '#C9B89A', accent: '#8C6A3A' },
+      { id: 'violet', nameZh: '赛博紫', nameEn: 'Cyber Violet', primary: '#7C5CFF', accent: '#2DE2FF' },
+      { id: 'obsidian', nameZh: '曜黑金线', nameEn: 'Obsidian & Gold', primary: '#1B1C20', accent: '#C9B89A' },
+      { id: 'pearl', nameZh: '珍珠白', nameEn: 'Pearl', primary: '#F2F4F7', accent: '#FF5CA8' }
+    ]
+  },
+  {
+    id: 'collab', nameZh: '联名系列', nameEn: 'Collaboration Series', subZh: 'IP 跨界联名，彰显个性', subEn: 'IP crossover drops with bold attitude', price: 499, tone: 'cyber',
+    colorways: [
+      { id: 'sunset', nameZh: '日落橙', nameEn: 'Sunset Orange', primary: '#FF8A4C', accent: '#7C5CFF' },
+      { id: 'jade', nameZh: '翡翠绿', nameEn: 'Jade', primary: '#34D399', accent: '#0E7C8C' },
+      { id: 'rose', nameZh: '樱粉', nameEn: 'Rose', primary: '#FF5CA8', accent: '#2DE2FF' },
+      { id: 'azure', nameZh: '电子青', nameEn: 'Azure', primary: '#5AA9E6', accent: '#FF8A4C' },
+      { id: 'mono', nameZh: '黑白拼', nameEn: 'Monochrome', primary: '#1B1C20', accent: '#F2F4F7' }
+    ]
+  }
 ]
 
 const MATERIAL_STYLES = [
@@ -112,18 +83,25 @@ const MATERIAL_STYLES = [
   { id: 'leather', nameZh: '皮革质感', nameEn: 'Leather', subZh: '复合涂层 · 醇厚质地', subEn: 'Layered coating, rich texture', addon: 300, swatch: 'bg-gradient-to-br from-amber-200/70 via-amber-700/50 to-amber-950/60' }
 ]
 
+// 面部样式 ≥5 款（无 / 科技极简 / 超写实 / 动漫 / 护目镜 / 武士）
 const MASKS = [
   { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
   { id: 'tech-minimal', nameZh: '科技极简', nameEn: 'Tech-Minimal', price: 299, tone: 'electric' },
   { id: 'realistic', nameZh: '超写实', nameEn: 'Hyper-Realistic', price: 1500, tone: 'rose' },
-  { id: 'anime', nameZh: '动漫风', nameEn: 'Anime', price: 399, tone: 'cyber' }
+  { id: 'anime', nameZh: '动漫风', nameEn: 'Anime', price: 399, tone: 'cyber' },
+  { id: 'visor', nameZh: '护目镜', nameEn: 'Cyber Visor', price: 459, tone: 'electric' },
+  { id: 'samurai', nameZh: '武士面甲', nameEn: 'Samurai', price: 699, tone: 'rose' }
 ]
 
+// 发型 ≥5 款（无 / 短 / 长 / 卷 / 波波 / 马尾 / 莫西干）
 const HAIRS = [
   { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
   { id: 'short', nameZh: '短发', nameEn: 'Short', price: 99, tone: 'electric' },
   { id: 'long', nameZh: '长发', nameEn: 'Long', price: 199, tone: 'rose' },
-  { id: 'curly', nameZh: '卷发', nameEn: 'Curly', price: 249, tone: 'cyber' }
+  { id: 'curly', nameZh: '卷发', nameEn: 'Curly', price: 249, tone: 'cyber' },
+  { id: 'bob', nameZh: '波波头', nameEn: 'Bob', price: 219, tone: 'rose' },
+  { id: 'ponytail', nameZh: '马尾', nameEn: 'Ponytail', price: 179, tone: 'electric' },
+  { id: 'mohawk', nameZh: '莫西干', nameEn: 'Mohawk', price: 299, tone: 'cyber' }
 ]
 
 const ACCESSORIES = [
@@ -131,7 +109,7 @@ const ACCESSORIES = [
   { id: 'shoes', nameZh: '运动鞋履', nameEn: 'Performance Shoes', price: 129 }
 ]
 
-// ---- 机身肤色：机器人裸露机身（手 / 前臂 / 小腿 / 颈部）的金属"皮肤"漆色，可独立于服装调整 ----
+// ---- 机身肤色：机器人裸露机身（手 / 前臂 / 小腿 / 颈部）的金属"皮肤"漆色 ----
 const ROBOT_SKINS = [
   { id: 'titanium', hex: '#A7ADB6', nameZh: '钛灰', nameEn: 'Titanium' },
   { id: 'graphite', hex: '#3A3E45', nameZh: '石墨', nameEn: 'Graphite' },
@@ -143,7 +121,7 @@ const ROBOT_SKINS = [
   { id: 'obsidian', hex: '#1B1C20', nameZh: '曜黑', nameEn: 'Obsidian' }
 ]
 
-// ---- 发色：机器人头发（短/长/卷）的颜色，独立于面具与机身 ----
+// ---- 发色：机器人头发的颜色，独立于面部与机身 ----
 const HAIR_COLORS = [
   { id: 'black', hex: '#1A1614', nameZh: '乌黑', nameEn: 'Black' },
   { id: 'brown', hex: '#5A3A22', nameZh: '棕色', nameEn: 'Brown' },
@@ -155,13 +133,20 @@ const HAIR_COLORS = [
   { id: 'rose', hex: '#E68FB0', nameZh: '樱粉', nameEn: 'Rose' }
 ]
 
+// 手风琴板块顺序与各自聚焦的身体局部
+const SECTION_ORDER = ['series', 'material', 'skin', 'face', 'hair', 'haircolor', 'accessories', 'diy']
+const SECTION_FOCUS = {
+  series: 'torso', material: 'torso', skin: 'torso',
+  face: 'head', hair: 'head', haircolor: 'head',
+  accessories: 'feet', diy: 'full'
+}
+
 const formatPrice = (n) => `$${n.toLocaleString('en-US')}`
 
 // ============================================================
 // 展示型子组件
 // ============================================================
 
-// 选配卡片配色基调（与品牌色板呼应，用于区分不同分组/选项的视觉个性）
 const TONE_STYLES = {
   electric: {
     active: 'border-electric-400/70 bg-electric-500/[0.09] shadow-[0_0_26px_-6px_rgba(45,226,255,0.4)]',
@@ -189,7 +174,7 @@ const TONE_STYLES = {
   }
 }
 
-// Tesla 选配页风格的可视化选项卡片：图标徽标 + 标题/说明 + 价格 + 选中态对勾
+// Tesla 选配页风格的可视化选项卡片
 function VisualOptionCard({ active, onClick, Icon, tone = 'electric', title, subtitle, price, badge }) {
   const t = TONE_STYLES[tone] ?? TONE_STYLES.electric
   return (
@@ -204,9 +189,11 @@ function VisualOptionCard({ active, onClick, Icon, tone = 'electric', title, sub
           {badge}
         </span>
       )}
-      <span className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors duration-300 ${active ? t.icon : 'border-white/12 bg-white/[0.03] text-white/40'}`}>
-        <Icon width={20} height={20} />
-      </span>
+      {Icon && (
+        <span className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors duration-300 ${active ? t.icon : 'border-white/12 bg-white/[0.03] text-white/40'}`}>
+          <Icon width={20} height={20} />
+        </span>
+      )}
       <span className="min-w-0 flex-1">
         <span className={`block text-sm font-semibold ${active ? 'text-white' : 'text-white/80'}`}>{title}</span>
         {subtitle && <span className="mt-0.5 block text-xs leading-snug text-white/40">{subtitle}</span>}
@@ -221,20 +208,48 @@ function VisualOptionCard({ active, onClick, Icon, tone = 'electric', title, sub
   )
 }
 
-// 选配分组容器：步骤序号 + 标题 + 提示语，统一包裹各类可视化选择网格
-// onActivate：在本分组内任意交互时触发（用于让相机平滑聚焦到对应身体局部）
-function OptionGroup({ index, title, hint, onActivate, children }) {
+// 手风琴板块容器：折叠时显示已选摘要 + ✓；一次只展开一栏，逐项挑选
+function AccordionSection({ index, title, summary, isOpen, onToggle, children }) {
   return (
-    <div onClickCapture={onActivate}>
-      <div className="mb-3.5 flex items-baseline justify-between gap-3">
-        <h3 className="flex items-center gap-2.5 font-display text-sm font-semibold text-white/85">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/15 font-mono text-[11px] text-white/45">{index}</span>
-          {title}
-        </h3>
-        {hint && <span className="text-[11px] text-white/35">{hint}</span>}
+    <div className={`overflow-hidden rounded-2xl border transition-colors duration-300 ${isOpen ? 'border-electric-400/40 bg-white/[0.03]' : 'border-white/10 bg-white/[0.015] hover:border-white/20'}`}>
+      <button onClick={onToggle} className="flex w-full items-center gap-3 px-5 py-4 text-left">
+        <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-[11px] ${isOpen ? 'border-electric-400/60 text-electric-300' : 'border-white/15 text-white/45'}`}>{index}</span>
+        <span className="font-display text-sm font-semibold text-white/85">{title}</span>
+        <span className="ml-auto flex items-center gap-2">
+          {!isOpen && summary && (
+            <span className="flex items-center gap-1.5 truncate text-[11px] text-electric-300/90">
+              {summary}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12l4 4L19 6" /></svg>
+            </span>
+          )}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className={`text-white/40 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><path d="M6 9l6 6 6-6" /></svg>
+        </span>
+      </button>
+      <div className={`grid transition-all duration-300 ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+        <div className="overflow-hidden">
+          <div className="px-5 pb-5">{children}</div>
+        </div>
       </div>
-      {children}
     </div>
+  )
+}
+
+// 圆形色板按钮
+function Swatch({ active, hex, label, onClick, darkCheck }) {
+  return (
+    <button onClick={onClick} title={label} aria-label={label} className="group flex flex-col items-center gap-2">
+      <span
+        className={`relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+          active ? 'scale-110 border-electric-400 shadow-[0_0_22px_rgba(45,226,255,0.4)]' : 'border-white/15 group-hover:scale-105 group-hover:border-white/40'
+        }`}
+        style={{ backgroundColor: hex }}
+      >
+        {active && (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={darkCheck ? '#0A0A0B' : '#fff'} strokeWidth="2.6"><path d="M5 12l4 4L19 6" /></svg>
+        )}
+      </span>
+      <span className={`text-[11px] transition-colors duration-300 ${active ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}>{label}</span>
+    </button>
   )
 }
 
@@ -247,14 +262,14 @@ function Row({ label, value }) {
   )
 }
 
-function SaveLookModal({ look, onClose, T, lang }) {
+function SaveLookModal({ look, onClose, T }) {
   if (!look) return null
 
   const shareText = [
     `RoboFit™ ${T('搭配方案', 'Look')}`,
-    `${T('机型', 'Model')}: ${T(look.robot.nameZh, look.robot.nameEn)}`,
-    `${T('系列', 'Series')}: ${T(look.series.nameZh, look.series.nameEn)} · ${T('颜色', 'Color')}: ${T(look.color.nameZh, look.color.nameEn)}`,
-    `${T('材质', 'Material')}: ${T(look.material.nameZh, look.material.nameEn)} · ${T('面具', 'Mask')}: ${T(look.mask.nameZh, look.mask.nameEn)} · ${T('假发', 'Hair')}: ${T(look.hair.nameZh, look.hair.nameEn)}`,
+    `${T('服装', 'Apparel')}: ${T(look.series.nameZh, look.series.nameEn)} · ${T(look.colorway.nameZh, look.colorway.nameEn)}`,
+    `${T('材质', 'Material')}: ${T(look.material.nameZh, look.material.nameEn)} · ${T('机身肤色', 'Body skin')}: ${T(look.skin.nameZh, look.skin.nameEn)}`,
+    `${T('面部', 'Face')}: ${T(look.mask.nameZh, look.mask.nameEn)} · ${T('发型', 'Hair')}: ${T(look.hair.nameZh, look.hair.nameEn)} · ${T('发色', 'Hair color')}: ${T(look.hairColor.nameZh, look.hairColor.nameEn)}`,
     `${T('预估总价', 'Estimated total')}: ${formatPrice(look.total)}`
   ].join('\n')
 
@@ -290,20 +305,20 @@ function SaveLookModal({ look, onClose, T, lang }) {
         </p>
 
         <div className="mt-5 space-y-1.5 rounded-2xl border border-white/10 bg-carbon-900/60 p-5 text-sm">
-          <Row label={T('机型', 'Model')} value={T(look.robot.nameZh, look.robot.nameEn)} />
           <Row label={T('服装系列', 'Apparel series')} value={T(look.series.nameZh, look.series.nameEn)} />
           <Row
-            label={T('主色调', 'Primary color')}
+            label={T('配色', 'Colorway')}
             value={
               <span className="inline-flex items-center gap-2">
-                <span className="h-3.5 w-3.5 rounded-full border border-white/20" style={{ backgroundColor: look.color.hex }} />
-                {T(look.color.nameZh, look.color.nameEn)}
+                <span className="h-3.5 w-3.5 rounded-full border border-white/20" style={{ backgroundColor: look.colorway.primary }} />
+                {T(look.colorway.nameZh, look.colorway.nameEn)}
               </span>
             }
           />
           <Row label={T('材质工艺', 'Material finish')} value={T(look.material.nameZh, look.material.nameEn)} />
-          <Row label={T('面具', 'Mask')} value={T(look.mask.nameZh, look.mask.nameEn)} />
-          <Row label={T('假发', 'Hair')} value={T(look.hair.nameZh, look.hair.nameEn)} />
+          <Row label={T('机身肤色', 'Body skin')} value={T(look.skin.nameZh, look.skin.nameEn)} />
+          <Row label={T('面部', 'Face')} value={T(look.mask.nameZh, look.mask.nameEn)} />
+          <Row label={T('发型', 'Hair')} value={`${T(look.hair.nameZh, look.hair.nameEn)} · ${T(look.hairColor.nameZh, look.hairColor.nameEn)}`} />
           <Row
             label={T('配件', 'Accessories')}
             value={look.accessories.length ? look.accessories.map((a) => T(a.nameZh, a.nameEn)).join(' · ') : T('无', 'None')}
@@ -347,33 +362,33 @@ function SaveLookModal({ look, onClose, T, lang }) {
 export default function RoboFit() {
   const { T, lang } = useLanguage()
 
-  // ---- 配置状态：全部使用 React useState 管理，禁止任何浏览器持久化存储 ----
-  const [robotId, setRobotId] = useState('optimus')
+  // ---- 配置状态：全部使用 React useState，禁止任何浏览器持久化存储 ----
   const [seriesId, setSeriesId] = useState('professional')
-  const [colorId, setColorId] = useState('electric')
+  const [colorwayId, setColorwayId] = useState('electric')
   const [materialId, setMaterialId] = useState('smooth')
+  const [skinColorId, setSkinColorId] = useState('titanium')
   const [maskId, setMaskId] = useState('tech-minimal')
   const [hairId, setHairId] = useState('short')
-  const [accessoryState, setAccessoryState] = useState({ backpack: false, shoes: false })
-  const [savedLook, setSavedLook] = useState(null)
-  const [robotReady, setRobotReady] = useState(false)
-  // 当前造型（模块化定制原型 / 整身套装）：切换时替换或显示对应预览主体
-  const [suiteId, setSuiteId] = useState(DEFAULT_SUITE_ID)
-  // 套装换装加载中标记（纯 UI 反馈，useState 管理，无任何持久化存储）
-  const [suiteLoading, setSuiteLoading] = useState(false)
-  // 机器人逐部位定制：机身肤色（裸露机身）/ 发色（头发），独立于服装配色
-  const [skinColorId, setSkinColorId] = useState('titanium')
   const [hairColorId, setHairColorId] = useState('black')
-  // 当前聚焦的局部区域（选择不同选配板块时，相机平滑对准对应身体局部）
-  const [focusKey, setFocusKey] = useState('full')
-  // 仅用于左侧预览区的"实时渲染中"视觉反馈脉冲（纯 UI 状态，同样通过 useState 管理）
+  const [accessoryState, setAccessoryState] = useState({ backpack: false, shoes: false })
+  // DIY 自定义：null 表示未启用，由用户主动取色后才覆盖对应材质
+  const [diyClothing, setDiyClothing] = useState(null)
+  const [diySkin, setDiySkin] = useState(null)
+  const [diyHair, setDiyHair] = useState(null)
+  const [diyFace, setDiyFace] = useState(null)
+  const [diyRough, setDiyRough] = useState(null)
+  // 手风琴：当前展开的板块（一次只展开一栏，选完自动折叠并展开下一项）
+  const [openSection, setOpenSection] = useState('series')
+  // 当前聚焦的身体局部（选不同板块时相机平滑对准 → 局部放大）
+  const [focusKey, setFocusKey] = useState('torso')
+  const [savedLook, setSavedLook] = useState(null)
   const [isRendering, setIsRendering] = useState(false)
-
-  const activeSuite = SUITES.find((s) => s.id === suiteId) ?? SUITES[0]
-  const isProceduralActive = !!activeSuite.procedural
 
   const mountRef = useRef(null)
   const sceneRef = useRef(null)
+
+  const activeSeries = SERIES.find((s) => s.id === seriesId) ?? SERIES[0]
+  const activeColorway = activeSeries.colorways.find((c) => c.id === colorwayId) ?? activeSeries.colorways[0]
 
   // ---------------- Three.js 场景初始化（仅挂载时执行一次） ----------------
   useEffect(() => {
@@ -392,7 +407,6 @@ export default function RoboFit() {
     renderer.setSize(mount.clientWidth, mount.clientHeight)
     mount.appendChild(renderer.domElement)
 
-    // 灯光：主光源 + 冷暖双色补光 + 环境光，营造科技摄影棚氛围
     const keyLight = new THREE.DirectionalLight('#ffffff', 1.6)
     keyLight.position.set(4, 6, 5)
     scene.add(keyLight)
@@ -408,7 +422,6 @@ export default function RoboFit() {
     const ambientLight = new THREE.AmbientLight('#3B4049', 1.5)
     scene.add(ambientLight)
 
-    // 地面网格 + 发光底座光环
     const grid = new THREE.GridHelper(9, 18, '#2DE2FF', '#1C1D22')
     grid.position.y = -2.01
     grid.material.transparent = true
@@ -422,14 +435,10 @@ export default function RoboFit() {
     ring.position.y = -1.998
     scene.add(ring)
 
-    // 人形机器人模型（由 Box / Cylinder / Sphere 拼接，无 CapsuleGeometry）
+    // 标准版 Optimus（分体可拆装人形：服装/机身/头发/面部均为独立部件）
     const { group, materials, parts } = createRobotGroup()
     scene.add(group)
 
-    // 造型主体（模块化分体原型默认显示 / GLB 套装按需加载替换）由独立的 suiteId effect 负责，
-    // 此处仅初始化场景；默认的模块化原型即上方的程序化分体机器人 group。
-
-    // OrbitControls：拖拽旋转 + 滚轮缩放，限制极角避免穿地
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
     controls.dampingFactor = 0.07
@@ -442,9 +451,7 @@ export default function RoboFit() {
 
     sceneRef.current = {
       scene, camera, renderer, controls, group, materials, parts, ring,
-      isProcedural: true,
-      // 局部聚焦目标：active 时在动画循环中平滑插值相机 target 高度与轨道半径
-      focus: { targetY: FOCUS_PROC.full.targetY, dist: FOCUS_PROC.full.dist, active: false }
+      focus: { targetY: FOCUS.torso.targetY, dist: FOCUS.torso.dist, active: true }
     }
 
     let frameId
@@ -452,9 +459,9 @@ export default function RoboFit() {
     const animate = () => {
       frameId = requestAnimationFrame(animate)
       const t = clock.getElapsedTime()
-      group.position.y = -2.0 + Math.sin(t * 0.9) * 0.035 // 轻微悬浮呼吸感
+      group.position.y = -2.0 + Math.sin(t * 0.9) * 0.035
       ring.material.opacity = 0.3 + Math.sin(t * 1.6) * 0.12
-      // 局部聚焦平滑动画：选择不同选配板块时，相机缓动对准对应身体局部
+      // 局部聚焦平滑动画：选不同板块时相机缓动对准对应身体局部（局部放大）
       const f = sceneRef.current?.focus
       if (f && f.active) {
         controls.target.y += (f.targetY - controls.target.y) * 0.09
@@ -498,91 +505,47 @@ export default function RoboFit() {
     }
   }, [])
 
-  // ---------------- 造型切换：模块化分体原型（显示 group）/ 整身 GLB 套装（加载替换） ----------------
+  // ---------------- 局部聚焦：展开的板块决定相机对准的身体局部 ----------------
+  useEffect(() => {
+    if (openSection) setFocusKey(SECTION_FOCUS[openSection] ?? 'full')
+  }, [openSection])
+
   useEffect(() => {
     const ctx = sceneRef.current
     if (!ctx) return
-    const suite = SUITES.find((s) => s.id === suiteId)
-    if (!suite) return
-
-    // 模块化定制原型：直接显示程序化分体机器人（支持逐部位独立调整），释放并移除可能存在的 GLB
-    if (suite.procedural) {
-      const prev = ctx.robotModel
-      if (prev) {
-        ctx.scene.remove(prev.model)
-        prev.dispose?.()
-        ctx.robotModel = null
-      }
-      ctx.group.visible = true
-      ctx.ring.visible = true
-      ctx.isProcedural = true
-      setRobotReady(true)
-      setSuiteLoading(false)
-      return
-    }
-
-    // 整身 GLB 套装：异步加载后整体替换，隐藏分体原型
-    let cancelled = false
-    ctx.isProcedural = false
-    setSuiteLoading(true)
-    setRobotReady(false)
-
-    loadRobotModel(suite.url)
-      .then((handle) => {
-        if (cancelled) {
-          handle.dispose?.()
-          return
-        }
-        const prev = ctx.robotModel
-        if (prev) {
-          ctx.scene.remove(prev.model)
-          prev.dispose?.()
-        }
-        fitModelToFloor(handle.model)
-        ctx.scene.add(handle.model)
-        ctx.group.visible = false
-        ctx.ring.visible = false
-        ctx.robotModel = handle
-        // 立即把当前配色 / 工艺整体叠加到新套装，避免换装瞬间闪回默认灰
-        const color = COLORS.find((c) => c.id === colorId)
-        const preset = MATERIAL_STYLE_PRESETS[materialId]
-        if (color) handle.setColor(color.hex)
-        if (preset) handle.setFinish({ roughness: preset.roughness, metalness: preset.metalness })
-        setRobotReady(true)
-        setSuiteLoading(false)
-      })
-      .catch(() => {
-        if (!cancelled) setSuiteLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-    // colorId / materialId 故意不入依赖：换装只由 suiteId 触发，配色由独立 effect 持续驱动
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [suiteId])
-
-  // ---------------- 局部聚焦：选择不同选配板块时，相机平滑对准对应身体局部 ----------------
-  useEffect(() => {
-    const ctx = sceneRef.current
-    if (!ctx) return
-    const map = ctx.isProcedural ? FOCUS_PROC : FOCUS_GLB
-    const region = map[focusKey] ?? map.full
+    const region = FOCUS[focusKey] ?? FOCUS.full
     ctx.focus = { targetY: region.targetY, dist: region.dist, active: true }
-  }, [focusKey, suiteId, robotReady])
+  }, [focusKey])
 
-  // ---------------- 服装颜色 + 材质风格：实时映射到 3D 模型材质 ----------------
+  // ---------------- 服装配色：系列配色方案实时映射到服装主色 + 撞色点缀 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
     if (!ctx) return
-    const color = COLORS.find((c) => c.id === colorId)
+    const cw = activeColorway
+    if (!cw) return
+    ctx.materials.clothingMaterial.color.set(cw.primary)
+    ctx.materials.clothingAccentMaterial.color.set(cw.accent)
+  }, [seriesId, colorwayId, activeColorway])
+
+  // ---------------- 材质风格：粗糙度 / 金属度实时驱动服装表面工艺 ----------------
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx) return
     const preset = MATERIAL_STYLE_PRESETS[materialId]
-    ctx.materials.clothingMaterial.color.set(color.hex)
+    if (!preset) return
     ctx.materials.clothingMaterial.roughness = preset.roughness
     ctx.materials.clothingMaterial.metalness = preset.metalness
-  }, [colorId, materialId])
+  }, [materialId])
 
-  // ---------------- 面具：实时切换可见性与外观 ----------------
+  // ---------------- 机身肤色：裸露机身（手/前臂/小腿/颈部）漆色独立驱动 ----------------
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx) return
+    const skin = ROBOT_SKINS.find((s) => s.id === skinColorId)
+    if (skin) ctx.materials.chassisMaterial.color.set(skin.hex)
+  }, [skinColorId])
+
+  // ---------------- 面部：实时切换可见性与外观 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
     if (!ctx) return
@@ -597,7 +560,7 @@ export default function RoboFit() {
     }
   }, [maskId])
 
-  // ---------------- 假发：清空旧几何并按样式重建 ----------------
+  // ---------------- 发型：清空旧几何并按样式重建 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
     if (!ctx) return
@@ -609,6 +572,14 @@ export default function RoboFit() {
     hairGroup.add(buildHairStyle(hairId, ctx.materials.hairMaterial))
   }, [hairId])
 
+  // ---------------- 发色：头发颜色独立驱动 ----------------
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx) return
+    const hc = HAIR_COLORS.find((c) => c.id === hairColorId)
+    if (hc) ctx.materials.hairMaterial.color.set(hc.hex)
+  }, [hairColorId, hairId])
+
   // ---------------- 配件：背包可见性 + 鞋履材质替换 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
@@ -619,46 +590,45 @@ export default function RoboFit() {
     ctx.parts.footR.material = footMaterial
   }, [accessoryState])
 
-  // ---------------- 机型切换：调整缩放比例直观体现体型差异 ----------------
+  // ---------------- DIY 自定义：自由取色 / 微调，主动设置后覆盖对应材质（后写生效） ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
-    const scale = ROBOT_SCALE[robotId] ?? 1
-    ctx.group.scale.setScalar(scale)
-  }, [robotId])
+    if (!ctx || !diyClothing) return
+    ctx.materials.clothingMaterial.color.set(diyClothing)
+  }, [diyClothing])
 
-  // ---------------- 整身 GLB 套装：整体配色 + 表面工艺实时驱动（单网格，整体生效） ----------------
-  useEffect(() => {
-    const rm = sceneRef.current?.robotModel
-    if (!rm) return
-    const color = COLORS.find((c) => c.id === colorId)
-    const preset = MATERIAL_STYLE_PRESETS[materialId]
-    if (color) rm.setColor(color.hex)
-    if (preset) rm.setFinish({ roughness: preset.roughness, metalness: preset.metalness })
-  }, [robotReady, colorId, materialId])
-
-  // ---------------- 机身肤色：模块化原型裸露机身（手/前臂/小腿/颈部）漆色独立驱动 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
-    const skin = ROBOT_SKINS.find((s) => s.id === skinColorId)
-    if (skin) ctx.materials.chassisMaterial.color.set(skin.hex)
-  }, [skinColorId])
+    if (!ctx || !diySkin) return
+    ctx.materials.chassisMaterial.color.set(diySkin)
+  }, [diySkin])
 
-  // ---------------- 发色：模块化原型头发颜色独立驱动 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
-    const hc = HAIR_COLORS.find((c) => c.id === hairColorId)
-    if (hc) ctx.materials.hairMaterial.color.set(hc.hex)
-  }, [hairColorId, hairId])
+    if (!ctx || !diyHair) return
+    ctx.materials.hairMaterial.color.set(diyHair)
+  }, [diyHair])
 
-  // ---------------- 选配变更时的"实时渲染中"提示脉冲（纯视觉反馈，状态同样经由 useState 管理） ----------------
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx || !diyFace) return
+    ctx.materials.maskMaterial.color.set(diyFace)
+  }, [diyFace])
+
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx || diyRough == null) return
+    // gloss 滑块：0 = 偏哑光（高粗糙度），1 = 偏光泽（低粗糙度）
+    ctx.materials.clothingMaterial.roughness = 0.92 - diyRough * 0.78
+    ctx.materials.clothingMaterial.metalness = 0.08 + diyRough * 0.7
+  }, [diyRough])
+
+  // ---------------- 选配变更时的"实时渲染中"提示脉冲（纯视觉反馈） ----------------
   useEffect(() => {
     setIsRendering(true)
     const timer = window.setTimeout(() => setIsRendering(false), 620)
     return () => window.clearTimeout(timer)
-  }, [robotId, seriesId, colorId, materialId, maskId, hairId, accessoryState, suiteId, skinColorId, hairColorId])
+  }, [seriesId, colorwayId, materialId, skinColorId, maskId, hairId, hairColorId, accessoryState, diyClothing, diySkin, diyHair, diyFace, diyRough])
 
   // ---------------- 实时价格计算引擎 ----------------
   const priceBreakdown = useMemo(() => {
@@ -670,8 +640,8 @@ export default function RoboFit() {
     const items = [
       { key: 'series', labelZh: `服装系列 · ${series.nameZh}`, labelEn: `Apparel · ${series.nameEn}`, price: series.price },
       { key: 'material', labelZh: `${material.nameZh}工艺加成`, labelEn: `${material.nameEn} finish`, price: material.addon },
-      { key: 'mask', labelZh: `面具 · ${mask.nameZh}`, labelEn: `Mask · ${mask.nameEn}`, price: mask.price },
-      { key: 'hair', labelZh: `假发 · ${hair.nameZh}`, labelEn: `Hair · ${hair.nameEn}`, price: hair.price }
+      { key: 'mask', labelZh: `面部 · ${mask.nameZh}`, labelEn: `Face · ${mask.nameEn}`, price: mask.price },
+      { key: 'hair', labelZh: `发型 · ${hair.nameZh}`, labelEn: `Hair · ${hair.nameEn}`, price: hair.price }
     ]
     ACCESSORIES.forEach((acc) => {
       if (accessoryState[acc.id]) {
@@ -684,19 +654,29 @@ export default function RoboFit() {
     return { items: visibleItems, total }
   }, [seriesId, materialId, maskId, hairId, accessoryState])
 
-  const activeRobot = ROBOTS.find((r) => r.id === robotId)
-  const activeColor = COLORS.find((c) => c.id === colorId)
   const activeSkinColor = ROBOT_SKINS.find((s) => s.id === skinColorId) ?? ROBOT_SKINS[0]
   const activeHairColor = HAIR_COLORS.find((c) => c.id === hairColorId) ?? HAIR_COLORS[0]
+  const activeMask = MASKS.find((m) => m.id === maskId) ?? MASKS[0]
+  const activeHair = HAIRS.find((h) => h.id === hairId) ?? HAIRS[0]
+  const activeMaterial = MATERIAL_STYLES.find((m) => m.id === materialId) ?? MATERIAL_STYLES[0]
+  const accessoryCount = ACCESSORIES.filter((a) => accessoryState[a.id]).length
+
+  // 手风琴：切换展开 / 选完自动折叠并展开下一项
+  const toggleSection = (id) => setOpenSection((prev) => (prev === id ? null : id))
+  const openNext = (id) => {
+    const idx = SECTION_ORDER.indexOf(id)
+    setOpenSection(SECTION_ORDER[idx + 1] ?? null)
+  }
 
   const handleSaveLook = () => {
     setSavedLook({
-      robot: activeRobot,
-      color: activeColor,
-      series: SERIES.find((s) => s.id === seriesId),
+      series: activeSeries,
+      colorway: activeColorway,
       material: MATERIAL_STYLES.find((m) => m.id === materialId),
+      skin: activeSkinColor,
       mask: MASKS.find((m) => m.id === maskId),
       hair: HAIRS.find((h) => h.id === hairId),
+      hairColor: activeHairColor,
       accessories: ACCESSORIES.filter((a) => accessoryState[a.id]),
       total: priceBreakdown.total
     })
@@ -727,8 +707,8 @@ export default function RoboFit() {
   ]
 
   const flowSteps = [
-    { step: '01', titleZh: '选择机型', titleEn: 'Pick a model', descZh: 'Optimus / Figure 03 / 小鹏 Iron 三大主流机型任选其一', descEn: 'Choose Optimus, Figure 03, or XPeng Iron as your base frame' },
-    { step: '02', titleZh: '自由搭配', titleEn: 'Customize freely', descZh: '系列、配色、材质、面具、假发与配件实时组合', descEn: 'Mix series, color, material, mask, hair and accessories in real time' },
+    { step: '01', titleZh: '挑选服装', titleEn: 'Pick apparel', descZh: '从四大系列中选择整套服装与专属配色', descEn: 'Choose a full outfit and colorway from four series' },
+    { step: '02', titleZh: '逐项定制', titleEn: 'Customize step by step', descZh: '材质、机身肤色、面部、发型发色与配件逐项展开挑选', descEn: 'Material, body skin, face, hair, color and accessories — one step at a time' },
     { step: '03', titleZh: '保存与分享', titleEn: 'Save & share', descZh: '生成搭配摘要，复制分享给好友，或联系顾问完成咨询', descEn: 'Generate a look summary, share it, or talk to an advisor to order' }
   ]
 
@@ -799,7 +779,7 @@ export default function RoboFit() {
         </div>
       </section>
 
-      {/* ---------------- 配置器主体（参考 Tesla Model Y 选配页：左侧实时预览常驻吸顶，右侧卡片化动态选配） ---------------- */}
+      {/* ---------------- 配置器主体（左侧 3D 预览常驻，右侧手风琴逐项展开） ---------------- */}
       <section className="relative pb-20">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-8 lg:px-10">
           <Reveal>
@@ -809,20 +789,20 @@ export default function RoboFit() {
                   {T('搭配工坊 · 所见即所得', 'Build studio · what you see is what you get')}
                 </span>
                 <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-[28px]">
-                  {T('像选配一台特斯拉一样，搭建你的机器人', 'Configure your robot the way you’d configure a Tesla')}
+                  {T('为你的 Optimus 逐项搭配造型', 'Style your Optimus, one step at a time')}
                 </h2>
               </div>
               <p className="max-w-md text-sm leading-relaxed text-white/40">
                 {T(
-                  '右侧每一次点选都会实时渲染到左侧 3D 预览上 — 机型、系列、配色、材质、面具、假发与配件，全部支持动态切换、即时比价，逐项展开挑选。',
-                  'Every tap on the right renders instantly on the 3D preview to the left — model, series, color, material, mask, hair and accessories all switch live with instant price comparison, laid out step by step.'
+                  '右侧每一次点选都会实时渲染到左侧 3D 预览 — 服装、配色、材质、机身肤色、面部、发型发色与配件逐项展开挑选，点不同板块时模型自动局部放大，左右对照即时比价。',
+                  'Every tap on the right renders instantly onto the 3D preview — apparel, color, material, body skin, face, hair and accessories unfold step by step; the model auto-zooms to the relevant part, side by side with live pricing.'
                 )}
               </p>
             </div>
           </Reveal>
 
           <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] xl:gap-12">
-            {/* 左：3D 实时预览（吸顶常驻，模拟 Tesla 选配页车辆预览区随滚动保持可见的体验） */}
+            {/* 左：3D 实时预览（吸顶常驻，左右对照） */}
             <div className="lg:sticky lg:top-24 lg:self-start">
               <Reveal direction="left">
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-carbon-800/70 to-carbon-900 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
@@ -839,17 +819,11 @@ export default function RoboFit() {
                     }`}
                   >
                     <span className={`h-1.5 w-1.5 rounded-full ${isRendering ? 'bg-electric-400 animate-pulseGlow' : 'bg-white/30'}`} />
-                    {isRendering
-                      ? T('实时渲染中…', 'Rendering live…')
-                      : isProceduralActive
-                        ? T('模块化定制 · 逐部位实时驱动', 'Modular custom · per-part live')
-                        : T(`${activeSuite.nameZh} · 实时配色`, `${activeSuite.nameEn} · Live color`)}
+                    {isRendering ? T('实时渲染中…', 'Rendering live…') : T('标准版 Optimus · 逐部位实时定制', 'Standard Optimus · per-part live')}
                   </div>
 
                   <div className="pointer-events-none absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-carbon-900/55 px-4 py-3 text-[11px] text-white/45 backdrop-blur-md">
-                    <span>{isProceduralActive
-                      ? T('模块化机器人模型已接入，服装 / 机身肤色 / 头发 / 面容均可逐部位实时定制；切换不同板块时镜头自动聚焦对应局部', 'Modular robot model loaded — apparel, body skin, hair and face are customizable per part in real time; the camera auto-focuses the relevant region as you switch panels')
-                      : T('整身实体套装已接入，可整体配色与切换表面工艺，拖拽旋转查看任意角度', 'Full-body suite loaded — recolor the whole body and switch surface finish, drag to inspect any angle')}</span>
+                    <span>{T('服装 / 机身肤色 / 头发 / 面部均为独立部件，可实时穿戴换色；点不同选配板块时镜头自动聚焦放大对应局部', 'Apparel, body skin, hair and face are independent parts you can dress and recolor live; the camera auto-zooms to the relevant region as you switch panels')}</span>
                     <span className="inline-flex items-center gap-1.5 text-electric-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
                       Three.js · WebGL
@@ -857,7 +831,7 @@ export default function RoboFit() {
                   </div>
                 </div>
 
-                {/* 预估总价 + 保存搭配 CTA：吸附在预览区下方，随滚动常驻可见（参考 Tesla 选配页底部价格条） */}
+                {/* 预估总价 + 保存搭配 CTA */}
                 <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-electric-500/25 bg-gradient-to-r from-electric-500/[0.07] via-cyber-500/[0.04] to-transparent p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-[11px] uppercase tracking-widest2 text-white/35">{T('预估总价 · 当前搭配', 'Estimated total · current build')}</p>
@@ -875,50 +849,23 @@ export default function RoboFit() {
               </Reveal>
             </div>
 
-            {/* 右：动态选配卡片网格（Tesla 选配页风格 — 大卡片 / 色板 / 材质预览，逐项分组展开挑选） */}
+            {/* 右：手风琴逐项选配（一次只展开一栏，选完折叠并进入下一项） */}
             <Reveal direction="right" delay={80}>
-              <div className="space-y-9">
-                <OptionGroup
-                  index="00"
-                  title={T('机甲套装 · 一键换装', 'Mech Suite · One-tap Swap')}
-                  hint={suiteLoading ? T('换装加载中…', 'Swapping…') : T('模块化定制 + 6 套整身造型', 'Modular + 6 full-body looks')}
-                  onActivate={() => setFocusKey('full')}
+              <div className="space-y-3">
+                {/* 01 服装系列（先选系列 → 再选 5 套配色） */}
+                <AccordionSection
+                  index="01"
+                  title={T('服装系列', 'Apparel Series')}
+                  summary={`${T(activeSeries.nameZh, activeSeries.nameEn)} · ${T(activeColorway.nameZh, activeColorway.nameEn)}`}
+                  isOpen={openSection === 'series'}
+                  onToggle={() => toggleSection('series')}
                 >
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {SUITES.map((s) => (
-                      <VisualOptionCard
-                        key={s.id}
-                        active={suiteId === s.id}
-                        onClick={() => setSuiteId(s.id)}
-                        Icon={IconRobotSilhouette}
-                        tone={s.tone}
-                        title={T(s.nameZh, s.nameEn)}
-                        subtitle={T(s.subZh, s.subEn)}
-                        price={
-                          suiteId === s.id
-                            ? suiteLoading
-                              ? T('换装中…', 'Swapping…')
-                              : T('当前穿着', 'Now worn')
-                            : T('点击换装', 'Tap to wear')
-                        }
-                      />
-                    ))}
-                  </div>
-                  <p className="mt-3 text-[11px] leading-relaxed text-white/35">
-                    {T(
-                      '「模块化定制」支持服装 / 机身肤色 / 头发 / 面容逐部位独立调整；其余为独立整身实体套装，一键换装，配色与材质工艺实时叠加。',
-                      '“Modular Custom” lets you tune apparel, body skin, hair and face per part; the others are standalone full-body suites — swap in one tap with color and finish layered live.'
-                    )}
-                  </p>
-                </OptionGroup>
-
-                <OptionGroup index="01" title={T('服装系列', 'Apparel Series')} hint={T('决定搭配基础价格', 'Sets your base price')} onActivate={() => setFocusKey('torso')}>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {SERIES.map((s) => (
                       <VisualOptionCard
                         key={s.id}
                         active={seriesId === s.id}
-                        onClick={() => setSeriesId(s.id)}
+                        onClick={() => { setSeriesId(s.id); setColorwayId(s.colorways[0].id) }}
                         Icon={IconApparelTag}
                         tone={s.tone}
                         title={T(s.nameZh, s.nameEn)}
@@ -928,44 +875,52 @@ export default function RoboFit() {
                       />
                     ))}
                   </div>
-                </OptionGroup>
-
-                <OptionGroup index="02" title={T('配色', 'Color')} hint={T(activeColor.nameZh, activeColor.nameEn)} onActivate={() => setFocusKey('torso')}>
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                  <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                    <div className="mb-3 flex items-baseline justify-between">
+                      <span className="text-[13px] font-medium text-white/70">{T('选择配色', 'Choose colorway')}</span>
+                      <span className="font-mono text-[11px] text-electric-300">{T(activeColorway.nameZh, activeColorway.nameEn)}</span>
+                    </div>
                     <div className="flex flex-wrap gap-4">
-                      {COLORS.map((c) => (
-                        <button key={c.id} onClick={() => setColorId(c.id)} title={T(c.nameZh, c.nameEn)} aria-label={T(c.nameZh, c.nameEn)} className="group flex flex-col items-center gap-2">
+                      {activeSeries.colorways.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => { setColorwayId(c.id); openNext('series') }}
+                          title={T(c.nameZh, c.nameEn)}
+                          aria-label={T(c.nameZh, c.nameEn)}
+                          className="group flex flex-col items-center gap-2"
+                        >
                           <span
-                            className={`relative flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                              colorId === c.id
-                                ? 'scale-110 border-electric-400 shadow-[0_0_22px_rgba(45,226,255,0.4)]'
-                                : 'border-white/15 group-hover:scale-105 group-hover:border-white/40'
+                            className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 transition-all duration-300 ${
+                              colorwayId === c.id ? 'scale-110 border-electric-400 shadow-[0_0_22px_rgba(45,226,255,0.4)]' : 'border-white/15 group-hover:scale-105 group-hover:border-white/40'
                             }`}
-                            style={{ backgroundColor: c.hex }}
+                            style={{ background: `linear-gradient(135deg, ${c.primary} 0%, ${c.primary} 58%, ${c.accent} 58%, ${c.accent} 100%)` }}
                           >
-                            {colorId === c.id && (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.id === 'pearl' || c.id === 'silver' ? '#0A0A0B' : '#fff'} strokeWidth="2.6">
-                                <path d="M5 12l4 4L19 6" />
-                              </svg>
+                            {colorwayId === c.id && (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A0A0B" strokeWidth="2.8"><path d="M5 12l4 4L19 6" /></svg>
                             )}
                           </span>
-                          <span className={`text-[11px] transition-colors duration-300 ${colorId === c.id ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}>
-                            {T(c.nameZh, c.nameEn)}
-                          </span>
+                          <span className={`text-[11px] transition-colors duration-300 ${colorwayId === c.id ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}>{T(c.nameZh, c.nameEn)}</span>
                         </button>
                       ))}
                     </div>
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                <OptionGroup index="03" title={T('材质风格', 'Material Style')} hint={T('影响表面反光与质感', 'Shapes surface finish & sheen')} onActivate={() => setFocusKey('torso')}>
+                {/* 02 材质风格 */}
+                <AccordionSection
+                  index="02"
+                  title={T('材质风格', 'Material Style')}
+                  summary={T(activeMaterial.nameZh, activeMaterial.nameEn)}
+                  isOpen={openSection === 'material'}
+                  onToggle={() => toggleSection('material')}
+                >
                   <div className="grid grid-cols-2 gap-3">
                     {MATERIAL_STYLES.map((m) => {
                       const isActive = materialId === m.id
                       return (
                         <button
                           key={m.id}
-                          onClick={() => setMaterialId(m.id)}
+                          onClick={() => { setMaterialId(m.id); openNext('material') }}
                           className={`group relative overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ${
                             isActive
                               ? 'border-electric-400/70 bg-electric-500/[0.08] shadow-[0_0_24px_-6px_rgba(45,226,255,0.32)]'
@@ -987,52 +942,48 @@ export default function RoboFit() {
                       )
                     })}
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                <OptionGroup
-                  index="04"
+                {/* 03 机身肤色 */}
+                <AccordionSection
+                  index="03"
                   title={T('机身肤色', 'Body Skin')}
-                  hint={isProceduralActive ? T(activeSkinColor.nameZh, activeSkinColor.nameEn) : T('仅模块化定制可用', 'Modular Custom only')}
-                  onActivate={() => setFocusKey('torso')}
+                  summary={T(activeSkinColor.nameZh, activeSkinColor.nameEn)}
+                  isOpen={openSection === 'skin'}
+                  onToggle={() => toggleSection('skin')}
                 >
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-                    <p className="mb-4 text-[11px] leading-relaxed text-white/35">
-                      {T('裸露机身（手 / 前臂 / 小腿 / 颈部）的金属漆色，独立于服装配色单独调整。',
-                        'Metallic finish of the exposed body (hands / forearms / shins / neck), tuned independently from apparel color.')}
-                    </p>
-                    <div className="flex flex-wrap gap-4">
-                      {ROBOT_SKINS.map((s) => (
-                        <button key={s.id} onClick={() => setSkinColorId(s.id)} title={T(s.nameZh, s.nameEn)} aria-label={T(s.nameZh, s.nameEn)} className="group flex flex-col items-center gap-2">
-                          <span
-                            className={`relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                              skinColorId === s.id
-                                ? 'scale-110 border-electric-400 shadow-[0_0_22px_rgba(45,226,255,0.4)]'
-                                : 'border-white/15 group-hover:scale-105 group-hover:border-white/40'
-                            }`}
-                            style={{ backgroundColor: s.hex }}
-                          >
-                            {skinColorId === s.id && (
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={s.id === 'platinum' || s.id === 'titanium' || s.id === 'champagne' ? '#0A0A0B' : '#fff'} strokeWidth="2.6">
-                                <path d="M5 12l4 4L19 6" />
-                              </svg>
-                            )}
-                          </span>
-                          <span className={`text-[11px] transition-colors duration-300 ${skinColorId === s.id ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}>
-                            {T(s.nameZh, s.nameEn)}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                  <p className="mb-4 text-[11px] leading-relaxed text-white/35">
+                    {T('裸露机身（手 / 前臂 / 小腿 / 颈部）的金属漆色，独立于服装配色单独调整。',
+                      'Metallic finish of the exposed body (hands / forearms / shins / neck), tuned independently from apparel color.')}
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    {ROBOT_SKINS.map((s) => (
+                      <Swatch
+                        key={s.id}
+                        active={skinColorId === s.id}
+                        hex={s.hex}
+                        label={T(s.nameZh, s.nameEn)}
+                        darkCheck={['platinum', 'titanium', 'champagne'].includes(s.id)}
+                        onClick={() => { setSkinColorId(s.id); openNext('skin') }}
+                      />
+                    ))}
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                <OptionGroup index="05" title={T('面具', 'Mask')} hint={T('可选 · 塑造表情个性', 'Optional · gives your robot a face')} onActivate={() => setFocusKey('head')}>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {/* 04 面部 */}
+                <AccordionSection
+                  index="04"
+                  title={T('面部', 'Face')}
+                  summary={T(activeMask.nameZh, activeMask.nameEn)}
+                  isOpen={openSection === 'face'}
+                  onToggle={() => toggleSection('face')}
+                >
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {MASKS.map((m) => (
                       <VisualOptionCard
                         key={m.id}
                         active={maskId === m.id}
-                        onClick={() => setMaskId(m.id)}
+                        onClick={() => { setMaskId(m.id); openNext('face') }}
                         Icon={m.id === 'none' ? IconSwatchOff : IconMaskFace}
                         tone={m.tone}
                         title={T(m.nameZh, m.nameEn)}
@@ -1040,15 +991,22 @@ export default function RoboFit() {
                       />
                     ))}
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                <OptionGroup index="06" title={T('假发', 'Hair')} hint={T('可选 · 个性化造型', 'Optional · personalize the look')} onActivate={() => setFocusKey('head')}>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {/* 05 发型 */}
+                <AccordionSection
+                  index="05"
+                  title={T('发型', 'Hair')}
+                  summary={T(activeHair.nameZh, activeHair.nameEn)}
+                  isOpen={openSection === 'hair'}
+                  onToggle={() => toggleSection('hair')}
+                >
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {HAIRS.map((h) => (
                       <VisualOptionCard
                         key={h.id}
                         active={hairId === h.id}
-                        onClick={() => setHairId(h.id)}
+                        onClick={() => { setHairId(h.id); openNext('hair') }}
                         Icon={h.id === 'none' ? IconSwatchOff : IconHairWisp}
                         tone={h.tone}
                         title={T(h.nameZh, h.nameEn)}
@@ -1056,46 +1014,42 @@ export default function RoboFit() {
                       />
                     ))}
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                <OptionGroup
-                  index="07"
+                {/* 06 发色 */}
+                <AccordionSection
+                  index="06"
                   title={T('发色', 'Hair Color')}
-                  hint={hairId === 'none' ? T('先选择发型', 'Pick a hairstyle first') : T(activeHairColor.nameZh, activeHairColor.nameEn)}
-                  onActivate={() => setFocusKey('head')}
+                  summary={hairId === 'none' ? T('先选发型', 'Pick hair first') : T(activeHairColor.nameZh, activeHairColor.nameEn)}
+                  isOpen={openSection === 'haircolor'}
+                  onToggle={() => toggleSection('haircolor')}
                 >
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-                    <p className="mb-4 text-[11px] leading-relaxed text-white/35">
-                      {T('头发颜色独立于面具与机身，自然色与潮流色随心切换。',
-                        'Hair color is independent from mask and body — switch freely between natural and statement shades.')}
-                    </p>
-                    <div className="flex flex-wrap gap-4">
-                      {HAIR_COLORS.map((c) => (
-                        <button key={c.id} onClick={() => setHairColorId(c.id)} title={T(c.nameZh, c.nameEn)} aria-label={T(c.nameZh, c.nameEn)} className="group flex flex-col items-center gap-2">
-                          <span
-                            className={`relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                              hairColorId === c.id
-                                ? 'scale-110 border-electric-400 shadow-[0_0_22px_rgba(45,226,255,0.4)]'
-                                : 'border-white/15 group-hover:scale-105 group-hover:border-white/40'
-                            }`}
-                            style={{ backgroundColor: c.hex }}
-                          >
-                            {hairColorId === c.id && (
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={c.id === 'platinum' || c.id === 'blonde' ? '#0A0A0B' : '#fff'} strokeWidth="2.6">
-                                <path d="M5 12l4 4L19 6" />
-                              </svg>
-                            )}
-                          </span>
-                          <span className={`text-[11px] transition-colors duration-300 ${hairColorId === c.id ? 'text-electric-300' : 'text-white/35 group-hover:text-white/55'}`}>
-                            {T(c.nameZh, c.nameEn)}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                  <p className="mb-4 text-[11px] leading-relaxed text-white/35">
+                    {T('头发颜色独立于面部与机身，自然色与潮流色随心切换。',
+                      'Hair color is independent from face and body — switch freely between natural and statement shades.')}
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    {HAIR_COLORS.map((c) => (
+                      <Swatch
+                        key={c.id}
+                        active={hairColorId === c.id}
+                        hex={c.hex}
+                        label={T(c.nameZh, c.nameEn)}
+                        darkCheck={['platinum', 'blonde'].includes(c.id)}
+                        onClick={() => { setHairColorId(c.id); openNext('haircolor') }}
+                      />
+                    ))}
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                <OptionGroup index="08" title={T('配件', 'Accessories')} hint={T('可多选叠加', 'Mix & match freely')} onActivate={() => setFocusKey('feet')}>
+                {/* 07 配件（可多选，不自动跳转） */}
+                <AccordionSection
+                  index="07"
+                  title={T('配件', 'Accessories')}
+                  summary={accessoryCount > 0 ? `${accessoryCount} ${T('项', 'on')}` : T('无', 'None')}
+                  isOpen={openSection === 'accessories'}
+                  onToggle={() => toggleSection('accessories')}
+                >
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {ACCESSORIES.map((a) => {
                       const Icon = a.id === 'backpack' ? IconBackpack : IconSneaker
@@ -1125,9 +1079,67 @@ export default function RoboFit() {
                       )
                     })}
                   </div>
-                </OptionGroup>
+                </AccordionSection>
 
-                {/* 报价明细：与左侧吸顶总价呼应，展开列出每一项加成 */}
+                {/* 08 DIY 自定义 */}
+                <AccordionSection
+                  index="08"
+                  title={T('DIY 自定义', 'DIY Custom')}
+                  summary={(diyClothing || diySkin || diyHair || diyFace || diyRough != null) ? T('已自定义', 'Customized') : T('自由调', 'Free')}
+                  isOpen={openSection === 'diy'}
+                  onToggle={() => toggleSection('diy')}
+                >
+                  <p className="mb-4 text-[11px] leading-relaxed text-white/35">
+                    {T('不满足于预设？自由取任意颜色并微调质感，实时覆盖到模型上（后选择的生效）。',
+                      'Not satisfied with presets? Pick any color and fine-tune the finish — applied live onto the model (latest pick wins).')}
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { label: T('服装主色', 'Apparel'), value: diyClothing ?? activeColorway.primary, set: setDiyClothing },
+                      { label: T('机身肤色', 'Body skin'), value: diySkin ?? activeSkinColor.hex, set: setDiySkin },
+                      { label: T('发色', 'Hair'), value: diyHair ?? activeHairColor.hex, set: setDiyHair },
+                      { label: T('面部色', 'Face'), value: diyFace ?? (MASK_PRESETS[maskId]?.color ?? '#15171B'), set: setDiyFace }
+                    ].map((item) => (
+                      <label key={item.label} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3">
+                        <span className="text-[13px] text-white/70">{item.label}</span>
+                        <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-white/20" style={{ backgroundColor: item.value }}>
+                          <input
+                            type="color"
+                            value={item.value}
+                            onChange={(e) => item.set(e.target.value)}
+                            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                          />
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4">
+                    <div className="mb-2.5 flex items-baseline justify-between">
+                      <span className="text-[13px] font-medium text-white/70">{T('服装光泽 / 金属度', 'Apparel gloss / metalness')}</span>
+                      <span className="font-mono text-[11px] text-white/35">
+                        {diyRough == null ? T('跟随材质', 'Follows material') : diyRough >= 0.66 ? T('偏光泽', 'Glossy') : diyRough <= 0.33 ? T('偏哑光', 'Matte') : T('自然', 'Natural')}
+                      </span>
+                    </div>
+                    <input
+                      type="range" min="0" max="1" step="0.01"
+                      value={diyRough ?? 0.5}
+                      onChange={(e) => setDiyRough(parseFloat(e.target.value))}
+                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[#2DE2FF]"
+                    />
+                    <div className="mt-1 flex justify-between text-[10px] text-white/30">
+                      <span>{T('哑光', 'Matte')}</span>
+                      <span>{T('镜面金属', 'Mirror metal')}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { setDiyClothing(null); setDiySkin(null); setDiyHair(null); setDiyFace(null); setDiyRough(null) }}
+                    className="mt-4 text-[11px] text-white/40 underline-offset-2 transition-colors hover:text-electric-300 hover:underline"
+                  >
+                    {T('重置 DIY，恢复预设', 'Reset DIY to presets')}
+                  </button>
+                </AccordionSection>
+
+                {/* 报价明细 */}
                 <div className="rounded-2xl border border-white/10 bg-carbon-800/40 p-5">
                   <h3 className="font-display text-xs font-semibold uppercase tracking-widest2 text-white/60">{T('报价明细', 'Price breakdown')}</h3>
                   <div className="mt-3 space-y-1.5 text-sm">
