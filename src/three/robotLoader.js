@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 
 /**
  * 通用 GLB 机器人模型加载器（用于接入 Meshy / 扫描等导出的实体模型）。
@@ -17,6 +18,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
  */
 
 const loader = new GLTFLoader()
+// 套装 GLB 经 gltf-transform 优化（EXT_meshopt_compression + KHR_mesh_quantization），
+// 必须注册 Meshopt 解码器，否则压缩网格无法解析（KHR_mesh_quantization 由 three 原生支持）
+loader.setMeshoptDecoder(MeshoptDecoder)
 
 export function loadRobotModel(url) {
   return new Promise((resolve, reject) => {

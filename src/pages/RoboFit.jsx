@@ -9,11 +9,35 @@ import { useLanguage } from '../context/LanguageContext.jsx'
 // 真人 avatar 模型地址（Ready Player Me 等导出的 .glb）。
 // 留空时回退到内置机器人占位模型；填入后自动加载真人模型用于深度定制。
 const AVATAR_URL = '/models/avatar.glb'
-// 实体机器人模型地址（Meshy 等导出的 .glb，单网格实体）。机器人模式下展示并接受整体配色 / 工艺驱动。
-const ROBOT_MODEL_URL = '/models/robot-optimus.glb'
 // 统一落地高度与目标身高（机器人 / 真人共用，保证双脚落在地面网格、取景一致）
 const FLOOR_Y = -2.0
 const TARGET_HEIGHT = 3.4
+
+// ---- 机甲套装：由 Meshy 生成、本地 gltf-transform 优化后的 5+ 套整身模型，支持一键换装 ----
+// 每套为独立 GLB（单网格实体），切换时整体替换预览主体；颜色 / 材质工艺在套装之上实时叠加。
+const SUITES = [
+  { id: 'optimus', url: '/models/robot-optimus.glb', nameZh: '经典原型', nameEn: 'Classic Prototype', subZh: '均衡仿生 · 全能基准', subEn: 'Balanced humanoid baseline', tone: 'silver' },
+  { id: 'combat', url: '/models/suites/suite-combat.glb', nameZh: '重装战甲', nameEn: 'Heavy Combat', subZh: '厚重装甲 · 力量型机身', subEn: 'Reinforced plating, power frame', tone: 'electric' },
+  { id: 'ceramic', url: '/models/suites/suite-ceramic.glb', nameZh: '陶瓷流线', nameEn: 'Ceramic Aero', subZh: '光洁陶瓷 · 空气动力外形', subEn: 'Glossy ceramic, aero contour', tone: 'cyber' },
+  { id: 'stealth', url: '/models/suites/suite-stealth.glb', nameZh: '碳纤隐袭', nameEn: 'Carbon Stealth', subZh: '碳纤维 · 低可视消光装甲', subEn: 'Carbon-fiber matte stealth shell', tone: 'silver' },
+  { id: 'royal', url: '/models/suites/suite-royal.glb', nameZh: '皇家礼甲', nameEn: 'Royal Ceremonial', subZh: '繁饰镀金 · 典礼骑士造型', subEn: 'Ornate gilded ceremonial knight', tone: 'rose' },
+  { id: 'exo', url: '/models/suites/suite-exo.glb', nameZh: '工业外骨骼', nameEn: 'Industrial Exo', subZh: '机能外骨骼 · 重工质感', subEn: 'Mechanical exo, heavy-industry feel', tone: 'electric' }
+]
+const DEFAULT_SUITE_ID = 'optimus'
+
+// 自动适配：按包围盒缩放到统一身高，双脚落在地面网格上，水平居中（机器人 / 真人 / 套装共用）
+function fitModelToFloor(model) {
+  const box = new THREE.Box3().setFromObject(model)
+  const size = new THREE.Vector3()
+  const center = new THREE.Vector3()
+  box.getSize(size)
+  box.getCenter(center)
+  const scale = size.y > 0 ? TARGET_HEIGHT / size.y : 1
+  model.scale.setScalar(scale)
+  model.position.x = -center.x * scale
+  model.position.z = -center.z * scale
+  model.position.y = FLOOR_Y - box.min.y * scale
+}
 import Reveal from '../components/Reveal.jsx'
 import {
   createRobotGroup,
@@ -328,6 +352,10 @@ export default function RoboFit() {
   // 预览主体模式：'robot' 展示实体机器人模型，'human' 展示真人 avatar
   const [viewMode, setViewMode] = useState('robot')
   const [robotReady, setRobotReady] = useState(false)
+  // 当前穿着的机甲套装（一键换装）：切换时整体替换预览主体模型
+  const [suiteId, setSuiteId] = useState(DEFAULT_SUITE_ID)
+  // 套装换装加载中标记（纯 UI 反馈，useState 管理，无任何持久化存储）
+  const [suiteLoading, setSuiteLoading] = useState(false)
   // 真人 avatar 深度定制状态（仅在加载真人模型成功后启用对应面板）
   const [avatarReady, setAvatarReady] = useState(false)
   const [skinToneId, setSkinToneId] = useState('natural')
@@ -391,33 +419,8 @@ export default function RoboFit() {
     const { group, materials, parts } = createRobotGroup()
     scene.add(group)
 
-    // 自动适配：按包围盒缩放到统一身高，双脚落在地面网格上，水平居中
-    const fitModelToFloor = (model) => {
-      const box = new THREE.Box3().setFromObject(model)
-      const size = new THREE.Vector3()
-      const center = new THREE.Vector3()
-      box.getSize(size)
-      box.getCenter(center)
-      const scale = size.y > 0 ? TARGET_HEIGHT / size.y : 1
-      model.scale.setScalar(scale)
-      model.position.x = -center.x * scale
-      model.position.z = -center.z * scale
-      model.position.y = FLOOR_Y - box.min.y * scale
-    }
-
-    // 实体机器人模型（Meshy 导出）：默认展示主体，隐藏程序化占位机器人
-    if (ROBOT_MODEL_URL) {
-      loadRobotModel(ROBOT_MODEL_URL)
-        .then((handle) => {
-          fitModelToFloor(handle.model)
-          scene.add(handle.model)
-          group.visible = false
-          ring.visible = false
-          if (sceneRef.current) sceneRef.current.robotModel = handle
-          setRobotReady(true)
-        })
-        .catch(() => {})
-    }
+    // 实体机器人套装模型由独立的 suiteId effect 负责加载 / 换装（见下方），
+    // 此处仅初始化场景；首套套装会在场景就绪后由该 effect 加载。
 
     // 真人 avatar：加载后默认隐藏，切到「真人」模式时再显示
     if (AVATAR_URL) {
@@ -486,6 +489,53 @@ export default function RoboFit() {
       sceneRef.current = null
     }
   }, [])
+
+  // ---------------- 机甲套装一键换装：切换 suiteId 时整体替换预览主体模型 ----------------
+  useEffect(() => {
+    const ctx = sceneRef.current
+    if (!ctx) return
+    const suite = SUITES.find((s) => s.id === suiteId)
+    if (!suite) return
+    let cancelled = false
+    setSuiteLoading(true)
+    setRobotReady(false)
+
+    loadRobotModel(suite.url)
+      .then((handle) => {
+        if (cancelled) {
+          handle.dispose?.()
+          return
+        }
+        // 移除并释放上一套，避免显存泄漏
+        const prev = ctx.robotModel
+        if (prev) {
+          ctx.scene.remove(prev.model)
+          prev.dispose?.()
+        }
+        fitModelToFloor(handle.model)
+        handle.model.visible = viewMode === 'robot'
+        ctx.scene.add(handle.model)
+        ctx.group.visible = false
+        ctx.ring.visible = false
+        ctx.robotModel = handle
+        // 立即把当前配色 / 工艺叠加到新套装，避免换装瞬间闪回默认灰
+        const color = COLORS.find((c) => c.id === colorId)
+        const preset = MATERIAL_STYLE_PRESETS[materialId]
+        if (color) handle.setColor(color.hex)
+        if (preset) handle.setFinish({ roughness: preset.roughness, metalness: preset.metalness })
+        setRobotReady(true)
+        setSuiteLoading(false)
+      })
+      .catch(() => {
+        if (!cancelled) setSuiteLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+    // colorId / materialId 故意不入依赖：换装只由 suiteId 触发，配色由独立 effect 持续驱动
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [suiteId])
 
   // ---------------- 服装颜色 + 材质风格：实时映射到 3D 模型材质 ----------------
   useEffect(() => {
@@ -929,6 +979,41 @@ export default function RoboFit() {
                       </button>
                     </OptionGroup>
                   </div>
+                )}
+
+                {viewMode === 'robot' && (
+                  <OptionGroup
+                    index="00"
+                    title={T('机甲套装 · 一键换装', 'Mech Suite · One-tap Swap')}
+                    hint={suiteLoading ? T('换装加载中…', 'Swapping…') : T('5+ 套整身造型可选', '5+ full-body looks')}
+                  >
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {SUITES.map((s) => (
+                        <VisualOptionCard
+                          key={s.id}
+                          active={suiteId === s.id}
+                          onClick={() => setSuiteId(s.id)}
+                          Icon={IconRobotSilhouette}
+                          tone={s.tone}
+                          title={T(s.nameZh, s.nameEn)}
+                          subtitle={T(s.subZh, s.subEn)}
+                          price={
+                            suiteId === s.id
+                              ? suiteLoading
+                                ? T('换装中…', 'Swapping…')
+                                : T('当前穿着', 'Now worn')
+                              : T('点击换装', 'Tap to wear')
+                          }
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-3 text-[11px] leading-relaxed text-white/35">
+                      {T(
+                        '每套为独立整身实体模型，可一键换装；配色与材质工艺会实时叠加到当前套装之上。',
+                        'Each suite is a standalone full-body model — swap in one tap; color and material finish layer onto the worn suite in real time.'
+                      )}
+                    </p>
+                  </OptionGroup>
                 )}
 
                 <OptionGroup index="01" title={T('服装系列', 'Apparel Series')} hint={T('决定搭配基础价格', 'Sets your base price')}>
