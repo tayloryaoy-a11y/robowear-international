@@ -133,10 +133,37 @@ const HAIR_COLORS = [
   { id: 'rose', hex: '#E68FB0', nameZh: '樱粉', nameEn: 'Rose' }
 ]
 
+// ---- RoboSkin · 完全拟真人：合成人类肌肤 + 真人面部的旗舰拟真形态（独立于金属机身漆色）----
+// none = 机器人原貌（金属机身）；其余为可批复覆盖的拟真人肤色，选中后左侧写实大图切换为拟真人渲染
+const ROBO_SKIN_TONES = [
+  { id: 'none', nameZh: '机器人原貌', nameEn: 'Robot (off)', swatch: '#C9CDD4', price: 0 },
+  { id: 'porcelain', nameZh: '瓷白', nameEn: 'Porcelain', swatch: '#F0D7C5', price: 3999 },
+  { id: 'beige', nameZh: '自然米', nameEn: 'Natural Beige', swatch: '#E3C2A2', price: 3999 },
+  { id: 'olive', nameZh: '暖橄榄', nameEn: 'Warm Olive', swatch: '#C99A6E', price: 3999 },
+  { id: 'tan', nameZh: '小麦', nameEn: 'Tan', swatch: '#AE7B4F', price: 3999 },
+  { id: 'ebony', nameZh: '乌檀', nameEn: 'Deep Ebony', swatch: '#6E4A33', price: 3999 }
+]
+
+// ---- 写实大图：每个选配板块聚焦时，左侧主预览切换为对应的写实渲染（轻 3D 角常驻可拖拽）----
+const CFG = '/configurator'
+const clothingSrc = (seriesId, colorwayId) => `${CFG}/clothing/${seriesId}-${colorwayId}.png`
+const roboskinSrc = (tone) => `${CFG}/roboskin/${tone && tone !== 'none' ? tone : 'porcelain'}.png`
+const faceSrc = (maskId) => `${CFG}/faces/${maskId}.png`
+// 发型 none 复用「真人裸头」写实图（拟真人光头基底）
+const hairSrc = (hairId) => (hairId === 'none' ? `${CFG}/faces/realistic.png` : `${CFG}/hairs/${hairId}.png`)
+
+// 全量写实图清单（挂载后预加载，使板块间切换瞬时无白屏）
+const ALL_PREVIEW_IMAGES = [
+  ...SERIES.flatMap((s) => s.colorways.map((c) => clothingSrc(s.id, c.id))),
+  ...ROBO_SKIN_TONES.filter((t) => t.id !== 'none').map((t) => roboskinSrc(t.id)),
+  ...MASKS.map((m) => faceSrc(m.id)),
+  ...HAIRS.map((h) => hairSrc(h.id))
+]
+
 // 手风琴板块顺序与各自聚焦的身体局部
-const SECTION_ORDER = ['series', 'material', 'skin', 'face', 'hair', 'haircolor', 'accessories', 'diy']
+const SECTION_ORDER = ['series', 'material', 'roboskin', 'skin', 'face', 'hair', 'haircolor', 'accessories', 'diy']
 const SECTION_FOCUS = {
-  series: 'torso', material: 'torso', skin: 'torso',
+  series: 'torso', material: 'torso', roboskin: 'full', skin: 'torso',
   face: 'head', hair: 'head', haircolor: 'head',
   accessories: 'feet', diy: 'full'
 }
@@ -268,7 +295,7 @@ function SaveLookModal({ look, onClose, T }) {
   const shareText = [
     `RoboFit™ ${T('搭配方案', 'Look')}`,
     `${T('服装', 'Apparel')}: ${T(look.series.nameZh, look.series.nameEn)} · ${T(look.colorway.nameZh, look.colorway.nameEn)}`,
-    `${T('材质', 'Material')}: ${T(look.material.nameZh, look.material.nameEn)} · ${T('机身肤色', 'Body skin')}: ${T(look.skin.nameZh, look.skin.nameEn)}`,
+    `${T('材质', 'Material')}: ${T(look.material.nameZh, look.material.nameEn)} · RoboSkin: ${T(look.roboSkin.nameZh, look.roboSkin.nameEn)} · ${T('机身肤色', 'Body skin')}: ${T(look.skin.nameZh, look.skin.nameEn)}`,
     `${T('面部', 'Face')}: ${T(look.mask.nameZh, look.mask.nameEn)} · ${T('发型', 'Hair')}: ${T(look.hair.nameZh, look.hair.nameEn)} · ${T('发色', 'Hair color')}: ${T(look.hairColor.nameZh, look.hairColor.nameEn)}`,
     `${T('预估总价', 'Estimated total')}: ${formatPrice(look.total)}`
   ].join('\n')
@@ -316,6 +343,7 @@ function SaveLookModal({ look, onClose, T }) {
             }
           />
           <Row label={T('材质工艺', 'Material finish')} value={T(look.material.nameZh, look.material.nameEn)} />
+          <Row label={T('RoboSkin · 拟真人', 'RoboSkin · Lifelike')} value={T(look.roboSkin.nameZh, look.roboSkin.nameEn)} />
           <Row label={T('机身肤色', 'Body skin')} value={T(look.skin.nameZh, look.skin.nameEn)} />
           <Row label={T('面部', 'Face')} value={T(look.mask.nameZh, look.mask.nameEn)} />
           <Row label={T('发型', 'Hair')} value={`${T(look.hair.nameZh, look.hair.nameEn)} · ${T(look.hairColor.nameZh, look.hairColor.nameEn)}`} />
@@ -367,6 +395,8 @@ export default function RoboFit() {
   const [colorwayId, setColorwayId] = useState('electric')
   const [materialId, setMaterialId] = useState('smooth')
   const [skinColorId, setSkinColorId] = useState('titanium')
+  // RoboSkin · 完全拟真人：none = 机器人原貌；其余覆盖批复后左侧大图切换为拟真人渲染
+  const [roboSkinId, setRoboSkinId] = useState('none')
   const [maskId, setMaskId] = useState('tech-minimal')
   const [hairId, setHairId] = useState('short')
   const [hairColorId, setHairColorId] = useState('black')
@@ -389,6 +419,29 @@ export default function RoboFit() {
 
   const activeSeries = SERIES.find((s) => s.id === seriesId) ?? SERIES[0]
   const activeColorway = activeSeries.colorways.find((c) => c.id === colorwayId) ?? activeSeries.colorways[0]
+
+  // ---- 写实大图主预览：依据当前展开板块切换聚焦的写实渲染 ----
+  const previewSrc = useMemo(() => {
+    switch (openSection) {
+      case 'roboskin':
+        return roboskinSrc(roboSkinId)
+      case 'face':
+        return faceSrc(maskId)
+      case 'hair':
+      case 'haircolor':
+        return hairSrc(hairId)
+      default:
+        return clothingSrc(seriesId, colorwayId)
+    }
+  }, [openSection, roboSkinId, maskId, hairId, seriesId, colorwayId])
+
+  // 挂载后预加载全部写实图，板块切换瞬时无白屏
+  useEffect(() => {
+    ALL_PREVIEW_IMAGES.forEach((src) => {
+      const img = new Image()
+      img.src = src
+    })
+  }, [])
 
   // ---------------- Three.js 场景初始化（仅挂载时执行一次） ----------------
   useEffect(() => {
@@ -636,10 +689,12 @@ export default function RoboFit() {
     const material = MATERIAL_STYLES.find((m) => m.id === materialId)
     const mask = MASKS.find((m) => m.id === maskId)
     const hair = HAIRS.find((h) => h.id === hairId)
+    const roboSkin = ROBO_SKIN_TONES.find((t) => t.id === roboSkinId)
 
     const items = [
       { key: 'series', labelZh: `服装系列 · ${series.nameZh}`, labelEn: `Apparel · ${series.nameEn}`, price: series.price },
       { key: 'material', labelZh: `${material.nameZh}工艺加成`, labelEn: `${material.nameEn} finish`, price: material.addon },
+      { key: 'roboskin', labelZh: `RoboSkin 拟真人 · ${roboSkin.nameZh}`, labelEn: `RoboSkin · ${roboSkin.nameEn}`, price: roboSkin.price },
       { key: 'mask', labelZh: `面部 · ${mask.nameZh}`, labelEn: `Face · ${mask.nameEn}`, price: mask.price },
       { key: 'hair', labelZh: `发型 · ${hair.nameZh}`, labelEn: `Hair · ${hair.nameEn}`, price: hair.price }
     ]
@@ -652,9 +707,10 @@ export default function RoboFit() {
     const visibleItems = items.filter((item) => item.price > 0 || item.key === 'series')
     const total = items.reduce((sum, item) => sum + item.price, 0)
     return { items: visibleItems, total }
-  }, [seriesId, materialId, maskId, hairId, accessoryState])
+  }, [seriesId, materialId, roboSkinId, maskId, hairId, accessoryState])
 
   const activeSkinColor = ROBOT_SKINS.find((s) => s.id === skinColorId) ?? ROBOT_SKINS[0]
+  const activeRoboSkin = ROBO_SKIN_TONES.find((t) => t.id === roboSkinId) ?? ROBO_SKIN_TONES[0]
   const activeHairColor = HAIR_COLORS.find((c) => c.id === hairColorId) ?? HAIR_COLORS[0]
   const activeMask = MASKS.find((m) => m.id === maskId) ?? MASKS[0]
   const activeHair = HAIRS.find((h) => h.id === hairId) ?? HAIRS[0]
@@ -673,6 +729,7 @@ export default function RoboFit() {
       series: activeSeries,
       colorway: activeColorway,
       material: MATERIAL_STYLES.find((m) => m.id === materialId),
+      roboSkin: activeRoboSkin,
       skin: activeSkinColor,
       mask: MASKS.find((m) => m.id === maskId),
       hair: HAIRS.find((h) => h.id === hairId),
@@ -806,11 +863,31 @@ export default function RoboFit() {
             <div className="lg:sticky lg:top-24 lg:self-start">
               <Reveal direction="left">
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-carbon-800/70 to-carbon-900 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
-                  <div ref={mountRef} className="h-[420px] w-full sm:h-[480px] lg:h-[560px] xl:h-[600px]" />
+                  <style>{`@keyframes rwFade{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:scale(1)}}`}</style>
+
+                  {/* 写实大图主预览：随当前展开板块切换聚焦渲染（带淡入过渡） */}
+                  <div className="relative h-[420px] w-full sm:h-[480px] lg:h-[560px] xl:h-[600px]">
+                    <img
+                      key={previewSrc}
+                      src={previewSrc}
+                      alt={T('写实预览', 'Photoreal preview')}
+                      className="absolute inset-0 h-full w-full object-contain"
+                      style={{ animation: 'rwFade 0.45s ease both' }}
+                    />
+
+                    {/* 轻 3D 角：常驻可拖拽的实时模型缩览 */}
+                    <div className="absolute bottom-4 right-4 z-10 w-[38%] max-w-[230px] overflow-hidden rounded-2xl border border-electric-400/30 bg-carbon-900/70 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-md">
+                      <div ref={mountRef} className="pointer-events-auto h-[150px] w-full cursor-grab active:cursor-grabbing" />
+                      <div className="pointer-events-none absolute left-0 top-0 flex items-center gap-1.5 rounded-br-xl bg-carbon-900/70 px-2.5 py-1 text-[10px] font-medium text-electric-200 backdrop-blur-md">
+                        <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
+                        {T('3D 实时 · 可拖拽', '3D live · drag me')}
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="pointer-events-none absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/12 bg-carbon-900/60 px-3 py-1.5 text-[11px] text-white/55 backdrop-blur-md">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2DE2FF" strokeWidth="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z" /><path d="M3 12h18M12 3a14 14 0 010 18 14 14 0 010-18z" /></svg>
-                    {T('拖拽旋转视角 · 滚轮缩放距离', 'Drag to orbit · Scroll to zoom')}
+                    {T('写实大图 · 一键换装', 'Photoreal preview · instant swap')}
                   </div>
 
                   <div
@@ -819,11 +896,11 @@ export default function RoboFit() {
                     }`}
                   >
                     <span className={`h-1.5 w-1.5 rounded-full ${isRendering ? 'bg-electric-400 animate-pulseGlow' : 'bg-white/30'}`} />
-                    {isRendering ? T('实时渲染中…', 'Rendering live…') : T('标准版 Optimus · 逐部位实时定制', 'Standard Optimus · per-part live')}
+                    {isRendering ? T('实时渲染中…', 'Rendering live…') : T('标准版 Optimus · 拟真渲染', 'Standard Optimus · photoreal')}
                   </div>
 
                   <div className="pointer-events-none absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-carbon-900/55 px-4 py-3 text-[11px] text-white/45 backdrop-blur-md">
-                    <span>{T('服装 / 机身肤色 / 头发 / 面部均为独立部件，可实时穿戴换色；点不同选配板块时镜头自动聚焦放大对应局部', 'Apparel, body skin, hair and face are independent parts you can dress and recolor live; the camera auto-zooms to the relevant region as you switch panels')}</span>
+                    <span>{T('左侧为写实大图主预览，随选配板块自动切换对应渲染；右下角 3D 缩览可随时拖拽旋转查看真实比例', 'The big image is the photoreal preview that swaps with each panel; the 3D inset bottom-right can be dragged to orbit and check real proportions')}</span>
                     <span className="inline-flex items-center gap-1.5 text-electric-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
                       Three.js · WebGL
@@ -944,9 +1021,41 @@ export default function RoboFit() {
                   </div>
                 </AccordionSection>
 
-                {/* 03 机身肤色 */}
+                {/* 03 RoboSkin · 完全拟真人 */}
                 <AccordionSection
                   index="03"
+                  title={T('RoboSkin · 拟真人', 'RoboSkin · Lifelike')}
+                  summary={T(activeRoboSkin.nameZh, activeRoboSkin.nameEn)}
+                  isOpen={openSection === 'roboskin'}
+                  onToggle={() => toggleSection('roboskin')}
+                >
+                  <p className="mb-4 text-[11px] leading-relaxed text-white/35">
+                    {T('旗舰级覆盖批复：合成人类肌肤包覆全身，连面部也变为真人面孔 — 完全拟真人。选「机器人原貌」则保留金属机身。',
+                      'Flagship dermal overlay: synthetic human skin wraps the whole body and even the face becomes a real human face — fully lifelike. Choose “Robot (off)” to keep the metallic chassis.')}
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    {ROBO_SKIN_TONES.map((t) => (
+                      <Swatch
+                        key={t.id}
+                        active={roboSkinId === t.id}
+                        hex={t.swatch}
+                        label={T(t.nameZh, t.nameEn)}
+                        darkCheck={['porcelain', 'beige'].includes(t.id)}
+                        onClick={() => { setRoboSkinId(t.id); openNext('roboskin') }}
+                      />
+                    ))}
+                  </div>
+                  {roboSkinId !== 'none' && (
+                    <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-electric-400/30 bg-electric-500/[0.07] px-3.5 py-1.5 font-mono text-[11px] text-electric-300">
+                      <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
+                      {T('拟真人覆盖', 'Lifelike overlay')} · +{formatPrice(activeRoboSkin.price)}
+                    </p>
+                  )}
+                </AccordionSection>
+
+                {/* 04 机身肤色 */}
+                <AccordionSection
+                  index="04"
                   title={T('机身肤色', 'Body Skin')}
                   summary={T(activeSkinColor.nameZh, activeSkinColor.nameEn)}
                   isOpen={openSection === 'skin'}
@@ -970,9 +1079,9 @@ export default function RoboFit() {
                   </div>
                 </AccordionSection>
 
-                {/* 04 面部 */}
+                {/* 05 面部 */}
                 <AccordionSection
-                  index="04"
+                  index="05"
                   title={T('面部', 'Face')}
                   summary={T(activeMask.nameZh, activeMask.nameEn)}
                   isOpen={openSection === 'face'}
@@ -993,9 +1102,9 @@ export default function RoboFit() {
                   </div>
                 </AccordionSection>
 
-                {/* 05 发型 */}
+                {/* 06 发型 */}
                 <AccordionSection
-                  index="05"
+                  index="06"
                   title={T('发型', 'Hair')}
                   summary={T(activeHair.nameZh, activeHair.nameEn)}
                   isOpen={openSection === 'hair'}
@@ -1016,9 +1125,9 @@ export default function RoboFit() {
                   </div>
                 </AccordionSection>
 
-                {/* 06 发色 */}
+                {/* 07 发色 */}
                 <AccordionSection
-                  index="06"
+                  index="07"
                   title={T('发色', 'Hair Color')}
                   summary={hairId === 'none' ? T('先选发型', 'Pick hair first') : T(activeHairColor.nameZh, activeHairColor.nameEn)}
                   isOpen={openSection === 'haircolor'}
@@ -1042,9 +1151,9 @@ export default function RoboFit() {
                   </div>
                 </AccordionSection>
 
-                {/* 07 配件（可多选，不自动跳转） */}
+                {/* 08 配件（可多选，不自动跳转） */}
                 <AccordionSection
-                  index="07"
+                  index="08"
                   title={T('配件', 'Accessories')}
                   summary={accessoryCount > 0 ? `${accessoryCount} ${T('项', 'on')}` : T('无', 'None')}
                   isOpen={openSection === 'accessories'}
@@ -1081,9 +1190,9 @@ export default function RoboFit() {
                   </div>
                 </AccordionSection>
 
-                {/* 08 DIY 自定义 */}
+                {/* 09 DIY 自定义 */}
                 <AccordionSection
-                  index="08"
+                  index="09"
                   title={T('DIY 自定义', 'DIY Custom')}
                   summary={(diyClothing || diySkin || diyHair || diyFace || diyRough != null) ? T('已自定义', 'Customized') : T('自由调', 'Free')}
                   isOpen={openSection === 'diy'}
