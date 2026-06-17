@@ -202,7 +202,7 @@ export default function Home() {
                     '身着高定白色风衣套装的人形机器人，冷调影棚灯光，全身站姿',
                     'Humanoid robot in a haute-couture white trench-coat ensemble, cool studio lighting, full-body stance'
                   )}
-                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full object-cover object-[center_18%]"
+                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full object-cover object-[81%_50%]"
                 />
               </div>
             </div>

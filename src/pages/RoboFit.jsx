@@ -10,6 +10,7 @@ import {
   MATERIAL_STYLE_PRESETS,
   MASK_PRESETS
 } from '../three/robotBuilder.js'
+import { loadRobotModel } from '../three/robotLoader.js'
 import {
   IconApparelTag,
   IconMaskFace,
@@ -488,9 +489,33 @@ export default function RoboFit() {
     ring.position.y = -1.998
     scene.add(ring)
 
-    // 标准版 Optimus（分体可拆装人形：服装/机身/头发/面部均为独立部件）
-    const { group, materials, parts } = createRobotGroup()
+    // 标准版 Optimus —— 与 optimus-viewer 同源的 GLB 实体模型（异步加载后注入 group）
+    const group = new THREE.Group()
     scene.add(group)
+    // GLB 为整体实体网格，不再具备分体材质/部件句柄；下方各材质 useEffect 已做空值保护
+    const materials = null
+    const parts = null
+    let robotDisposed = false
+    loadRobotModel('/models/robot-optimus.glb')
+      .then((handle) => {
+        if (robotDisposed) { handle.dispose(); return }
+        const model = handle.model
+        // 缩放到与原程序化机器人相近的高度（≈3.4 单位），保持镜头/聚焦参数复用
+        const pre = new THREE.Box3().setFromObject(model)
+        const preSize = new THREE.Vector3()
+        pre.getSize(preSize)
+        model.scale.setScalar(3.4 / (preSize.y || 1))
+        // 缩放后居中（X/Z）并把脚底落在 group 原点（group 整体在动画中悬浮于 y≈-2）
+        const fit = new THREE.Box3().setFromObject(model)
+        const c = new THREE.Vector3()
+        fit.getCenter(c)
+        model.position.x -= c.x
+        model.position.z -= c.z
+        model.position.y -= fit.min.y
+        group.add(model)
+        if (sceneRef.current) sceneRef.current.robotHandle = handle
+      })
+      .catch((err) => console.error('[RoboFit] Optimus GLB 加载失败', err))
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
@@ -540,6 +565,8 @@ export default function RoboFit() {
     resizeObserver.observe(mount)
 
     return () => {
+      robotDisposed = true
+      sceneRef.current?.robotHandle?.dispose()
       cancelAnimationFrame(frameId)
       resizeObserver.disconnect()
       controls.dispose()
@@ -573,7 +600,7 @@ export default function RoboFit() {
   // ---------------- 服装配色：系列配色方案实时映射到服装主色 + 撞色点缀 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.materials) return
     const cw = activeColorway
     if (!cw) return
     ctx.materials.clothingMaterial.color.set(cw.primary)
@@ -583,7 +610,7 @@ export default function RoboFit() {
   // ---------------- 材质风格：粗糙度 / 金属度实时驱动服装表面工艺 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.materials) return
     const preset = MATERIAL_STYLE_PRESETS[materialId]
     if (!preset) return
     ctx.materials.clothingMaterial.roughness = preset.roughness
@@ -593,7 +620,7 @@ export default function RoboFit() {
   // ---------------- 机身肤色：裸露机身（手/前臂/小腿/颈部）漆色独立驱动 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.materials) return
     const skin = ROBOT_SKINS.find((s) => s.id === skinColorId)
     if (skin) ctx.materials.chassisMaterial.color.set(skin.hex)
   }, [skinColorId])
@@ -601,7 +628,7 @@ export default function RoboFit() {
   // ---------------- 面部：实时切换可见性与外观 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.parts || !ctx?.materials) return
     const preset = MASK_PRESETS[maskId]
     ctx.parts.mask.visible = preset.visible
     if (preset.visible) {
@@ -616,7 +643,7 @@ export default function RoboFit() {
   // ---------------- 发型：清空旧几何并按样式重建 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.parts || !ctx?.materials) return
     const { hairGroup } = ctx.parts
     while (hairGroup.children.length) {
       const child = hairGroup.children.pop()
@@ -628,7 +655,7 @@ export default function RoboFit() {
   // ---------------- 发色：头发颜色独立驱动 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.materials) return
     const hc = HAIR_COLORS.find((c) => c.id === hairColorId)
     if (hc) ctx.materials.hairMaterial.color.set(hc.hex)
   }, [hairColorId, hairId])
@@ -636,7 +663,7 @@ export default function RoboFit() {
   // ---------------- 配件：背包可见性 + 鞋履材质替换 ----------------
   useEffect(() => {
     const ctx = sceneRef.current
-    if (!ctx) return
+    if (!ctx?.parts || !ctx?.materials) return
     ctx.parts.backpack.visible = accessoryState.backpack
     const footMaterial = accessoryState.shoes ? ctx.materials.shoesMaterial : ctx.materials.chassisMaterial
     ctx.parts.footL.material = footMaterial
