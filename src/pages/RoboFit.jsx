@@ -744,12 +744,8 @@ export default function RoboFit() {
   const activeMaterial = MATERIAL_STYLES.find((m) => m.id === materialId) ?? MATERIAL_STYLES[0]
   const accessoryCount = ACCESSORIES.filter((a) => accessoryState[a.id]).length
 
-  // 手风琴：切换展开 / 选完自动折叠并展开下一项
+  // 手风琴：仅在点击板块标题时切换展开/折叠；选择具体选项不自动折叠、不跳转
   const toggleSection = (id) => setOpenSection((prev) => (prev === id ? null : id))
-  const openNext = (id) => {
-    const idx = SECTION_ORDER.indexOf(id)
-    setOpenSection(SECTION_ORDER[idx + 1] ?? null)
-  }
 
   const handleSaveLook = () => {
     setSavedLook({
@@ -988,7 +984,7 @@ export default function RoboFit() {
                       {activeSeries.colorways.map((c) => (
                         <button
                           key={c.id}
-                          onClick={() => { setColorwayId(c.id); openNext('series') }}
+                          onClick={() => setColorwayId(c.id)}
                           title={T(c.nameZh, c.nameEn)}
                           aria-label={T(c.nameZh, c.nameEn)}
                           className="group flex flex-col items-center gap-2"
@@ -1024,7 +1020,7 @@ export default function RoboFit() {
                       return (
                         <button
                           key={m.id}
-                          onClick={() => { setMaterialId(m.id); openNext('material') }}
+                          onClick={() => setMaterialId(m.id)}
                           className={`group relative overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ${
                             isActive
                               ? 'border-electric-400/70 bg-electric-500/[0.08] shadow-[0_0_24px_-6px_rgba(45,226,255,0.32)]'
@@ -1068,7 +1064,7 @@ export default function RoboFit() {
                         hex={t.swatch}
                         label={T(t.nameZh, t.nameEn)}
                         darkCheck={['porcelain', 'beige'].includes(t.id)}
-                        onClick={() => { setRoboSkinId(t.id); openNext('roboskin') }}
+                        onClick={() => setRoboSkinId(t.id)}
                       />
                     ))}
                   </div>
@@ -1100,7 +1096,7 @@ export default function RoboFit() {
                         hex={s.hex}
                         label={T(s.nameZh, s.nameEn)}
                         darkCheck={['platinum', 'titanium', 'champagne'].includes(s.id)}
-                        onClick={() => { setSkinColorId(s.id); openNext('skin') }}
+                        onClick={() => setSkinColorId(s.id)}
                       />
                     ))}
                   </div>
@@ -1119,7 +1115,7 @@ export default function RoboFit() {
                       <VisualOptionCard
                         key={m.id}
                         active={maskId === m.id}
-                        onClick={() => { setMaskId(m.id); openNext('face') }}
+                        onClick={() => setMaskId(m.id)}
                         Icon={m.id === 'none' ? IconSwatchOff : IconMaskFace}
                         tone={m.tone}
                         title={T(m.nameZh, m.nameEn)}
@@ -1142,7 +1138,7 @@ export default function RoboFit() {
                       <VisualOptionCard
                         key={h.id}
                         active={hairId === h.id}
-                        onClick={() => { setHairId(h.id); openNext('hair') }}
+                        onClick={() => setHairId(h.id)}
                         Icon={h.id === 'none' ? IconSwatchOff : IconHairWisp}
                         tone={h.tone}
                         title={T(h.nameZh, h.nameEn)}
@@ -1172,7 +1168,7 @@ export default function RoboFit() {
                         hex={c.hex}
                         label={T(c.nameZh, c.nameEn)}
                         darkCheck={['platinum', 'blonde'].includes(c.id)}
-                        onClick={() => { setHairColorId(c.id); openNext('haircolor') }}
+                        onClick={() => setHairColorId(c.id)}
                       />
                     ))}
                   </div>
