@@ -238,8 +238,9 @@ export default function Home() {
                 source: 'Morgan Stanley'
               },
               {
-                value: 1250,
-                suffix: T(' 万台', ' 万 units'),
+                value: 1.5,
+                suffix: T(' 亿台', 'B units'),
+                decimals: 1,
                 labelZh: '2035 年人形机器人预估保有量',
                 labelEn: 'Est. Humanoid Robots in Service by 2035',
                 source: T('行业测算', 'Industry Estimate')
