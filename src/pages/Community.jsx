@@ -7,6 +7,9 @@ const projects = [
   {
     id: 'neon-samurai',
     gradient: 'from-electric-500/30 via-carbon-800 to-cyber-500/30',
+    image: '/images/robowear/community/neon-samurai.webp',
+    imageAltZh: '仿真人面部模特身穿霓虹武士外骨骼涂装',
+    imageAltEn: 'Lifelike humanoid model wearing the Neon Samurai exoskeleton skin',
     titleZh: '霓虹武士 · 外骨骼涂装',
     titleEn: 'Neon Samurai · Exo Skin',
     designer: 'KENJI.studio',
@@ -19,6 +22,9 @@ const projects = [
   {
     id: 'porcelain',
     gradient: 'from-pink-400/25 via-carbon-800 to-electric-500/25',
+    image: '/images/robowear/community/porcelain.webp',
+    imageAltZh: '仿真人面部模特展示青花瓷东方配件系列',
+    imageAltEn: 'Lifelike humanoid model presenting the blue-and-white porcelain accessory series',
     titleZh: '青花瓷 · 东方面具系列',
     titleEn: 'Porcelain · Oriental Mask Set',
     designer: '李未央 Studio',
@@ -31,6 +37,9 @@ const projects = [
   {
     id: 'street-mecha',
     gradient: 'from-cyber-500/30 via-carbon-800 to-pink-400/20',
+    image: '/images/robowear/community/street-mecha.webp',
+    imageAltZh: '仿真人面部模特身穿街头机甲联名卫衣',
+    imageAltEn: 'Lifelike humanoid model wearing the Street Mecha collaboration hoodie',
     titleZh: '街头机甲 · 联名卫衣',
     titleEn: 'Street Mecha · Collab Hoodie',
     designer: 'WAVE Collective',
@@ -43,6 +52,9 @@ const projects = [
   {
     id: 'aurora-hair',
     gradient: 'from-electric-500/25 via-carbon-800 to-cyber-500/25',
+    image: '/images/robowear/community/aurora-hair.webp',
+    imageAltZh: '仿真人面部模特展示极光渐变假发造型',
+    imageAltEn: 'Lifelike humanoid model presenting the Aurora gradient hair style',
     titleZh: '极光 · 渐变假发造型',
     titleEn: 'Aurora · Gradient Hair',
     designer: 'Mika Hairlab',
@@ -55,6 +67,9 @@ const projects = [
   {
     id: 'carbon-knight',
     gradient: 'from-white/10 via-carbon-800 to-electric-500/20',
+    image: '/images/robowear/community/carbon-knight.webp',
+    imageAltZh: '仿真人面部模特身穿碳纤骑士哑光机身',
+    imageAltEn: 'Lifelike humanoid model wearing the Carbon Knight matte body',
     titleZh: '碳纤骑士 · 哑光机身',
     titleEn: 'Carbon Knight · Matte Body',
     designer: 'NOIR works',
@@ -67,6 +82,9 @@ const projects = [
   {
     id: 'festival',
     gradient: 'from-pink-400/30 via-carbon-800 to-cyber-500/25',
+    image: '/images/robowear/community/cyber-festival.webp',
+    imageAltZh: '仿真人面部模特展示赛博庙会限定配件包',
+    imageAltEn: 'Lifelike humanoid model presenting the Cyber Festival accessory pack',
     titleZh: '赛博庙会 · 限定配件包',
     titleEn: 'Cyber Festival · Accessory Pack',
     designer: '陈陈 Atelier',
@@ -193,9 +211,17 @@ export default function Community() {
             {projects.map((p, idx) => (
               <Reveal key={p.id} delay={(idx % 3) * 90}>
                 <div className="hover-lift group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-carbon-800/40">
-                  {/* 作品缩略图（渐变占位） */}
+                  {/* 作品缩略图 */}
                   <div className={`relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br ${p.gradient}`}>
-                    <div className="absolute inset-0 bg-tech-grid opacity-20" />
+                    <img
+                      src={p.image}
+                      alt={T(p.imageAltZh, p.imageAltEn)}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/45 via-transparent to-carbon-900/10" />
+                    <div className="absolute inset-0 bg-tech-grid opacity-10 mix-blend-screen" />
                     <div className="absolute left-3 top-3 rounded-full border border-white/15 bg-carbon-900/60 px-2.5 py-1 text-[11px] font-semibold text-white/70 backdrop-blur">
                       {T(p.categoryZh, p.categoryEn)}
                     </div>
