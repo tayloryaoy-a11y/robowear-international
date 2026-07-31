@@ -41,6 +41,16 @@ const OFFICES = [
     addrEn: 'Central Financial District, Hong Kong SAR, China',
     tone: 'rose',
     image: 'office-hongkong.webp'
+  },
+  {
+    cityZh: '北京',
+    cityEn: 'Beijing',
+    roleZh: '产业资源整合中心',
+    roleEn: 'Industry resource integration center',
+    addrZh: '中国北京市',
+    addrEn: 'Beijing, China',
+    tone: 'cyber',
+    image: 'office-beijing.webp'
   }
 ]
 
@@ -363,19 +373,19 @@ export default function Contact() {
                 <h3 className="font-display text-xl font-bold text-white sm:text-2xl">{T('全球据点', 'Global Offices')}</h3>
                 <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/45">
                   {T(
-                    '从供应链到品牌，从研发到资本——三座城市，一个统一的全球团队。',
-                    'From supply chain to brand, from R&D to capital — three cities, one unified global team.'
+                    '从供应链到品牌，从研发到资本——四座城市，一个统一的全球团队。',
+                    'From supply chain to brand, from R&D to capital — four cities, one unified global team.'
                   )}
                 </p>
               </div>
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/12 px-4 py-1.5 text-xs font-medium text-white/45">
                 <span className="h-1.5 w-1.5 rounded-full bg-electric-500 animate-pulseGlow" />
-                {T('总部：洛杉矶 ｜ 成都 ｜ 香港', 'HQ: Los Angeles · Chengdu · Hong Kong')}
+                {T('总部：洛杉矶 ｜ 成都 ｜ 香港 ｜ 北京', 'HQ: Los Angeles · Chengdu · Hong Kong · Beijing')}
               </span>
             </div>
           </Reveal>
 
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {OFFICES.map((office, i) => (
               <Reveal key={office.cityZh} delay={i * 90}>
                 <div className={`group h-full overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${officeTone[office.tone]}`}>

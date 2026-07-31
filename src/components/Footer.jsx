@@ -56,7 +56,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* 联系方式 / 三地办公室 */}
+          {/* 联系方式 / 四地办公室 */}
           <div>
             <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">
               {T('全球据点', 'Global Offices')}
@@ -76,6 +76,11 @@ export default function Footer() {
                 <span className="font-medium text-white/70">{T('香港', 'Hong Kong')}</span>
                 <br />
                 {T('国际融资与资本运作', 'International financing & capital ops')}
+              </li>
+              <li>
+                <span className="font-medium text-white/70">{T('北京', 'Beijing')}</span>
+                <br />
+                {T('产业资源整合中心 · 中国北京', 'Industry resource integration center · Beijing, China')}
               </li>
             </ul>
           </div>
@@ -111,7 +116,7 @@ export default function Footer() {
           </p>
           <p className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-electric-500 animate-pulseGlow" />
-            {T('总部：美国 · 洛杉矶 ｜ 中国 · 成都 ｜ 中国 · 香港', 'HQ: Los Angeles, USA · Chengdu, China · Hong Kong, China')}
+            {T('总部：美国 · 洛杉矶 ｜ 中国 · 成都 ｜ 中国 · 香港 ｜ 中国 · 北京', 'HQ: Los Angeles, USA · Chengdu, China · Hong Kong, China · Beijing, China')}
           </p>
         </div>
       </div>
