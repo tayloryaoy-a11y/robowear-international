@@ -129,7 +129,7 @@ const FOOTWEAR = [
   { id: 'outdoor-technical', nameZh: '户外机能鞋', nameEn: 'Outdoor Technical' },
   { id: 'haute-couture', nameZh: '高定造型鞋', nameEn: 'Haute Couture' },
   { id: 'themed-character', nameZh: '主题角色鞋', nameEn: 'Themed Character' },
-  { id: 'custom', nameZh: '自定义鞋履', nameEn: 'Custom Footwear' }
+  { id: 'custom', nameZh: '自定义鞋履', nameEn: 'Custom Footwear', disabled: true }
 ]
 
 const CARRY_SYSTEMS = [
@@ -213,7 +213,7 @@ const ROBO_SKIN_TONES = [
 
 // ---- 写实大图：每个选配板块聚焦时，左侧主预览切换为对应的写实渲染（轻 3D 角常驻可拖拽）----
 const CFG = '/configurator'
-const ASSET_VERSION = '20260801b'
+const ASSET_VERSION = '20260801c'
 const clothingSrc = (seriesId, outfitId) => `${CFG}/clothing/${seriesId}-${outfitId}.webp`
 const roboskinSrc = (tone) => `${CFG}/roboskin/${tone && tone !== 'none' ? tone : 'porcelain'}.png`
 const faceSrc = (maskId) => `${CFG}/personalization/faces/${maskId}.webp?v=${ASSET_VERSION}`
@@ -357,13 +357,17 @@ function Swatch({ active, hex, label, onClick, darkCheck }) {
   )
 }
 
-function ImageChoiceCard({ active, onClick, image, title, multi = false }) {
+function ImageChoiceCard({ active, onClick, image, title, multi = false, disabled = false, status = null }) {
   return (
     <button
-      onClick={onClick}
-      aria-pressed={active}
+      onClick={disabled ? undefined : onClick}
+      aria-pressed={disabled ? undefined : active}
+      aria-disabled={disabled}
+      disabled={disabled}
       className={`group relative overflow-hidden rounded-2xl border text-left transition-all duration-300 ${
-        active
+        disabled
+          ? 'cursor-not-allowed border-amber-300/15 bg-white/[0.015] opacity-70'
+          : active
           ? 'border-electric-400/80 bg-electric-500/[0.08] shadow-[0_0_24px_-7px_rgba(45,226,255,0.55)]'
           : 'border-white/10 bg-white/[0.02] hover:-translate-y-0.5 hover:border-white/30'
       }`}
@@ -373,9 +377,13 @@ function ImageChoiceCard({ active, onClick, image, title, multi = false }) {
       </span>
       <span className="flex min-h-[52px] items-center justify-between gap-2 px-3 py-2.5">
         <span className={`text-[12px] font-semibold leading-tight ${active ? 'text-electric-200' : 'text-white/78'}`}>{title}</span>
-        {multi && <span className="shrink-0 text-[9px] text-white/35">MULTI</span>}
+        {status ? (
+          <span className="shrink-0 rounded-full border border-amber-300/30 bg-amber-300/10 px-2 py-1 text-[9px] font-semibold text-amber-200">{status}</span>
+        ) : multi ? (
+          <span className="shrink-0 text-[9px] text-white/35">MULTI</span>
+        ) : null}
       </span>
-      {active && (
+      {active && !disabled && (
         <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-electric-400 text-carbon-900 shadow-[0_0_16px_rgba(45,226,255,0.55)]">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12l4 4L19 6" /></svg>
         </span>
@@ -638,7 +646,17 @@ function RoboFitConfigurator({
         {primaryMode === 'extensions' && activeSubcategory === 'footwear' && (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-              {FOOTWEAR.map((item) => <ImageChoiceCard key={item.id} active={footwearId === item.id} onClick={() => onFootwearChange(item.id)} image={footwearSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
+              {FOOTWEAR.map((item) => (
+                <ImageChoiceCard
+                  key={item.id}
+                  active={footwearId === item.id}
+                  onClick={() => onFootwearChange(item.id)}
+                  image={footwearSrc(item.id)}
+                  title={T(item.nameZh, item.nameEn)}
+                  disabled={item.disabled}
+                  status={item.disabled ? T('暂未开放', 'Coming soon') : null}
+                />
+              ))}
             </div>
             <p className="text-[11px] text-white/38">{T('鞋履采用无鞋带、一体包覆或磁吸闭合结构，适配机器人足部。', 'All footwear uses laceless shells, integrated wraps, or magnetic closures for robotic feet.')}</p>
           </div>
@@ -1182,6 +1200,7 @@ export default function RoboFit() {
   }
 
   const handleFootwearChange = (id) => {
+    if (FOOTWEAR.find((item) => item.id === id)?.disabled) return
     setFootwearId(id)
     setAccessoryState((prev) => ({ ...prev, shoes: id !== 'none' }))
   }
