@@ -89,25 +89,86 @@ const MATERIAL_STYLES = [
   { id: 'leather', nameZh: '皮革质感', nameEn: 'Leather', subZh: '复合涂层 · 醇厚质地', subEn: 'Layered coating, rich texture', addon: 300, swatch: 'bg-gradient-to-br from-amber-200/70 via-amber-700/50 to-amber-950/60' }
 ]
 
-// 面部样式 ≥5 款（无 / 科技极简 / 超写实 / 动漫 / 护目镜 / 武士）
+// 02 个性化选配：面具类型（采用亲和 Gen-3 仿真人面部基底）
 const MASKS = [
   { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
   { id: 'tech-minimal', nameZh: '科技极简', nameEn: 'Tech-Minimal', price: 299, tone: 'electric' },
-  { id: 'realistic', nameZh: '超写实', nameEn: 'Hyper-Realistic', price: 1500, tone: 'rose' },
-  { id: 'anime', nameZh: '动漫风', nameEn: 'Anime', price: 399, tone: 'cyber' },
-  { id: 'visor', nameZh: '护目镜', nameEn: 'Cyber Visor', price: 459, tone: 'electric' },
-  { id: 'samurai', nameZh: '武士面甲', nameEn: 'Samurai', price: 699, tone: 'rose' }
+  { id: 'geometric-mechanical', nameZh: '几何机械', nameEn: 'Geometric Mech', price: 399, tone: 'cyber' },
+  { id: 'business-human', nameZh: '商务拟人', nameEn: 'Business Human', price: 899, tone: 'electric' },
+  { id: 'warm-companion', nameZh: '温和陪伴', nameEn: 'Warm Companion', price: 899, tone: 'rose' },
+  { id: 'anime-character', nameZh: '动漫角色', nameEn: 'Anime Character', price: 399, tone: 'cyber' },
+  { id: 'brand-character', nameZh: '品牌角色', nameEn: 'Brand Character', price: 699, tone: 'rose' },
+  { id: 'custom-portrait', nameZh: '定制肖像', nameEn: 'Custom Portrait', price: 1500, tone: 'electric' }
 ]
 
-// 发型 ≥5 款（无 / 短 / 长 / 卷 / 波波 / 马尾 / 莫西干）
+const HEADWEAR = [
+  { id: 'none', nameZh: '无', nameEn: 'None' },
+  { id: 'goggles', nameZh: '护目镜', nameEn: 'Goggles' },
+  { id: 'headband', nameZh: '头箍', nameEn: 'Headband' },
+  { id: 'hat', nameZh: '帽饰', nameEn: 'Head Ornament' },
+  { id: 'helmet-shell', nameZh: '头盔外壳', nameEn: 'Helmet Shell' }
+]
+
+// 02 个性化选配：发型
 const HAIRS = [
   { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
   { id: 'short', nameZh: '短发', nameEn: 'Short', price: 99, tone: 'electric' },
-  { id: 'long', nameZh: '长发', nameEn: 'Long', price: 199, tone: 'rose' },
+  { id: 'long-straight', nameZh: '长直发', nameEn: 'Long Straight', price: 199, tone: 'rose' },
   { id: 'curly', nameZh: '卷发', nameEn: 'Curly', price: 249, tone: 'cyber' },
   { id: 'bob', nameZh: '波波头', nameEn: 'Bob', price: 219, tone: 'rose' },
   { id: 'ponytail', nameZh: '马尾', nameEn: 'Ponytail', price: 179, tone: 'electric' },
+  { id: 'slicked-back', nameZh: '背头', nameEn: 'Slicked Back', price: 179, tone: 'silver' },
   { id: 'mohawk', nameZh: '莫西干', nameEn: 'Mohawk', price: 299, tone: 'cyber' }
+]
+
+const FOOTWEAR = [
+  { id: 'none', nameZh: '不佩戴', nameEn: 'None' },
+  { id: 'light-athletic', nameZh: '轻量运动鞋', nameEn: 'Light Athletic' },
+  { id: 'business-formal', nameZh: '商务礼仪鞋', nameEn: 'Business Formal' },
+  { id: 'work-protective', nameZh: '工装防护鞋', nameEn: 'Protective Work' },
+  { id: 'outdoor-technical', nameZh: '户外机能鞋', nameEn: 'Outdoor Technical' },
+  { id: 'haute-couture', nameZh: '高定造型鞋', nameEn: 'Haute Couture' },
+  { id: 'themed-character', nameZh: '主题角色鞋', nameEn: 'Themed Character' },
+  { id: 'custom', nameZh: '自定义鞋履', nameEn: 'Custom Footwear' }
+]
+
+const CARRY_SYSTEMS = [
+  { id: 'none', nameZh: '不佩戴', nameEn: 'None' },
+  { id: 'utility', nameZh: '机能背包', nameEn: 'Utility Module' },
+  { id: 'business', nameZh: '商务背包', nameEn: 'Business Module' },
+  { id: 'display', nameZh: '展示背包', nameEn: 'Display Module' },
+  { id: 'waist', nameZh: '腰包', nameEn: 'Waist Pod' },
+  { id: 'shoulder-mission', nameZh: '单肩任务包', nameEn: 'Mission Pod' },
+  { id: 'tool-module', nameZh: '工具挂包', nameEn: 'Tool Module' },
+  { id: 'themed', nameZh: '主题造型包', nameEn: 'Themed Shell' }
+]
+
+const IDENTITY_MARKS = [
+  { id: 'chest-badge', nameZh: '胸牌', nameEn: 'Chest Badge' },
+  { id: 'nameplate', nameZh: '姓名牌', nameEn: 'Nameplate' },
+  { id: 'role-plate', nameZh: '岗位牌', nameEn: 'Role Plate' },
+  { id: 'company-logo', nameZh: '企业 Logo', nameEn: 'Company Logo' },
+  { id: 'number-id', nameZh: '编号标识', nameEn: 'Number ID' },
+  { id: 'reflective', nameZh: '反光标识', nameEn: 'Reflective Mark' },
+  { id: 'arm-badge', nameZh: '臂章', nameEn: 'Arm Badge' },
+  { id: 'shoulder-rank', nameZh: '肩章', nameEn: 'Shoulder Rank' },
+  { id: 'back-id', nameZh: '背部标识', nameEn: 'Back ID' },
+  { id: 'digital-id', nameZh: '数字身份牌', nameEn: 'Digital ID' }
+]
+
+const APPEARANCE_ACCESSORIES = [
+  { id: 'tie', nameZh: '领带', nameEn: 'Tie' },
+  { id: 'bow-tie', nameZh: '领结', nameEn: 'Bow Tie' },
+  { id: 'scarf', nameZh: '围巾', nameEn: 'Scarf' },
+  { id: 'belt', nameZh: '腰带', nameEn: 'Belt' },
+  { id: 'gloves', nameZh: '手套', nameEn: 'Gloves' },
+  { id: 'wrist-guard', nameZh: '护腕', nameEn: 'Wrist Guard' },
+  { id: 'necklace', nameZh: '项链', nameEn: 'Necklace' },
+  { id: 'smart-band', nameZh: '手环', nameEn: 'Smart Band' },
+  { id: 'brooch', nameZh: '胸针', nameEn: 'Brooch' },
+  { id: 'cape', nameZh: '披肩', nameEn: 'Cape' },
+  { id: 'glasses', nameZh: '眼镜', nameEn: 'Glasses' },
+  { id: 'goggles', nameZh: '护目镜', nameEn: 'Goggles' }
 ]
 
 const ACCESSORIES = [
@@ -154,16 +215,25 @@ const ROBO_SKIN_TONES = [
 const CFG = '/configurator'
 const clothingSrc = (seriesId, outfitId) => `${CFG}/clothing/${seriesId}-${outfitId}.webp`
 const roboskinSrc = (tone) => `${CFG}/roboskin/${tone && tone !== 'none' ? tone : 'porcelain'}.png`
-const faceSrc = (maskId) => `${CFG}/faces/${maskId}.png`
-// 发型 none 复用「真人裸头」写实图（拟真人光头基底）
-const hairSrc = (hairId) => (hairId === 'none' ? `${CFG}/faces/realistic.png` : `${CFG}/hairs/${hairId}.png`)
+const faceSrc = (maskId) => `${CFG}/personalization/faces/${maskId}.webp`
+const headwearSrc = (id) => `${CFG}/personalization/headwear/${id}.webp`
+const hairSrc = (id) => `${CFG}/personalization/hair/${id}.webp`
+const footwearSrc = (id) => `${CFG}/extensions/footwear/${id}.webp`
+const carrySrc = (id) => `${CFG}/extensions/carry/${id}.webp`
+const identitySrc = (id) => `${CFG}/extensions/identity/${id}.webp`
+const appearanceSrc = (id) => `${CFG}/extensions/appearance/${id}.webp`
 
 // 全量写实图清单（挂载后预加载，使板块间切换瞬时无白屏）
 const ALL_PREVIEW_IMAGES = [
   ...SERIES.flatMap((s) => s.outfits.map((outfit) => clothingSrc(s.id, outfit.id))),
   ...ROBO_SKIN_TONES.filter((t) => t.id !== 'none').map((t) => roboskinSrc(t.id)),
   ...MASKS.map((m) => faceSrc(m.id)),
-  ...HAIRS.map((h) => hairSrc(h.id))
+  ...HEADWEAR.map((h) => headwearSrc(h.id)),
+  ...HAIRS.map((h) => hairSrc(h.id)),
+  ...FOOTWEAR.map((item) => footwearSrc(item.id)),
+  ...CARRY_SYSTEMS.map((item) => carrySrc(item.id)),
+  ...IDENTITY_MARKS.map((item) => identitySrc(item.id)),
+  ...APPEARANCE_ACCESSORIES.map((item) => appearanceSrc(item.id))
 ]
 
 // 手风琴板块顺序与各自聚焦的身体局部
@@ -286,6 +356,322 @@ function Swatch({ active, hex, label, onClick, darkCheck }) {
   )
 }
 
+function ImageChoiceCard({ active, onClick, image, title, multi = false }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      className={`group relative overflow-hidden rounded-2xl border text-left transition-all duration-300 ${
+        active
+          ? 'border-electric-400/80 bg-electric-500/[0.08] shadow-[0_0_24px_-7px_rgba(45,226,255,0.55)]'
+          : 'border-white/10 bg-white/[0.02] hover:-translate-y-0.5 hover:border-white/30'
+      }`}
+    >
+      <span className="block aspect-square overflow-hidden bg-black/25">
+        <img src={image} alt={title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]" />
+      </span>
+      <span className="flex min-h-[52px] items-center justify-between gap-2 px-3 py-2.5">
+        <span className={`text-[12px] font-semibold leading-tight ${active ? 'text-electric-200' : 'text-white/78'}`}>{title}</span>
+        {multi && <span className="shrink-0 text-[9px] text-white/35">MULTI</span>}
+      </span>
+      {active && (
+        <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-electric-400 text-carbon-900 shadow-[0_0_16px_rgba(45,226,255,0.55)]">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12l4 4L19 6" /></svg>
+        </span>
+      )}
+    </button>
+  )
+}
+
+function LockedOptionPanel({ T, title, groups }) {
+  return (
+    <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h4 className="font-display text-base font-semibold text-white">{title}</h4>
+          <p className="mt-1 text-xs text-white/40">{T('结构已预留，当前不进入下单选择。', 'The structure is reserved and is not yet available for ordering.')}</p>
+        </div>
+        <span className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[11px] font-semibold text-amber-200">
+          {T('暂未开放', 'Coming soon')}
+        </span>
+      </div>
+      <div className="mt-5 space-y-4">
+        {groups.map((group) => (
+          <div key={group.labelZh} className="border-t border-white/8 pt-4 first:border-0 first:pt-0">
+            <p className="text-xs font-semibold text-electric-300">{T(group.labelZh, group.labelEn)}</p>
+            <p className="mt-2 text-sm leading-7 text-white/55">{T(group.itemsZh, group.itemsEn)}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ThreeLevelConfigurator({
+  T,
+  primaryMode,
+  onPrimaryChange,
+  activeSubcategory,
+  onSubcategoryChange,
+  seriesId,
+  onSeriesChange,
+  outfitId,
+  onOutfitChange,
+  materialId,
+  onMaterialChange,
+  activeSeries,
+  activeOutfit,
+  maskId,
+  onMaskChange,
+  headwearId,
+  onHeadwearChange,
+  hairId,
+  onHairChange,
+  footwearId,
+  onFootwearChange,
+  carryId,
+  onCarryChange,
+  identityIds,
+  onIdentityToggle,
+  appearanceIds,
+  onAppearanceToggle
+}) {
+  const activeMaterial = MATERIAL_STYLES.find((item) => item.id === materialId) ?? MATERIAL_STYLES[0]
+  const activeMask = MASKS.find((item) => item.id === maskId) ?? MASKS[0]
+  const activeHair = HAIRS.find((item) => item.id === hairId) ?? HAIRS[0]
+  const activeFootwear = FOOTWEAR.find((item) => item.id === footwearId) ?? FOOTWEAR[0]
+  const activeCarry = CARRY_SYSTEMS.find((item) => item.id === carryId) ?? CARRY_SYSTEMS[0]
+
+  const primaryOptions = [
+    {
+      id: 'apparel',
+      index: '01',
+      titleZh: '成品服装系列',
+      titleEn: 'Ready-to-Wear',
+      summaryZh: `${activeSeries.nameZh} · ${activeOutfit.nameZh}`,
+      summaryEn: `${activeSeries.nameEn} · ${activeOutfit.nameEn}`
+    },
+    {
+      id: 'personalization',
+      index: '02',
+      titleZh: '个性化选配',
+      titleEn: 'Personalization',
+      summaryZh: `${activeMask.nameZh} · ${activeHair.nameZh}`,
+      summaryEn: `${activeMask.nameEn} · ${activeHair.nameEn}`
+    },
+    {
+      id: 'extensions',
+      index: '03',
+      titleZh: '功能配件与外观拓展',
+      titleEn: 'Function & Appearance',
+      summaryZh: `${activeFootwear.nameZh} · ${activeCarry.nameZh}`,
+      summaryEn: `${activeFootwear.nameEn} · ${activeCarry.nameEn}`
+    }
+  ]
+
+  const secondaryOptions = {
+    apparel: [
+      { id: 'series', nameZh: '服装系列', nameEn: 'Apparel Series' },
+      { id: 'material', nameZh: '材质风格', nameEn: 'Material Style' }
+    ],
+    personalization: [
+      { id: 'face', nameZh: '面具类型', nameEn: 'Face & Mask' },
+      { id: 'headwear', nameZh: '头部装饰', nameEn: 'Head Decoration' },
+      { id: 'hair', nameZh: '发型', nameEn: 'Hair Style' },
+      { id: 'skin-custom', nameZh: '皮肤定制', nameEn: 'Skin Custom' },
+      { id: 'face-custom', nameZh: '面部定制', nameEn: 'Face Custom' },
+      { id: 'hair-custom', nameZh: '头发定制', nameEn: 'Hair Custom' }
+    ],
+    extensions: [
+      { id: 'footwear', nameZh: '鞋履系统', nameEn: 'Footwear' },
+      { id: 'carry', nameZh: '携行系统', nameEn: 'Carrying' },
+      { id: 'identity', nameZh: '身份标识系统', nameEn: 'Identity' },
+      { id: 'appearance', nameZh: '外观装饰配件', nameEn: 'Appearance' }
+    ]
+  }
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[11px] font-semibold uppercase tracking-widest2 text-white/35">{T('一级分类', 'Level 1')}</span>
+          <span className="text-[11px] text-electric-300">{T('选择需求路径', 'Choose a path')}</span>
+        </div>
+        <div className="grid gap-3">
+          {primaryOptions.map((item) => {
+            const active = primaryMode === item.id
+            return (
+              <button
+                key={item.id}
+                onClick={() => onPrimaryChange(item.id)}
+                aria-pressed={active}
+                className={`flex items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all duration-300 ${
+                  active ? 'border-electric-400/65 bg-electric-500/[0.08] shadow-[0_0_28px_-9px_rgba(45,226,255,0.45)]' : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                }`}
+              >
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border font-mono text-xs ${active ? 'border-electric-400/70 text-electric-300' : 'border-white/15 text-white/40'}`}>{item.index}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-base font-semibold text-white">{T(item.titleZh, item.titleEn)}</span>
+                  <span className="mt-1 block truncate text-xs text-white/38">{T(item.summaryZh, item.summaryEn)}</span>
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className={active ? 'text-electric-300' : 'text-white/25'}><path d="M9 6l6 6-6 6" /></svg>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-carbon-800/45 p-4 sm:p-5">
+        <span className="text-[11px] font-semibold uppercase tracking-widest2 text-white/35">{T('二级分类', 'Level 2')}</span>
+        <div className={`mt-3 grid gap-2 ${primaryMode === 'personalization' ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-2'}`}>
+          {secondaryOptions[primaryMode].map((item) => {
+            const active = activeSubcategory === item.id
+            const locked = ['skin-custom', 'face-custom', 'hair-custom'].includes(item.id)
+            return (
+              <button
+                key={item.id}
+                onClick={() => onSubcategoryChange(item.id)}
+                aria-pressed={active}
+                className={`relative rounded-xl border px-3 py-2.5 text-[12px] font-semibold transition-all ${active ? 'border-electric-400/65 bg-electric-500/10 text-electric-200' : 'border-white/10 bg-white/[0.02] text-white/55 hover:border-white/25 hover:text-white/80'}`}
+              >
+                {T(item.nameZh, item.nameEn)}
+                {locked && <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-amber-300" />}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[11px] font-semibold uppercase tracking-widest2 text-white/35">{T('三级选项', 'Level 3')}</span>
+          {['identity', 'appearance'].includes(activeSubcategory) && <span className="text-[11px] text-electric-300">{T('支持多选', 'Multi-select')}</span>}
+        </div>
+
+        {primaryMode === 'apparel' && activeSubcategory === 'series' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {SERIES.map((series) => (
+                <VisualOptionCard
+                  key={series.id}
+                  active={seriesId === series.id}
+                  onClick={() => onSeriesChange(series)}
+                  Icon={IconApparelTag}
+                  tone={series.tone}
+                  title={T(series.nameZh, series.nameEn)}
+                  subtitle={T(series.subZh, series.subEn)}
+                  price={formatPrice(series.price)}
+                  badge={series.badgeZh ? T(series.badgeZh, series.badgeEn) : null}
+                />
+              ))}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-[13px] font-medium text-white/70">{T(`选择${activeSeries.nameZh}套装`, `Choose a ${activeSeries.nameEn} look`)}</span>
+                <span className="font-mono text-[11px] text-electric-300">{T(`${activeSeries.outfits.length} 款`, `${activeSeries.outfits.length} looks`)}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {activeSeries.outfits.map((outfit) => (
+                  <button
+                    key={outfit.id}
+                    onClick={() => onOutfitChange(outfit.id)}
+                    aria-pressed={outfitId === outfit.id}
+                    className={`group relative overflow-hidden rounded-xl border text-left transition-all ${outfitId === outfit.id ? 'border-electric-400/80 bg-electric-500/[0.08]' : 'border-white/10 bg-carbon-900/55 hover:border-white/30'}`}
+                  >
+                    <img src={clothingSrc(activeSeries.id, outfit.id)} alt={T(outfit.nameZh, outfit.nameEn)} loading="lazy" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]" />
+                    <span className="block p-2.5 text-[12px] font-semibold text-white/80">{T(outfit.nameZh, outfit.nameEn)}</span>
+                    {outfitId === outfit.id && <span className="absolute right-2 top-2 h-5 w-5 rounded-full bg-electric-400" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {primaryMode === 'apparel' && activeSubcategory === 'material' && (
+          <div className="grid grid-cols-2 gap-3">
+            {MATERIAL_STYLES.map((material) => (
+              <button key={material.id} onClick={() => onMaterialChange(material.id)} aria-pressed={materialId === material.id} className={`rounded-2xl border p-4 text-left transition-all ${materialId === material.id ? 'border-electric-400/70 bg-electric-500/[0.08]' : 'border-white/10 bg-white/[0.02] hover:border-white/25'}`}>
+                <span className={`block h-14 rounded-xl border border-white/10 ${material.swatch}`} />
+                <span className="mt-3 block text-sm font-semibold text-white/85">{T(material.nameZh, material.nameEn)}</span>
+                <span className="mt-1 block text-xs text-white/40">{T(material.subZh, material.subEn)}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {primaryMode === 'personalization' && activeSubcategory === 'face' && (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+            {MASKS.map((item) => <ImageChoiceCard key={item.id} active={maskId === item.id} onClick={() => onMaskChange(item.id)} image={faceSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
+          </div>
+        )}
+        {primaryMode === 'personalization' && activeSubcategory === 'headwear' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {HEADWEAR.map((item) => <ImageChoiceCard key={item.id} active={headwearId === item.id} onClick={() => onHeadwearChange(item.id)} image={headwearSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
+            </div>
+            <p className="text-[11px] leading-relaxed text-white/38">{T('选择头盔外壳时，系统会自动取消发型，避免结构冲突。', 'Selecting the helmet shell automatically removes hair to prevent a fit conflict.')}</p>
+          </div>
+        )}
+        {primaryMode === 'personalization' && activeSubcategory === 'hair' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              {HAIRS.map((item) => <ImageChoiceCard key={item.id} active={hairId === item.id} onClick={() => onHairChange(item.id)} image={hairSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
+            </div>
+            <p className="text-[11px] leading-relaxed text-white/38">{T('选择任一发型时，若当前佩戴头盔外壳，系统会自动切换为“无头部装饰”。', 'Choosing hair removes the helmet shell automatically when the two conflict.')}</p>
+          </div>
+        )}
+        {primaryMode === 'personalization' && activeSubcategory === 'skin-custom' && (
+          <LockedOptionPanel T={T} title={T('皮肤定制', 'Skin Customization')} groups={[
+            { labelZh: '覆盖范围', labelEn: 'Coverage', itemsZh: '面部局部覆盖；手部覆盖；头颈覆盖；四肢局部覆盖；全身覆盖', itemsEn: 'Partial face; hands; head and neck; partial limbs; full body' },
+            { labelZh: '皮肤颜色', labelEn: 'Skin colors', itemsZh: '瓷白；自然米；暖橄榄；小麦色；深棕；乌檀；幻想色；自定义颜色', itemsEn: 'Porcelain; natural beige; warm olive; wheat; deep brown; ebony; fantasy; custom' },
+            { labelZh: '皮肤纹理', labelEn: 'Skin textures', itemsZh: '光滑；自然肌理；磨砂；仿皮革；未来合成纹理', itemsEn: 'Smooth; natural; frosted; leather-like; future synthetic' }
+          ]} />
+        )}
+        {primaryMode === 'personalization' && activeSubcategory === 'face-custom' && (
+          <LockedOptionPanel T={T} title={T('面部定制', 'Face Customization')} groups={[
+            { labelZh: '基础结构', labelEn: 'Structure', itemsZh: '面部轮廓；眼部样式；眉形；嘴部样式；面部颜色；表面质感', itemsEn: 'Face contour; eye style; brows; mouth; face color; surface finish' },
+            { labelZh: '面部图案', labelEn: 'Face graphics', itemsZh: '雀斑；妆容；纹身；品牌图案；发光纹路；自定义图案', itemsEn: 'Freckles; makeup; tattoo; brand graphic; luminous trace; custom graphic' }
+          ]} />
+        )}
+        {primaryMode === 'personalization' && activeSubcategory === 'hair-custom' && (
+          <LockedOptionPanel T={T} title={T('头发定制', 'Hair Customization')} groups={[
+            { labelZh: '颜色', labelEn: 'Colors', itemsZh: '乌黑；深棕；浅棕；金棕；栗红；铂金；雾紫；天蓝；樱粉', itemsEn: 'Black; dark brown; light brown; golden brown; chestnut; platinum; lavender; azure; rose' },
+            { labelZh: '发质', labelEn: 'Texture', itemsZh: '自然哑光；柔顺光泽；蓬松卷曲；未来纤维；金属丝感', itemsEn: 'Natural matte; smooth gloss; voluminous curl; future fiber; metallic filament' }
+          ]} />
+        )}
+
+        {primaryMode === 'extensions' && activeSubcategory === 'footwear' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              {FOOTWEAR.map((item) => <ImageChoiceCard key={item.id} active={footwearId === item.id} onClick={() => onFootwearChange(item.id)} image={footwearSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
+            </div>
+            <p className="text-[11px] text-white/38">{T('鞋履采用无鞋带、一体包覆或磁吸闭合结构，适配机器人足部。', 'All footwear uses laceless shells, integrated wraps, or magnetic closures for robotic feet.')}</p>
+          </div>
+        )}
+        {primaryMode === 'extensions' && activeSubcategory === 'carry' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              {CARRY_SYSTEMS.map((item) => <ImageChoiceCard key={item.id} active={carryId === item.id} onClick={() => onCarryChange(item.id)} image={carrySrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
+            </div>
+            <p className="text-[11px] text-white/38">{T('携行模块统一采用磁吸背板、快拆导轨或机械连接臂，不沿用人类双肩背带。', 'Carrying modules use magnetic plates, quick-release rails, or articulated mounts instead of human shoulder straps.')}</p>
+          </div>
+        )}
+        {primaryMode === 'extensions' && activeSubcategory === 'identity' && (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+            {IDENTITY_MARKS.map((item) => <ImageChoiceCard key={item.id} active={identityIds.includes(item.id)} onClick={() => onIdentityToggle(item.id)} image={identitySrc(item.id)} title={T(item.nameZh, item.nameEn)} multi />)}
+          </div>
+        )}
+        {primaryMode === 'extensions' && activeSubcategory === 'appearance' && (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+            {APPEARANCE_ACCESSORIES.map((item) => <ImageChoiceCard key={item.id} active={appearanceIds.includes(item.id)} onClick={() => onAppearanceToggle(item.id)} image={appearanceSrc(item.id)} title={T(item.nameZh, item.nameEn)} multi />)}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function Row({ label, value }) {
   return (
     <div className="flex items-center justify-between gap-4 py-1">
@@ -302,7 +688,10 @@ function SaveLookModal({ look, onClose, T }) {
     `RoboFit™ ${T('搭配方案', 'Look')}`,
     `${T('服装', 'Apparel')}: ${T(look.series.nameZh, look.series.nameEn)} · ${T(look.outfit.nameZh, look.outfit.nameEn)}`,
     `${T('材质', 'Material')}: ${T(look.material.nameZh, look.material.nameEn)} · RoboSkin: ${T(look.roboSkin.nameZh, look.roboSkin.nameEn)} · ${T('机身肤色', 'Body skin')}: ${T(look.skin.nameZh, look.skin.nameEn)}`,
-    `${T('面部', 'Face')}: ${T(look.mask.nameZh, look.mask.nameEn)} · ${T('发型', 'Hair')}: ${T(look.hair.nameZh, look.hair.nameEn)} · ${T('发色', 'Hair color')}: ${T(look.hairColor.nameZh, look.hairColor.nameEn)}`,
+    `${T('面部', 'Face')}: ${T(look.mask.nameZh, look.mask.nameEn)} · ${T('头部装饰', 'Head decoration')}: ${T(look.headwear.nameZh, look.headwear.nameEn)} · ${T('发型', 'Hair')}: ${T(look.hair.nameZh, look.hair.nameEn)}`,
+    `${T('鞋履', 'Footwear')}: ${T(look.footwear.nameZh, look.footwear.nameEn)} · ${T('携行', 'Carrying')}: ${T(look.carry.nameZh, look.carry.nameEn)}`,
+    `${T('身份标识', 'Identity')}: ${look.identities.length ? look.identities.map((item) => T(item.nameZh, item.nameEn)).join(' · ') : T('无', 'None')}`,
+    `${T('外观配件', 'Appearance')}: ${look.appearance.length ? look.appearance.map((item) => T(item.nameZh, item.nameEn)).join(' · ') : T('无', 'None')}`,
     `${T('预估总价', 'Estimated total')}: ${formatPrice(look.total)}`
   ].join('\n')
 
@@ -344,11 +733,12 @@ function SaveLookModal({ look, onClose, T }) {
           <Row label={T('RoboSkin · 拟真人', 'RoboSkin · Lifelike')} value={T(look.roboSkin.nameZh, look.roboSkin.nameEn)} />
           <Row label={T('机身肤色', 'Body skin')} value={T(look.skin.nameZh, look.skin.nameEn)} />
           <Row label={T('面部', 'Face')} value={T(look.mask.nameZh, look.mask.nameEn)} />
-          <Row label={T('发型', 'Hair')} value={`${T(look.hair.nameZh, look.hair.nameEn)} · ${T(look.hairColor.nameZh, look.hairColor.nameEn)}`} />
-          <Row
-            label={T('配件', 'Accessories')}
-            value={look.accessories.length ? look.accessories.map((a) => T(a.nameZh, a.nameEn)).join(' · ') : T('无', 'None')}
-          />
+          <Row label={T('头部装饰', 'Head decoration')} value={T(look.headwear.nameZh, look.headwear.nameEn)} />
+          <Row label={T('发型', 'Hair')} value={T(look.hair.nameZh, look.hair.nameEn)} />
+          <Row label={T('鞋履系统', 'Footwear')} value={T(look.footwear.nameZh, look.footwear.nameEn)} />
+          <Row label={T('携行系统', 'Carrying')} value={T(look.carry.nameZh, look.carry.nameEn)} />
+          <Row label={T('身份标识', 'Identity')} value={look.identities.length ? look.identities.map((item) => T(item.nameZh, item.nameEn)).join(' · ') : T('无', 'None')} />
+          <Row label={T('外观装饰', 'Appearance')} value={look.appearance.length ? look.appearance.map((item) => T(item.nameZh, item.nameEn)).join(' · ') : T('无', 'None')} />
           <div className="my-2 h-px bg-white/10" />
           <Row label={T('预估总价', 'Estimated total')} value={<span className="font-display text-lg text-electric-300">{formatPrice(look.total)}</span>} />
         </div>
@@ -396,8 +786,13 @@ export default function RoboFit() {
   // RoboSkin · 完全拟真人：none = 机器人原貌；其余覆盖批复后左侧大图切换为拟真人渲染
   const [roboSkinId, setRoboSkinId] = useState('none')
   const [maskId, setMaskId] = useState('tech-minimal')
+  const [headwearId, setHeadwearId] = useState('none')
   const [hairId, setHairId] = useState('short')
   const [hairColorId, setHairColorId] = useState('black')
+  const [footwearId, setFootwearId] = useState('none')
+  const [carryId, setCarryId] = useState('none')
+  const [identityIds, setIdentityIds] = useState([])
+  const [appearanceIds, setAppearanceIds] = useState([])
   const [accessoryState, setAccessoryState] = useState({ backpack: false, shoes: false })
   // DIY 自定义：null 表示未启用，由用户主动取色后才覆盖对应材质
   const [diyClothing, setDiyClothing] = useState(null)
@@ -407,6 +802,8 @@ export default function RoboFit() {
   const [diyRough, setDiyRough] = useState(null)
   // 手风琴：当前展开的板块（一次只展开一栏，选完自动折叠并展开下一项）
   const [openSection, setOpenSection] = useState('series')
+  const [primaryMode, setPrimaryMode] = useState('apparel')
+  const [activeSubcategory, setActiveSubcategory] = useState('series')
   // 当前聚焦的身体局部（选不同板块时相机平滑对准 → 局部放大）
   const [focusKey, setFocusKey] = useState('torso')
   const [savedLook, setSavedLook] = useState(null)
@@ -418,20 +815,45 @@ export default function RoboFit() {
   const activeSeries = SERIES.find((s) => s.id === seriesId) ?? SERIES[0]
   const activeOutfit = activeSeries.outfits.find((outfit) => outfit.id === outfitId) ?? activeSeries.outfits[0]
 
-  // ---- 写实大图主预览：依据当前展开板块切换聚焦的写实渲染 ----
+  // ---- 写实大图主预览：一级路径 + 二级分类 + 三级选项同步联动 ----
   const previewSrc = useMemo(() => {
-    switch (openSection) {
-      case 'roboskin':
-        return roboskinSrc(roboSkinId)
-      case 'face':
-        return faceSrc(maskId)
-      case 'hair':
-      case 'haircolor':
-        return hairSrc(hairId)
-      default:
-        return clothingSrc(seriesId, outfitId)
+    if (primaryMode === 'apparel') return clothingSrc(seriesId, outfitId)
+    if (primaryMode === 'personalization') {
+      if (activeSubcategory === 'face' || activeSubcategory === 'face-custom') return faceSrc(maskId)
+      if (activeSubcategory === 'headwear') return headwearSrc(headwearId)
+      if (activeSubcategory === 'hair' || activeSubcategory === 'hair-custom') return hairSrc(hairId)
+      return roboskinSrc(roboSkinId)
     }
-  }, [openSection, roboSkinId, maskId, hairId, seriesId, outfitId])
+    if (activeSubcategory === 'footwear') return footwearSrc(footwearId)
+    if (activeSubcategory === 'carry') return carrySrc(carryId)
+    if (activeSubcategory === 'identity') return identitySrc(identityIds.at(-1) ?? 'chest-badge')
+    return appearanceSrc(appearanceIds.at(-1) ?? 'tie')
+  }, [primaryMode, activeSubcategory, seriesId, outfitId, maskId, headwearId, hairId, roboSkinId, footwearId, carryId, identityIds, appearanceIds])
+
+  const previewAlt = useMemo(() => {
+    if (primaryMode === 'apparel') return `${T('成品服装', 'Ready-to-wear')} · ${T(activeOutfit.nameZh, activeOutfit.nameEn)}`
+    if (primaryMode === 'personalization') {
+      if (activeSubcategory === 'face' || activeSubcategory === 'face-custom') {
+        const item = MASKS.find((option) => option.id === maskId) ?? MASKS[0]
+        return `${T('面具类型', 'Face & mask')} · ${T(item.nameZh, item.nameEn)}`
+      }
+      if (activeSubcategory === 'headwear') {
+        const item = HEADWEAR.find((option) => option.id === headwearId) ?? HEADWEAR[0]
+        return `${T('头部装饰', 'Head decoration')} · ${T(item.nameZh, item.nameEn)}`
+      }
+      const item = HAIRS.find((option) => option.id === hairId) ?? HAIRS[0]
+      return `${T('发型', 'Hair style')} · ${T(item.nameZh, item.nameEn)}`
+    }
+    if (activeSubcategory === 'footwear') {
+      const item = FOOTWEAR.find((option) => option.id === footwearId) ?? FOOTWEAR[0]
+      return `${T('鞋履系统', 'Footwear')} · ${T(item.nameZh, item.nameEn)}`
+    }
+    if (activeSubcategory === 'carry') {
+      const item = CARRY_SYSTEMS.find((option) => option.id === carryId) ?? CARRY_SYSTEMS[0]
+      return `${T('携行系统', 'Carrying')} · ${T(item.nameZh, item.nameEn)}`
+    }
+    return T('功能配件与外观拓展预览', 'Function and appearance preview')
+  }, [T, primaryMode, activeSubcategory, activeOutfit, maskId, headwearId, hairId, footwearId, carryId])
 
   // 挂载后预加载全部写实图，板块切换瞬时无白屏
   useEffect(() => {
@@ -582,10 +1004,15 @@ export default function RoboFit() {
     }
   }, [])
 
-  // ---------------- 局部聚焦：展开的板块决定相机对准的身体局部 ----------------
+  // ---------------- 局部聚焦：二级分类决定相机对准的身体局部 ----------------
   useEffect(() => {
-    if (openSection) setFocusKey(SECTION_FOCUS[openSection] ?? 'full')
-  }, [openSection])
+    const focusBySubcategory = {
+      series: 'torso', material: 'torso', face: 'head', headwear: 'head', hair: 'head',
+      'skin-custom': 'full', 'face-custom': 'head', 'hair-custom': 'head',
+      footwear: 'feet', carry: 'torso', identity: 'torso', appearance: 'full'
+    }
+    setFocusKey(focusBySubcategory[activeSubcategory] ?? 'full')
+  }, [activeSubcategory])
 
   useEffect(() => {
     const ctx = sceneRef.current
@@ -625,7 +1052,7 @@ export default function RoboFit() {
   useEffect(() => {
     const ctx = sceneRef.current
     if (!ctx?.parts || !ctx?.materials) return
-    const preset = MASK_PRESETS[maskId]
+    const preset = MASK_PRESETS[maskId] ?? MASK_PRESETS['tech-minimal']
     ctx.parts.mask.visible = preset.visible
     if (preset.visible) {
       ctx.materials.maskMaterial.color.set(preset.color)
@@ -704,7 +1131,7 @@ export default function RoboFit() {
     setIsRendering(true)
     const timer = window.setTimeout(() => setIsRendering(false), 620)
     return () => window.clearTimeout(timer)
-  }, [seriesId, outfitId, materialId, skinColorId, maskId, hairId, hairColorId, accessoryState, diyClothing, diySkin, diyHair, diyFace, diyRough])
+  }, [seriesId, outfitId, materialId, skinColorId, maskId, headwearId, hairId, hairColorId, footwearId, carryId, identityIds, appearanceIds, accessoryState, diyClothing, diySkin, diyHair, diyFace, diyRough])
 
   // ---------------- 实时价格计算引擎 ----------------
   const priceBreakdown = useMemo(() => {
@@ -740,6 +1167,40 @@ export default function RoboFit() {
   const activeMaterial = MATERIAL_STYLES.find((m) => m.id === materialId) ?? MATERIAL_STYLES[0]
   const accessoryCount = ACCESSORIES.filter((a) => accessoryState[a.id]).length
 
+  const handlePrimaryChange = (id) => {
+    setPrimaryMode(id)
+    setActiveSubcategory(id === 'apparel' ? 'series' : id === 'personalization' ? 'face' : 'footwear')
+  }
+
+  const handleSeriesChange = (series) => {
+    setSeriesId(series.id)
+    setOutfitId(series.outfits[0].id)
+  }
+
+  const handleHeadwearChange = (id) => {
+    setHeadwearId(id)
+    if (id === 'helmet-shell') setHairId('none')
+  }
+
+  const handleHairChange = (id) => {
+    setHairId(id)
+    if (id !== 'none' && headwearId === 'helmet-shell') setHeadwearId('none')
+  }
+
+  const handleFootwearChange = (id) => {
+    setFootwearId(id)
+    setAccessoryState((prev) => ({ ...prev, shoes: id !== 'none' }))
+  }
+
+  const handleCarryChange = (id) => {
+    setCarryId(id)
+    setAccessoryState((prev) => ({ ...prev, backpack: id !== 'none' }))
+  }
+
+  const toggleMultiSelect = (setter, id) => {
+    setter((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])
+  }
+
   // 手风琴：仅在点击板块标题时切换展开/折叠；选择具体选项不自动折叠、不跳转
   const toggleSection = (id) => setOpenSection((prev) => (prev === id ? null : id))
 
@@ -751,9 +1212,13 @@ export default function RoboFit() {
       roboSkin: activeRoboSkin,
       skin: activeSkinColor,
       mask: MASKS.find((m) => m.id === maskId),
+      headwear: HEADWEAR.find((item) => item.id === headwearId),
       hair: HAIRS.find((h) => h.id === hairId),
       hairColor: activeHairColor,
-      accessories: ACCESSORIES.filter((a) => accessoryState[a.id]),
+      footwear: FOOTWEAR.find((item) => item.id === footwearId),
+      carry: CARRY_SYSTEMS.find((item) => item.id === carryId),
+      identities: IDENTITY_MARKS.filter((item) => identityIds.includes(item.id)),
+      appearance: APPEARANCE_ACCESSORIES.filter((item) => appearanceIds.includes(item.id)),
       total: priceBreakdown.total
     })
   }
@@ -784,7 +1249,7 @@ export default function RoboFit() {
 
   const flowSteps = [
     { step: '01', titleZh: '挑选服装', titleEn: 'Pick apparel', descZh: '从四大系列中选择不同场景与完整套装', descEn: 'Choose a complete scenario outfit from four series' },
-    { step: '02', titleZh: '逐项定制', titleEn: 'Customize step by step', descZh: '材质、机身肤色、面部、发型发色与配件逐项展开挑选', descEn: 'Material, body skin, face, hair, color and accessories — one step at a time' },
+    { step: '02', titleZh: '逐级选配', titleEn: 'Choose by level', descZh: '按三条需求路径进入二级分类，再用图片选择具体方案', descEn: 'Enter a level-two group from one of three paths, then choose a visual option' },
     { step: '03', titleZh: '保存与分享', titleEn: 'Save & share', descZh: '生成搭配摘要，复制分享给好友，或联系顾问完成咨询', descEn: 'Generate a look summary, share it, or talk to an advisor to order' }
   ]
 
@@ -870,8 +1335,8 @@ export default function RoboFit() {
               </div>
               <p className="max-w-md text-sm leading-relaxed text-white/40">
                 {T(
-                  '右侧每一次点选都会实时渲染到左侧 3D 预览 — 四大系列套装、材质、机身肤色、面部、发型发色与配件逐项展开挑选，点不同板块时模型自动局部放大，左右对照即时比价。',
-                  'Every tap on the right renders instantly onto the 3D preview — complete outfits, material, body skin, face, hair and accessories unfold step by step; the model auto-zooms to the relevant part, side by side with live pricing.'
+                  '先选择成品服装、个性化选配或功能配件与外观拓展，再进入二级分类与三级图像选项；每次点选都会联动左侧写实预览，并自动聚焦对应部位。',
+                  'Choose ready-to-wear, personalization, or function and appearance first, then move through level-two groups and visual level-three options; every choice updates the preview and focus.'
                 )}
               </p>
             </div>
@@ -889,7 +1354,7 @@ export default function RoboFit() {
                     <img
                       key={previewSrc}
                       src={previewSrc}
-                      alt={`${T(activeSeries.nameZh, activeSeries.nameEn)} · ${T(activeOutfit.nameZh, activeOutfit.nameEn)}`}
+                      alt={previewAlt}
                       className="absolute inset-0 h-full w-full object-contain"
                       style={{ animation: 'rwFade 0.45s ease both' }}
                     />
@@ -919,7 +1384,7 @@ export default function RoboFit() {
                   </div>
 
                   <div className="pointer-events-none absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-carbon-900/55 px-4 py-3 text-[11px] text-white/45 backdrop-blur-md">
-                    <span>{T('左侧为写实大图主预览，随选配板块自动切换对应渲染；右下角 3D 缩览可随时拖拽旋转查看真实比例', 'The big image is the photoreal preview that swaps with each panel; the 3D inset bottom-right can be dragged to orbit and check real proportions')}</span>
+                    <span>{T('左侧写实大图随一级路径、二级分类与三级选项联动切换；右下角 3D 缩览可拖拽旋转查看整体比例', 'The photoreal preview follows all three selection levels; drag the 3D inset to inspect overall proportions')}</span>
                     <span className="inline-flex items-center gap-1.5 text-electric-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-electric-400 animate-pulseGlow" />
                       Three.js · WebGL
@@ -947,7 +1412,39 @@ export default function RoboFit() {
 
             {/* 右：手风琴逐项选配（一次只展开一栏，选完折叠并进入下一项） */}
             <Reveal direction="right" delay={80}>
-              <div className="space-y-3">
+              <div className="space-y-5">
+                <ThreeLevelConfigurator
+                  T={T}
+                  primaryMode={primaryMode}
+                  onPrimaryChange={handlePrimaryChange}
+                  activeSubcategory={activeSubcategory}
+                  onSubcategoryChange={setActiveSubcategory}
+                  seriesId={seriesId}
+                  onSeriesChange={handleSeriesChange}
+                  outfitId={outfitId}
+                  onOutfitChange={setOutfitId}
+                  materialId={materialId}
+                  onMaterialChange={setMaterialId}
+                  activeSeries={activeSeries}
+                  activeOutfit={activeOutfit}
+                  maskId={maskId}
+                  onMaskChange={setMaskId}
+                  headwearId={headwearId}
+                  onHeadwearChange={handleHeadwearChange}
+                  hairId={hairId}
+                  onHairChange={handleHairChange}
+                  footwearId={footwearId}
+                  onFootwearChange={handleFootwearChange}
+                  carryId={carryId}
+                  onCarryChange={handleCarryChange}
+                  identityIds={identityIds}
+                  onIdentityToggle={(id) => toggleMultiSelect(setIdentityIds, id)}
+                  appearanceIds={appearanceIds}
+                  onAppearanceToggle={(id) => toggleMultiSelect(setAppearanceIds, id)}
+                />
+
+                {/* 旧九项结构仅留作代码迁移对照，构建时不会渲染。 */}
+                {false && (<div aria-hidden="true">
                 {/* 01 服装系列（先选系列 → 再选该系列独立场景套装） */}
                 <AccordionSection
                   index="01"
@@ -1297,6 +1794,7 @@ export default function RoboFit() {
                     {T('价格仅供参考演示，不构成最终报价 · 状态仅保存于当前会话内存', 'Prices are illustrative only · all state lives in this session’s memory')}
                   </p>
                 </div>
+              </div>)}
               </div>
             </Reveal>
           </div>
