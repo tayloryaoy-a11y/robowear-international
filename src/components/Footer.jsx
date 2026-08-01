@@ -33,11 +33,10 @@ export default function Footer() {
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
               {T(
-                'RoboWear International — 全球首个具身机器人在线服装 DIY 定制选购平台。机器人时代的 Nike，让每一台机器人都拥有独一无二的外在身份。',
-                'RoboWear International — the world’s first online DIY apparel customization platform for embodied robots. The Nike of the robotic era, giving every robot a one-of-a-kind identity.'
+                'RoboWear-全球首个具身机器人在线服装 DIY 定制选购平台，让每一台机器人都拥有独一无二的外在身份。',
+                'RoboWear — the world’s first online DIY apparel customization and shopping platform for embodied robots, giving every robot a one-of-a-kind external identity.'
               )}
             </p>
-            <p className="mt-4 text-xs uppercase tracking-widest2 text-white/30">RoboWear International Ltd. · Est. 2026</p>
           </div>
 
           {/* 五大产品线链接 */}
@@ -75,7 +74,7 @@ export default function Footer() {
               <li>
                 <span className="font-medium text-white/70">{T('香港', 'Hong Kong')}</span>
                 <br />
-                {T('国际融资与资本运作', 'International financing & capital ops')}
+                {T('国际资本运作中心 · 中国香港', 'International capital operations center · Hong Kong, China')}
               </li>
               <li>
                 <span className="font-medium text-white/70">{T('北京', 'Beijing')}</span>

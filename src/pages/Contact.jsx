@@ -35,8 +35,8 @@ const OFFICES = [
   {
     cityZh: '香港',
     cityEn: 'Hong Kong',
-    roleZh: '国际融资与资本运作',
-    roleEn: 'International financing & capital ops',
+    roleZh: '国际资本运作中心',
+    roleEn: 'International capital operations center',
     addrZh: '中国香港特别行政区中环金融街',
     addrEn: 'Central Financial District, Hong Kong SAR, China',
     tone: 'rose',
@@ -47,8 +47,8 @@ const OFFICES = [
     cityEn: 'Beijing',
     roleZh: '产业资源整合中心',
     roleEn: 'Industry resource integration center',
-    addrZh: '中国北京市',
-    addrEn: 'Beijing, China',
+    addrZh: '中国北京市朝阳区建国门外大街1号国贸中心',
+    addrEn: 'China World Trade Center, No. 1 Jianguomen Outer Street, Chaoyang District, Beijing, China',
     tone: 'cyber',
     image: 'office-beijing.webp'
   }
