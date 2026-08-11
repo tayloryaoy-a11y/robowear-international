@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { IconX, IconYouTube, IconTikTok, IconDouyin, IconInstagram } from '../components/icons.jsx'
@@ -129,7 +129,14 @@ function BrandPulse({ T }) {
   )
 }
 
-const initialForm = { name: '', company: '', email: '', phone: '', inquiryType: 'general', message: '' }
+const initialForm = { name: '', company: '', email: '', phone: '', inquiryType: 'general', message: '', contactWebsite: '' }
+
+function createSubmissionId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`
+}
 
 function validateForm(form, T) {
   const errors = {}
@@ -160,19 +167,50 @@ export default function Contact() {
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const submissionIdRef = useRef(createSubmissionId())
 
   const updateField = (key) => (e) => {
     const value = e.target.value
     setForm((prev) => ({ ...prev, [key]: value }))
     setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev))
+    setSubmitError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    if (isSubmitting) return
+
     const validation = validateForm(form, T)
     setErrors(validation)
-    if (Object.keys(validation).length === 0) {
+    if (Object.keys(validation).length !== 0) return
+
+    setIsSubmitting(true)
+    setSubmitError('')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, submissionId: submissionIdRef.current })
+      })
+      const result = await response.json().catch(() => null)
+
+      if (!response.ok || result?.ok !== true) {
+        throw new Error('Contact form request failed')
+      }
+
       setSubmitted(true)
+    } catch {
+      setSubmitError(
+        T(
+          '消息暂时未能发送，请稍后重试，或直接发送邮件至 tayloryaoy@gmail.com。',
+          'Your message could not be sent right now. Please try again, or email tayloryaoy@gmail.com directly.'
+        )
+      )
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -180,6 +218,9 @@ export default function Contact() {
     setForm(initialForm)
     setErrors({})
     setSubmitted(false)
+    setIsSubmitting(false)
+    setSubmitError('')
+    submissionIdRef.current = createSubmissionId()
   }
 
   return (
@@ -210,8 +251,8 @@ export default function Contact() {
           <Reveal delay={160}>
             <p className="mt-6 max-w-4xl text-base leading-relaxed text-white/55">
               {T(
-                '填写下方表单，或直接通过邮箱与我们的全球团队取得联系。我们通常会在 1–2 个工作日内回复。',
-                'Fill out the form below or reach our global team directly by email. We typically reply within 1–2 business days.'
+                '填写下方表单，或直接通过邮箱与我们的全球团队取得联系。我们通常会在3个工作日内回复。',
+                'Fill out the form below or reach our global team directly by email. We typically reply within 3 business days.'
               )}
             </p>
           </Reveal>
@@ -232,8 +273,8 @@ export default function Contact() {
                   <h3 className="mt-6 font-display text-2xl font-bold text-white">{T('已收到您的留言', 'Message received')}</h3>
                   <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/50">
                     {T(
-                      `感谢 ${form.name || ''} 与我们联系！这是一个纯前端演示表单（未连接后端），但在真实环境中，我们的团队会在 1–2 个工作日内通过 ${form.email} 与您取得联系。`,
-                      `Thanks for reaching out${form.name ? `, ${form.name}` : ''}! This is a front-end-only demo form (no backend is connected yet) — in production, our team would follow up at ${form.email} within 1–2 business days.`
+                      '感谢您与我们联系！我们的团队会在3个工作日内通过邮件与您取得联系。',
+                      'Thank you for contacting us! Our team will contact you by email within 3 business days.'
                     )}
                   </p>
                   <button
@@ -245,17 +286,29 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                  <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+                    <label htmlFor="contact-website">Website</label>
+                    <input
+                      id="contact-website"
+                      name="contactWebsite"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={form.contactWebsite}
+                      onChange={updateField('contactWebsite')}
+                    />
+                  </div>
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div>
                       <label className="mb-1.5 block text-xs font-semibold uppercase tracking-widest2 text-white/40">
                         {T('姓名', 'Full name')} <span className="text-pink-400">*</span>
                       </label>
-                      <input type="text" value={form.name} onChange={updateField('name')} placeholder={T('您的姓名', 'Your name')} className="input-field" />
+                      <input type="text" value={form.name} onChange={updateField('name')} placeholder={T('您的姓名', 'Your name')} autoComplete="name" maxLength={100} className="input-field" />
                       <FieldError message={errors.name} />
                     </div>
                     <div>
                       <label className="mb-1.5 block text-xs font-semibold uppercase tracking-widest2 text-white/40">{T('公司 / 机构', 'Company / Organization')}</label>
-                      <input type="text" value={form.company} onChange={updateField('company')} placeholder={T('选填', 'Optional')} className="input-field" />
+                      <input type="text" value={form.company} onChange={updateField('company')} placeholder={T('选填', 'Optional')} autoComplete="organization" maxLength={160} className="input-field" />
                     </div>
                   </div>
 
@@ -264,12 +317,12 @@ export default function Contact() {
                       <label className="mb-1.5 block text-xs font-semibold uppercase tracking-widest2 text-white/40">
                         {T('邮箱地址', 'Email address')} <span className="text-pink-400">*</span>
                       </label>
-                      <input type="email" value={form.email} onChange={updateField('email')} placeholder="you@example.com" className="input-field" />
+                      <input type="email" value={form.email} onChange={updateField('email')} placeholder="you@example.com" autoComplete="email" maxLength={254} className="input-field" />
                       <FieldError message={errors.email} />
                     </div>
                     <div>
                       <label className="mb-1.5 block text-xs font-semibold uppercase tracking-widest2 text-white/40">{T('电话', 'Phone')}</label>
-                      <input type="tel" value={form.phone} onChange={updateField('phone')} placeholder={T('选填', 'Optional')} className="input-field" />
+                      <input type="tel" value={form.phone} onChange={updateField('phone')} placeholder={T('选填', 'Optional')} autoComplete="tel" maxLength={40} className="input-field" />
                       <FieldError message={errors.phone} />
                     </div>
                   </div>
@@ -294,6 +347,7 @@ export default function Contact() {
                       value={form.message}
                       onChange={updateField('message')}
                       placeholder={T('请简单描述您的需求或想法……', 'Briefly describe your needs or idea…')}
+                      maxLength={5000}
                       className="input-field resize-none"
                     />
                     <div className="mt-1.5 flex items-center justify-between">
@@ -302,15 +356,32 @@ export default function Contact() {
                     </div>
                   </div>
 
+                  {submitError ? (
+                    <div role="alert" className="rounded-2xl border border-pink-400/30 bg-pink-400/[0.08] px-4 py-3 text-sm leading-relaxed text-pink-200">
+                      {submitError}
+                    </div>
+                  ) : null}
+
                   <button
                     type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3.5 text-sm font-semibold text-carbon-900 shadow-[0_0_28px_rgba(45,226,255,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(45,226,255,0.45)] sm:w-auto"
+                    disabled={isSubmitting}
+                    aria-busy={isSubmitting}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3.5 text-sm font-semibold text-carbon-900 shadow-[0_0_28px_rgba(45,226,255,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(45,226,255,0.45)] disabled:cursor-wait disabled:opacity-65 disabled:hover:translate-y-0 sm:w-auto"
                   >
-                    {T('发送消息', 'Send message')}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    {isSubmitting ? (
+                      <>
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-carbon-900/30 border-t-carbon-900" aria-hidden="true" />
+                        {T('正在发送…', 'Sending…')}
+                      </>
+                    ) : (
+                      <>
+                        {T('发送消息', 'Send message')}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                      </>
+                    )}
                   </button>
                   <p className="text-[11px] text-white/30">
-                    {T('* 为必填项 · 这是一个纯前端演示表单，提交内容仅保存在当前页面状态中，不会被发送或持久化存储。', '* Required fields · This is a front-end-only demo form — submitted content stays in this page’s state and is never sent or persisted.')}
+                    {T('* 为必填项 · 提交内容将发送至 RoboWear 团队邮箱，仅用于回复您的咨询。', '* Required fields · Your submission is sent to the RoboWear team and used only to respond to your inquiry.')}
                   </p>
                 </form>
               )}

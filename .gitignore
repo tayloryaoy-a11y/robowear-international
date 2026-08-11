@@ -3,3 +3,5 @@ dist/
 asset-package/
 .DS_Store
 *.log
+.env*
+!.env.example

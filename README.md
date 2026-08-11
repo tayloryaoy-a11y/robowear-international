@@ -13,12 +13,13 @@
 - **Tailwind CSS 3** — 原子化样式（自定义 carbon / electric / cyber / metalsilver 主题色板）
 - **react-router-dom 6** — 多页面路由
 - **Three.js 0.160** — RoboFit 页面的实时 3D 试衣引擎（`OrbitControls` + 基础几何体拼接的人形机器人模型）
-- 纯 React `useState` / `useContext` 状态管理（**未使用** `localStorage` / `sessionStorage` 等浏览器持久化存储，刷新页面即重置，符合纯前端演示定位）
+- React `useState` / `useContext` 状态管理（**未使用** `localStorage` / `sessionStorage` 等浏览器持久化存储）
+- **Vercel Functions + Resend** — 联系表单服务端校验与邮件投递
 - 自研轻量动画方案：`IntersectionObserver` 滚动揭示（`Reveal`）、`requestAnimationFrame` 数字动画（`CountUp`），未引入第三方动画库
 
 ## 本地运行 Getting Started
 
-> 需要先安装 [Node.js](https://nodejs.org/)（建议 v18 及以上版本，自带 npm）。
+> 需要先安装 [Node.js](https://nodejs.org/)（v20 及以上版本，自带 npm）。
 
 ```bash
 # 1. 进入项目目录
@@ -65,7 +66,9 @@ robowear-international/
 │       ├── RoboFit.jsx         # ★ RoboFit 3D 定制平台（核心旗舰页）
 │       ├── Technology.jsx      # 技术与材料（五项专利 + 学科交汇维恩图）
 │       ├── About.jsx           # 关于我们（使命愿景 / 创始人 / 商业模式 / 路线图 / 市场规模）
-│       └── Contact.jsx         # 联系我们（带校验的表单 + 全球三地办公室）
+│       └── Contact.jsx         # 联系我们（真实邮件投递 + 全球四地办公室）
+├── api/
+│   └── contact.js              # Vercel 联系表单接口（Resend 邮件投递）
 ├── tailwind.config.js          # Tailwind 主题扩展（品牌色板、字体、动画关键帧）
 ├── postcss.config.js
 └── vite.config.js
@@ -111,10 +114,22 @@ robowear-international/
 
 右上角"中 / EN"按钮可一键切换全站语言，默认中文。文案通过 `useLanguage()` 提供的 `T(zh, en)` helper 内联维护在各组件中，便于审校与维护。
 
+## 联系表单配置 Contact Form Setup
+
+联系表单通过 Vercel Function `POST /api/contact` 调用 Resend。部署前，将 `.env.example` 中的三个变量配置到 Vercel 项目的 Production 和 Preview 环境；密钥不得使用 `VITE_` 前缀。
+
+推荐在 Resend 中验证 `forms.robowear.space` 子域名，并严格复制 Resend 当前生成的 SPF、DKIM 和 MX 记录到 Vercel DNS。验证完成后，将 `CONTACT_FROM_EMAIL` 设置为：
+
+```text
+RoboWear Website <website@forms.robowear.space>
+```
+
+本地仅运行 `npm run dev` 时不会启动 Vercel Function；需要端到端调试接口时使用 Vercel 本地开发环境或部署预览。
+
 ## 注意事项 Notes
 
-- 本项目为**纯前端演示**：所有交互状态（语言、3D 配置、表单、保存的搭配方案等）均通过 React `useState` 管理，**未使用** `localStorage` / `sessionStorage` 或任何后端服务，刷新页面会重置为初始状态。
-- 联系表单、"保存搭配"等功能均为前端校验与摘要展示演示，未连接真实的邮件 / 下单后端。
+- 除联系表单外，语言、3D 配置和保存的搭配方案等状态仍只保存在浏览器内存中，刷新页面会重置。
+- 联系表单已连接 Vercel Function；真实邮件投递需要在部署环境中配置 Resend 环境变量和已验证的发信域名。
 - 所有产品 / 机器人渲染图均为带说明的占位视觉，替换指南见上文。
 
 ---
