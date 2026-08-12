@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
-import { IconX, IconYouTube, IconTikTok, IconDouyin, IconInstagram } from '../components/icons.jsx'
+import { IconX, IconYouTube, IconTikTok, IconWeibo, IconInstagram } from '../components/icons.jsx'
 
 const INQUIRY_TYPES = [
   { id: 'general', zh: '一般咨询', en: 'General inquiry' },
@@ -58,7 +58,7 @@ const social = [
   { Icon: IconX, label: 'X (Twitter)' },
   { Icon: IconYouTube, label: 'YouTube' },
   { Icon: IconTikTok, label: 'TikTok' },
-  { Icon: IconDouyin, label: '抖音 Douyin' },
+  { Icon: IconWeibo, label: '微博 Weibo', href: 'https://weibo.com/u/6271428880' },
   { Icon: IconInstagram, label: 'Instagram' }
 ]
 
@@ -398,12 +398,14 @@ export default function Contact() {
                 </a>
                 <p className="mt-1.5 text-sm text-white/45">+86 13458670416</p>
                 <div className="mt-5 flex items-center gap-2.5">
-                  {social.map(({ Icon, label }) => (
+                  {social.map(({ Icon, label, href }) => (
                     <a
                       key={label}
-                      href="#"
+                      href={href ?? '#'}
+                      target={href ? '_blank' : undefined}
+                      rel={href ? 'noopener noreferrer' : undefined}
                       aria-label={label}
-                      onClick={(e) => e.preventDefault()}
+                      onClick={href ? undefined : (e) => e.preventDefault()}
                       className="flex h-9 w-9 items-center justify-center rounded-full border border-white/12 text-white/50 transition-all duration-300 hover:-translate-y-1 hover:border-electric-400/60 hover:text-electric-300"
                     >
                       <Icon />
