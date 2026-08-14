@@ -89,8 +89,8 @@ export default function Footer() {
             <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">
               {T('保持联系', 'Stay Connected')}
             </h4>
-            <a href="mailto:tayloryaoy@gmail.com" className="mt-5 inline-block text-sm text-electric-300 transition-colors hover:text-electric-200">
-              tayloryaoy@gmail.com
+            <a href="mailto:contact@robowear.space" className="mt-5 inline-block text-sm text-electric-300 transition-colors hover:text-electric-200">
+              contact@robowear.space
             </a>
             <p className="mt-2 text-sm text-white/45">+86 13458670416</p>
             <div className="mt-5 flex items-center gap-2.5">
