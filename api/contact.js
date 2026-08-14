@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'tayloryaoy@gmail.com'
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'contact@robowear.space'
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || 'RoboWear Website <website@forms.robowear.space>'
 const MAX_BODY_BYTES = 20_000
 
