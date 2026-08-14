@@ -205,8 +205,8 @@ export default function Contact() {
     } catch {
       setSubmitError(
         T(
-          '消息暂时未能发送，请稍后重试，或直接发送邮件至 tayloryaoy@gmail.com。',
-          'Your message could not be sent right now. Please try again, or email tayloryaoy@gmail.com directly.'
+          '消息暂时未能发送，请稍后重试，或直接发送邮件至 contact@robowear.space。',
+          'Your message could not be sent right now. Please try again, or email contact@robowear.space directly.'
         )
       )
     } finally {
@@ -393,8 +393,8 @@ export default function Contact() {
             <div className="space-y-6">
               <div className="rounded-3xl border border-white/10 bg-carbon-800/40 p-6">
                 <h3 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/70">{T('直接联系', 'Direct Contact')}</h3>
-                <a href="mailto:tayloryaoy@gmail.com" className="mt-4 block text-base font-semibold text-electric-300 transition-colors hover:text-electric-200">
-                  tayloryaoy@gmail.com
+                <a href="mailto:contact@robowear.space" className="mt-4 block text-base font-semibold text-electric-300 transition-colors hover:text-electric-200">
+                  contact@robowear.space
                 </a>
                 <p className="mt-1.5 text-sm text-white/45">+86 13458670416</p>
                 <div className="mt-5 flex items-center gap-2.5">
