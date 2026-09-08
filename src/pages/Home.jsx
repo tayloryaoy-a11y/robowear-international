@@ -197,12 +197,12 @@ export default function Home() {
               <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-electric-500/20 via-transparent to-cyber-500/20 blur-2xl animate-pulseGlow" />
               <div className="relative animate-floaty overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_30px_90px_-25px_rgba(45,226,255,0.35)]">
                 <img
-                  src="/images/robowear/hero-couture.png"
+                  src="/images/robowear/hero-couture.webp"
                   alt={T(
-                    '身着高定白色风衣套装的人形机器人，冷调影棚灯光，全身站姿',
-                    'Humanoid robot in a haute-couture white trench-coat ensemble, cool studio lighting, full-body stance'
+                    '身着 RoboWear 高级定制服装的人形机器人，全身形象',
+                    'Humanoid robot in RoboWear haute-couture apparel, full figure'
                   )}
-                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full object-cover object-[81%_50%]"
+                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full bg-carbon-900 object-contain object-center"
                 />
               </div>
             </div>
