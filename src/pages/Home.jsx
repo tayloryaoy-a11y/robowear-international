@@ -193,7 +193,7 @@ export default function Home() {
 
           {/* 右侧：机器人渲染占位视觉区 */}
           <Reveal delay={200} direction="right" className="order-1 lg:order-2">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
+            <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
               <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-electric-500/20 via-transparent to-cyber-500/20 blur-2xl animate-pulseGlow" />
               <div className="relative animate-floaty overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_30px_90px_-25px_rgba(45,226,255,0.35)]">
                 <img
@@ -202,7 +202,7 @@ export default function Home() {
                     '身着 RoboWear 高级定制服装的人形机器人，全身形象',
                     'Humanoid robot in RoboWear haute-couture apparel, full figure'
                   )}
-                  className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full bg-carbon-900 object-contain object-center"
+                  className="aspect-[3/2] w-full rounded-[1.75rem] object-cover object-center sm:aspect-[16/10] lg:aspect-[3/2]"
                 />
               </div>
             </div>
