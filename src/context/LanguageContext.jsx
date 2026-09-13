@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useMemo } from 'react'
 
-// 语言上下文：默认中文，可在中/英之间切换
+// 语言上下文：默认英文，可在中/英之间切换
 // 使用方式：const { lang, toggleLang, T } = useLanguage()
 //   T('中文文案', 'English copy') 会根据当前语言返回对应文案
 const LanguageContext = createContext(null)
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState('zh') // 'zh' | 'en'
+  const [lang, setLang] = useState('en') // 'zh' | 'en'
 
   const value = useMemo(() => {
     const toggleLang = () => setLang((prev) => (prev === 'zh' ? 'en' : 'zh'))

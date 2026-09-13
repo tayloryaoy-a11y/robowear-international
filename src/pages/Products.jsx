@@ -212,8 +212,8 @@ export default function Products() {
             </h1>
             <p className="mt-5 max-w-5xl text-base leading-relaxed text-white/50">
               {T(
-                '从第二皮肤到日常服装，从面具到假发与配件——RoboWear 用材料科学 × 机器人工程学 × 时尚美学，构建了一套完整的机器人外观解决方案。所有产品均已适配 Tesla Optimus、Figure 03、小鹏 Iron 三大主流机型。',
-                'From a second skin to everyday wear, masks to hair and accessories — RoboWear fuses materials science, robotics engineering, and fashion to deliver a complete robot-appearance solution. Every line is compatible with Tesla Optimus, Figure 03, and XPeng Iron.'
+                '从第二皮肤到日常服装，从面具到假发与配件——RoboWear 用材料科学 × 机器人工程学 × 时尚美学，构建了一套完整的机器人外观解决方案。',
+                'From a second skin to everyday wear, masks to hair and accessories — RoboWear fuses materials science, robotics engineering, and fashion to deliver a complete robot-appearance solution.'
               )}
             </p>
           </Reveal>
