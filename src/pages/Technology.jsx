@@ -83,13 +83,6 @@ const iconBg = {
   rose: 'bg-pink-400/10 text-pink-300'
 }
 
-const labRows = [
-  { labelZh: '材料疲劳测试', labelEn: 'Material fatigue testing', valueZh: '> 10 万次循环屈挠不开裂', valueEn: '100,000+ flex cycles without cracking' },
-  { labelZh: '极端温度测试', labelEn: 'Extreme temperature testing', valueZh: '-30°C ~ 65°C 性能稳定', valueEn: 'Stable performance from -30°C to 65°C' },
-  { labelZh: '阻燃安全等级', labelEn: 'Fire-retardant safety rating', valueZh: '通过 UL94 V-0 标准', valueEn: 'Certified to UL94 V-0 standard' },
-  { labelZh: '传感器兼容验证', labelEn: 'Sensor-compatibility validation', valueZh: '红外 / 激光雷达 / 视觉三项联调', valueEn: 'Validated across IR, LiDAR & vision stacks' }
-]
-
 export default function Technology() {
   const { T } = useLanguage()
 
@@ -230,45 +223,6 @@ export default function Technology() {
         </div>
       </section>
 
-      {/* ---------------- 实验室与测试标准 ---------------- */}
-      <section className="py-24">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:px-10">
-          <Reveal direction="left">
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10">
-              <img
-                src="/images/robowear/thermal-test.webp"
-                alt={T('红外热成像散热对比测试：左侧未穿 RoboWear，右侧穿着后温度更稳定', 'Infrared thermal-imaging comparison — without RoboWear (left) vs. with RoboWear, showing more stable cooling (right)')}
-                loading="lazy"
-                className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-            </div>
-          </Reveal>
-          <Reveal direction="right" delay={80}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-electric-500/30 bg-electric-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-electric-300">
-              {T('实验室与测试标准', 'Lab & Testing Standards')}
-            </span>
-            <h2 className="mt-5 font-display text-3xl font-bold leading-snug sm:text-4xl">
-              {T('每一件产品，', 'Every product —')}
-              <br />
-              {T('都先经过实验室的"折磨"', 'survives the lab before it ships')}
-            </h2>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/50">
-              {T(
-                '从材料疲劳到极端温度，从阻燃安全到传感器联调，我们用工业级测试标准对待每一寸面料 —— 因为机器人不会"将就"。',
-                'From fatigue cycles to extreme temperatures, from fire safety to sensor integration — we hold every fiber to industrial-grade standards, because robots don’t compromise.'
-              )}
-            </p>
-            <div className="mt-7 divide-y divide-white/8 overflow-hidden rounded-2xl border border-white/10 bg-carbon-800/40">
-              {labRows.map((row) => (
-                <div key={row.labelZh} className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  <span className="text-sm text-white/45">{T(row.labelZh, row.labelEn)}</span>
-                  <span className="text-sm font-semibold text-white/85">{T(row.valueZh, row.valueEn)}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
     </div>
   )
 }
