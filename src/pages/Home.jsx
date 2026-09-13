@@ -143,10 +143,10 @@ export default function Home() {
 
             <Reveal delay={120}>
               <h1 className="mt-6 font-display text-4xl font-bold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.4rem] xl:text-6xl">
-                {T('为硅基文明，', 'Dress the')}
+                {T('硅基文明的基础，', 'The foundation of')}
                 <br className="hidden sm:block" />
-                <span className="text-gradient">{T('穿上它应有的样子', 'Silicon Civilization')}</span>
-                <span className="hidden lg:inline"> {T('', 'in the Identity It Deserves')}</span>
+                <span className="text-gradient">{T('由穿戴来定义', 'silicon civilization')}</span>
+                <span className="hidden lg:inline"> {T('', 'is defined by wear')}</span>
               </h1>
             </Reveal>
 
