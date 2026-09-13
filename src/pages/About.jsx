@@ -73,8 +73,8 @@ export default function About() {
                 <h3 className="font-display text-sm font-semibold uppercase tracking-widest2 text-cyber-300">{T('愿景', 'Vision')}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-white/55">
                   {T(
-                    '成为具身智能时代最具影响力的外观品牌与创作平台 —— 当人们想到"机器人穿什么"时，第一反应就是 RoboWear。',
-                    'Become the most influential appearance brand and creative platform of the embodied-AI era — the first name that comes to mind when people ask "what does my robot wear?"'
+                    '成为具身智能时代最具影响力的外观品牌与创作平台。',
+                    'Become the most influential appearance brand and creative platform of the embodied-AI era.'
                   )}
                 </p>
               </div>
