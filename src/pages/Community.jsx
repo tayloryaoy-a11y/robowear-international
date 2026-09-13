@@ -142,14 +142,6 @@ export default function Community() {
               <span className="text-gradient">{T('机器人时尚', 'robot fashion')}</span>
             </h1>
           </Reveal>
-          <Reveal delay={160}>
-            <p className="mt-6 max-w-3xl text-base leading-relaxed text-white/55 sm:text-lg">
-              {T(
-                '像 Kickstarter 一样发行作品，像社区一样共创——独立设计师可以独立发行机器人服装及配件作品，人们可以直接一键添加设计师方案到 RoboFit 3D 试衣选配中。',
-                'Release like on Kickstarter, co-create like a community — independent designers can publish their own robot apparel and accessory works, and anyone can add a designer’s look to the RoboFit 3D fitting room in one click.'
-              )}
-            </p>
-          </Reveal>
           <Reveal delay={240}>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link

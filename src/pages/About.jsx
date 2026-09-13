@@ -31,12 +31,6 @@ const toneClass = {
   rose: 'border-pink-400/20 bg-pink-400/[0.05] text-pink-300'
 }
 
-const market = [
-  { key: 'tam', labelZh: '总潜在市场 TAM', labelEn: 'Total Addressable Market', value: '$50B', tone: 'border-electric-500/25 text-electric-300' },
-  { key: 'sam', labelZh: '可服务市场 SAM', labelEn: 'Serviceable Available Market', value: '$15B', tone: 'border-cyber-500/30 text-cyber-300' },
-  { key: 'som', labelZh: '可获得市场 SOM', labelEn: 'Serviceable Obtainable Market', value: '$3B', tone: 'border-pink-400/30 text-pink-300' }
-]
-
 export default function About() {
   const { T } = useLanguage()
 
@@ -197,57 +191,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* ---------------- TAM / SAM / SOM ---------------- */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-carbon-900 to-carbon-800/30 py-24">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-5 sm:px-8 lg:grid-cols-2 lg:px-10">
-          <Reveal direction="left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-electric-500/30 bg-electric-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-electric-300">
-              {T('市场机会', 'Market Opportunity')}
-            </span>
-            <h2 className="mt-5 font-display text-3xl font-bold leading-snug sm:text-4xl">
-              {T('一个刚刚起步、', 'A market that’s just getting started —')}
-              <br />
-              {T('却注定爆发式增长的市场', 'and is destined to explode')}
-            </h2>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/50">
-              {T(
-                '高盛预测 2035 年人形机器人市场规模将达 380 亿美元，摩根士丹利更将远期总量级预估推升至 5 万亿美元。RoboWear 锁定其中"外观与个性化"这一全新品类——一个目前几乎空白的市场。',
-                'Goldman Sachs projects the humanoid robot market will reach $38B by 2035, while Morgan Stanley puts the long-term total addressable opportunity as high as $5T. RoboWear is staking out an entirely new category within it — appearance & personalization — a space that’s still wide open.'
-              )}
-            </p>
-            <div className="mt-7 space-y-3">
-              {market.map((m) => (
-                <div key={m.key} className={`flex items-center justify-between rounded-xl border bg-white/[0.02] px-5 py-3.5 ${m.tone}`}>
-                  <span className="text-sm text-white/60">{T(m.labelZh, m.labelEn)}</span>
-                  <span className="font-display text-xl font-bold">{m.value}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          <Reveal direction="right" delay={100}>
-            <div className="relative mx-auto flex aspect-square max-w-sm items-center justify-center">
-              <div className="absolute inset-0 rounded-full border border-electric-500/25 bg-electric-500/[0.03]" />
-              <div className="absolute inset-[16%] rounded-full border border-cyber-500/30 bg-cyber-500/[0.05]" />
-              <div className="absolute inset-[36%] flex items-center justify-center rounded-full border border-pink-400/35 bg-pink-400/[0.09]">
-                <div className="text-center">
-                  <p className="text-[11px] uppercase tracking-widest2 text-white/40">SOM</p>
-                  <p className="font-display text-xl font-bold text-white">$3B</p>
-                </div>
-              </div>
-              <span className="absolute left-3 top-6 text-xs text-electric-300">
-                TAM <span className="ml-1 font-display font-bold text-white">$50B</span>
-              </span>
-              <span className="absolute right-3 top-[27%] text-xs text-cyber-300">
-                SAM <span className="ml-1 font-display font-bold text-white">$15B</span>
-              </span>
-            </div>
-            <p className="mt-6 text-center text-xs text-white/35">
-              {T('TAM / SAM / SOM 三层市场模型 · 数据来源于公司财务测算与公开市场研究', 'TAM / SAM / SOM market sizing — based on company financial models & public market research')}
-            </p>
-          </Reveal>
-        </div>
-      </section>
     </div>
   )
 }
