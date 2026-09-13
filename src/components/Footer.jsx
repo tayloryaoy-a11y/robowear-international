@@ -33,8 +33,8 @@ export default function Footer() {
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
               {T(
-                'RoboWear-全球首个具身机器人在线服装 DIY 定制选购平台，让每一台机器人都拥有独一无二的外在身份。',
-                'RoboWear — the world’s first online DIY apparel customization and shopping platform for embodied robots, giving every robot a one-of-a-kind external identity.'
+                'RoboWear全球首个具身机器人外观定制平台。',
+                'RoboWear, the world’s first appearance-customization platform for embodied robots.'
               )}
             </p>
           </div>
