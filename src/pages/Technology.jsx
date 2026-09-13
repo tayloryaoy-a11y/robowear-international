@@ -2,11 +2,11 @@ import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { IconThermal, IconSensor, IconMotion, IconCharge, IconCube3D } from '../components/icons.jsx'
 
-// 五项核心专利技术数据
+// 核心技术研发数据
 const PATENTS = [
   {
     id: 'thermal-weave',
-    name: 'Thermal-Weave™',
+    name: 'Thermal-Weave',
     image: 'patent-thermal-weave.webp',
     Icon: IconThermal,
     tone: 'electric',
@@ -19,7 +19,7 @@ const PATENTS = [
   },
   {
     id: 'sensor-pass',
-    name: 'Sensor-Pass™',
+    name: 'Sensor-Pass',
     image: 'patent-sensor-pass.webp',
     Icon: IconSensor,
     tone: 'cyber',
@@ -32,7 +32,7 @@ const PATENTS = [
   },
   {
     id: 'flexjoint',
-    name: 'FlexJoint™',
+    name: 'FlexJoint',
     image: 'patent-flexjoint.webp',
     Icon: IconMotion,
     tone: 'rose',
@@ -45,7 +45,7 @@ const PATENTS = [
   },
   {
     id: 'magcharge-port',
-    name: 'MagCharge-Port™',
+    name: 'MagCharge-Port',
     image: 'patent-magcharge.webp',
     Icon: IconCharge,
     tone: 'electric',
@@ -58,7 +58,7 @@ const PATENTS = [
   },
   {
     id: 'robofit-3d',
-    name: 'RoboFit-3D™',
+    name: 'RoboFit-3D',
     image: 'patent-robofit-3d.webp',
     Icon: IconCube3D,
     tone: 'cyber',
@@ -114,19 +114,19 @@ export default function Technology() {
           <Reveal delay={160}>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
               {T(
-                '我们不做"缩小版人类服装"，而是从机器人的关节结构、散热路径与传感器布局出发，正向设计每一寸面料与剪裁——这正是 RoboWear 五项核心专利技术的起点。',
-                'We don’t shrink human clothing to fit robots — we design every fiber and seam outward from a robot’s joints, thermal pathways, and sensor layout. That’s the origin of RoboWear’s five core patented technologies.'
+                '我们不做"缩小版人类服装"，而是从机器人的关节结构、散热路径与传感器布局出发，正向设计每一寸面料与剪裁——这正是 RoboWear 核心技术研发的起点。',
+                'We don’t shrink human clothing to fit robots — we design every fiber and seam outward from a robot’s joints, thermal pathways, and sensor layout. That’s the origin of RoboWear’s core technology R&D.'
               )}
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* ---------------- 五项核心专利 ---------------- */}
+      {/* ---------------- 核心技术研发 ---------------- */}
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <Reveal>
-            <h2 className="font-display text-2xl font-bold sm:text-3xl">{T('五项核心专利技术', 'Five Core Patented Technologies')}</h2>
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">{T('核心技术研发', 'Core Technology R&D')}</h2>
             <p className="mt-2 max-w-2xl text-sm text-white/45">
               {T('每一项专利都直接回应一个机器人在真实世界中会遇到的工程难题。', 'Each patent directly answers an engineering challenge robots face in the real world.')}
             </p>

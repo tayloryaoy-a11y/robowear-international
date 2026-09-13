@@ -82,10 +82,10 @@ const productLines = [
 
 // 六大工程约束（首页亮点区）
 const constraints = [
-  { Icon: IconThermal, zh: '散热不阻热', en: 'Thermal Transparency', sub: 'Thermal-Weave™', descZh: '石墨烯导热织物主动导热，杜绝过热降频。', descEn: 'Graphene weave actively conducts heat — no thermal throttling.' },
-  { Icon: IconSensor, zh: '传感器不遮挡', en: 'Sensor Transparency', sub: 'Sensor-Pass™', descZh: '红外/雷达高透材料，确保感知信号零衰减。', descEn: 'IR/radar-transparent material — zero signal loss for perception.' },
-  { Icon: IconMotion, zh: '运动不受限', en: 'Motion Freedom', sub: 'FlexJoint™', descZh: '关节四向弹力低摩擦面料，不增加伺服负载。', descEn: 'Four-way stretch, low-friction joint fabric adds zero servo load.' },
-  { Icon: IconCharge, zh: '充电不脱衣', en: 'Charge-Through Design', sub: 'MagCharge-Port™', descZh: '服装内置磁吸模块，穿衣状态直接对接充电桩。', descEn: 'Built-in magnetic module — dock & charge without undressing.' },
+  { Icon: IconThermal, zh: '散热不阻热', en: 'Thermal Transparency', sub: 'Thermal-Weave', descZh: '石墨烯导热织物主动导热，杜绝过热降频。', descEn: 'Graphene weave actively conducts heat — no thermal throttling.' },
+  { Icon: IconSensor, zh: '传感器不遮挡', en: 'Sensor Transparency', sub: 'Sensor-Pass', descZh: '红外/雷达高透材料，确保感知信号零衰减。', descEn: 'IR/radar-transparent material — zero signal loss for perception.' },
+  { Icon: IconMotion, zh: '运动不受限', en: 'Motion Freedom', sub: 'FlexJoint', descZh: '关节四向弹力低摩擦面料，不增加伺服负载。', descEn: 'Four-way stretch, low-friction joint fabric adds zero servo load.' },
+  { Icon: IconCharge, zh: '充电不脱衣', en: 'Charge-Through Design', sub: 'MagCharge-Port', descZh: '服装内置磁吸模块，穿衣状态直接对接充电桩。', descEn: 'Built-in magnetic module — dock & charge without undressing.' },
   { Icon: IconFireSafety, zh: '安全不起火', en: 'Fire Safety', sub: 'Flame-Retardant', descZh: '全系材料通过严苛阻燃测试，杜绝高温事故。', descEn: 'All materials pass strict flame-retardant testing standards.' },
   { Icon: IconCompliance, zh: '合规', en: 'Regulatory Compliance', sub: 'Global Compliance', descZh: '符合各国法律法规，杜绝武器/色情等违规改装。', descEn: 'Compliant with local regulations — no weaponized or explicit mods.' }
 ]
