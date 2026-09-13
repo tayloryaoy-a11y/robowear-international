@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
-import CountUp from '../components/CountUp.jsx'
 import {
   IconFunctionFirst,
   IconPersonalization,
@@ -143,7 +142,7 @@ export default function Home() {
 
             <Reveal delay={120}>
               <h1 className="mt-6 font-display text-4xl font-bold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.4rem] xl:text-6xl">
-                {T('硅基文明的基础，', 'The foundation of')}
+                {T('硅基文明的基础', 'The foundation of')}
                 <br className="hidden sm:block" />
                 <span className="text-gradient">{T('由穿戴来定义', 'silicon civilization')}</span>
                 <span className="hidden lg:inline"> {T('', 'is defined by wear')}</span>
@@ -213,57 +212,6 @@ export default function Home() {
         <div className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-white/30 sm:flex">
           <span className="text-[10px] uppercase tracking-widest2">{T('向下滚动', 'Scroll')}</span>
           <span className="h-9 w-[1px] bg-gradient-to-b from-white/40 to-transparent" />
-        </div>
-      </section>
-
-      {/* ============ 行业风口数据条 ============ */}
-      <section className="relative border-y border-white/8 bg-carbon-800/60">
-        <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            {[
-              {
-                value: 38,
-                prefix: '$',
-                suffix: T(' 亿美元', 'B'),
-                labelZh: '2035 年人形机器人市场规模',
-                labelEn: 'Humanoid Robot Market by 2035',
-                source: 'Goldman Sachs'
-              },
-              {
-                value: 5,
-                prefix: '$',
-                suffix: T(' 万亿美元', 'T'),
-                labelZh: '2050 年市场规模预测',
-                labelEn: 'Forecast Market Size by 2050',
-                source: 'Morgan Stanley'
-              },
-              {
-                value: 1.5,
-                suffix: T(' 亿台', 'B units'),
-                decimals: 1,
-                labelZh: '2035 年人形机器人预估保有量',
-                labelEn: 'Est. Humanoid Robots in Service by 2035',
-                source: T('行业测算', 'Industry Estimate')
-              },
-              {
-                value: 3,
-                suffix: T(' 大机型', '+ Platforms'),
-                labelZh: '已适配主流机器人平台',
-                labelEn: 'Mainstream Robot Platforms Supported',
-                source: 'Optimus · Figure 03 · Iron'
-              }
-            ].map((stat, i) => (
-              <Reveal key={stat.labelZh} delay={i * 110}>
-                <div className="text-center sm:text-left">
-                  <p className="font-display text-3xl font-bold text-white sm:text-4xl lg:text-[2.6rem]">
-                    <CountUp value={stat.value} prefix={stat.prefix || ''} suffix={stat.suffix} decimals={stat.decimals || 0} />
-                  </p>
-                  <p className="mt-2 text-sm leading-snug text-white/55">{T(stat.labelZh, stat.labelEn)}</p>
-                  <p className="mt-1 text-[11px] uppercase tracking-widest2 text-electric-400/70">{stat.source}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 

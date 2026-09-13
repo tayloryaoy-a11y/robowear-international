@@ -73,7 +73,7 @@ const BRAND_PULSES = [
   { zh: '功能优先', en: 'Function First' },
   { zh: '规模化个性', en: 'Personalization at Scale' },
   { zh: '人机和谐', en: 'Human-Robot Harmony' },
-  { zh: '硅基文明的基础，由穿戴来定义', en: 'The foundation of silicon civilization is defined by wear' },
+  { zh: '硅基文明的基础由穿戴来定义', en: 'The foundation of silicon civilization is defined by wear' },
   { zh: '机器人时代的 Nike', en: 'The Nike of the robotic era' }
 ]
 
