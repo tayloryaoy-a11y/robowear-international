@@ -763,20 +763,29 @@ function SaveLookModal({ look, onClose, T }) {
         </p>
         <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-white/10 bg-black/30 p-4 font-mono text-[11px] leading-relaxed text-white/50">{shareText}</pre>
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-full border border-white/15 px-5 py-2.5 text-center text-sm font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
-          >
-            {T('继续设计', 'Keep designing')}
-          </button>
+        <div className="mt-6 flex flex-col gap-3">
           <Link
-            to="/contact"
+            to="/order"
             onClick={onClose}
-            className="flex-1 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-5 py-2.5 text-center text-sm font-semibold text-carbon-900 transition-all duration-300 hover:shadow-[0_0_28px_rgba(45,226,255,0.4)]"
+            className="rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-5 py-2.5 text-center text-sm font-semibold text-carbon-900 transition-all duration-300 hover:shadow-[0_0_28px_rgba(45,226,255,0.4)]"
           >
-            {T('联系顾问下单', 'Talk to an advisor')}
+            {T('使用 Stripe 支付定金', 'Pay deposit with Stripe')}
           </Link>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-full border border-white/15 px-5 py-2.5 text-center text-sm font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            >
+              {T('继续设计', 'Keep designing')}
+            </button>
+            <Link
+              to="/contact"
+              onClick={onClose}
+              className="flex-1 rounded-full border border-white/15 px-5 py-2.5 text-center text-sm font-semibold text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            >
+              {T('联系顾问', 'Talk to an advisor')}
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -1412,13 +1421,21 @@ export default function RoboFit() {
                     <p className="mt-1 font-display text-3xl font-bold text-gradient">{formatPrice(priceBreakdown.total)}</p>
                     <p className="mt-1 text-[11px] text-white/30">{T('价格仅供参考演示，不构成最终报价', 'Prices are illustrative only — not a final quote')}</p>
                   </div>
-                  <button
-                    onClick={handleSaveLook}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3 text-sm font-semibold text-carbon-900 shadow-[0_0_28px_rgba(45,226,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(45,226,255,0.5)]"
-                  >
-                    {T('保存我的搭配', 'Save my look')}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-                  </button>
+                  <div className="flex shrink-0 flex-col gap-2 sm:items-stretch">
+                    <button
+                      onClick={handleSaveLook}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3 text-sm font-semibold text-carbon-900 shadow-[0_0_28px_rgba(45,226,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(45,226,255,0.5)]"
+                    >
+                      {T('保存我的搭配', 'Save my look')}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    </button>
+                    <Link
+                      to="/order"
+                      className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white/80 transition-colors hover:border-electric-400/50 hover:text-electric-200"
+                    >
+                      {T('支付定金', 'Pay deposit')}
+                    </Link>
+                  </div>
                 </div>
               </Reveal>
             </div>
