@@ -89,7 +89,10 @@ export default function Footer() {
             <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">
               {T('保持联系', 'Stay Connected')}
             </h4>
-            <a href="mailto:contact@robowear.space" className="mt-5 inline-block text-sm text-electric-300 transition-colors hover:text-electric-200">
+            <Link to="/order" className="mt-5 inline-block text-sm text-white/45 transition-colors hover:text-electric-300">
+              {T('支付定金下单', 'Order / pay deposit')}
+            </Link>
+            <a href="mailto:contact@robowear.space" className="mt-3 inline-block text-sm text-electric-300 transition-colors hover:text-electric-200">
               contact@robowear.space
             </a>
             <p className="mt-2 text-sm text-white/45">+86 13458670416</p>
