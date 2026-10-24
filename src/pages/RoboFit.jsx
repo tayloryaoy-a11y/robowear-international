@@ -89,36 +89,39 @@ const MATERIAL_STYLES = [
   { id: 'leather', nameZh: '皮革质感', nameEn: 'Leather', subZh: '复合涂层 · 醇厚质地', subEn: 'Layered coating, rich texture', addon: 300, swatch: 'bg-gradient-to-br from-amber-200/70 via-amber-700/50 to-amber-950/60' }
 ]
 
-// 02 个性化选配：面具类型（采用亲和 Gen-3 仿真人面部基底）
+// 02 个性化选配：面具类型（独立高清形象与统一产品摄影）
 const MASKS = [
-  { id: 'none', nameZh: '标准原生', nameEn: 'Standard Base', price: 0, tone: 'silver' },
-  { id: 'tech-minimal', nameZh: '科技拟人 · 亚洲女性', nameEn: 'Tech Human · Asian Woman', price: 299, tone: 'electric' },
-  { id: 'geometric-mechanical', nameZh: '机械科技', nameEn: 'Mechanical Tech', price: 399, tone: 'cyber' },
-  { id: 'business-human', nameZh: '商务拟人 · 欧美男性', nameEn: 'Business Human · European Man', price: 899, tone: 'electric' },
-  { id: 'warm-companion', nameZh: '温和陪伴 · 非洲女性', nameEn: 'Warm Companion · African Woman', price: 899, tone: 'rose' },
-  { id: 'anime-character', nameZh: '卡通动漫', nameEn: 'Anime Character', price: 399, tone: 'cyber' },
-  { id: 'brand-character', nameZh: '品牌角色 · 拉丁女性', nameEn: 'Brand Character · Latina Woman', price: 699, tone: 'rose' },
-  { id: 'custom-portrait', nameZh: '定制肖像 · 中性', nameEn: 'Custom Portrait · Neutral', price: 1500, tone: 'electric' }
+  { id: 'none', nameZh: '原生拟人', nameEn: 'Natural Base', price: 0, tone: 'silver' },
+  { id: 'tech-minimal', nameZh: '清和拟人', nameEn: 'Serene Human', price: 299, tone: 'electric' },
+  { id: 'geometric-mechanical', nameZh: '精工拟人', nameEn: 'Precision Human', price: 399, tone: 'cyber' },
+  { id: 'business-human', nameZh: '雅仕拟人', nameEn: 'Refined Human', price: 899, tone: 'electric' },
+  { id: 'warm-companion', nameZh: '暖棕微笑', nameEn: 'Warm Companion', price: 899, tone: 'rose' },
+  { id: 'anime-character', nameZh: '灵动角色', nameEn: 'Expressive Character', price: 399, tone: 'cyber' },
+  { id: 'brand-character', nameZh: '品牌缪斯', nameEn: 'Brand Muse', price: 699, tone: 'rose' },
+  { id: 'custom-portrait', nameZh: '中性肖像', nameEn: 'Androgynous Portrait', price: 1500, tone: 'electric' }
 ]
 
 const HEADWEAR = [
-  { id: 'none', nameZh: '标准原生', nameEn: 'Standard Base' },
-  { id: 'goggles', nameZh: '光环导轨', nameEn: 'Orbit Halo Rail' },
-  { id: 'headband', nameZh: '感知冠冕', nameEn: 'Sensor Crown' },
-  { id: 'hat', nameZh: '空气动力鳍', nameEn: 'Aero Crown Fins' },
-  { id: 'helmet-shell', nameZh: '模块化头舱', nameEn: 'Modular Head Pod' }
+  { id: 'none', nameZh: '原生状态', nameEn: 'Natural Base' },
+  { id: 'goggles', nameZh: '月轨光环', nameEn: 'Lunar Halo' },
+  { id: 'headband', nameZh: '流线发箍', nameEn: 'Contour Band' },
+  { id: 'hat', nameZh: '轻羽翼饰', nameEn: 'Feather Fins' },
+  { id: 'helmet-shell', nameZh: '晶透头舱', nameEn: 'Crystal Canopy' },
+  { id: 'ear-cuff', nameZh: '音弧耳饰', nameEn: 'Arc Ear Cuffs' },
+  { id: 'temple-arc', nameZh: '银杏侧饰', nameEn: 'Ginkgo Accent' },
+  { id: 'crown', nameZh: '星冠头饰', nameEn: 'Celestial Crown' }
 ]
 
 // 02 个性化选配：发型
 const HAIRS = [
-  { id: 'none', nameZh: '不佩戴', nameEn: 'None', price: 0, tone: 'silver' },
-  { id: 'short', nameZh: '短发', nameEn: 'Short', price: 99, tone: 'electric' },
-  { id: 'long-straight', nameZh: '长直发', nameEn: 'Long Straight', price: 199, tone: 'rose' },
-  { id: 'curly', nameZh: '卷发', nameEn: 'Curly', price: 249, tone: 'cyber' },
-  { id: 'bob', nameZh: '波波头', nameEn: 'Bob', price: 219, tone: 'rose' },
-  { id: 'ponytail', nameZh: '马尾', nameEn: 'Ponytail', price: 179, tone: 'electric' },
-  { id: 'slicked-back', nameZh: '背头', nameEn: 'Slicked Back', price: 179, tone: 'silver' },
-  { id: 'mohawk', nameZh: '莫西干', nameEn: 'Mohawk', price: 299, tone: 'cyber' }
+  { id: 'none', nameZh: '原生状态', nameEn: 'Natural Base', price: 0, tone: 'silver' },
+  { id: 'short', nameZh: '雾感短发', nameEn: 'Soft Crop', price: 99, tone: 'electric' },
+  { id: 'long-straight', nameZh: '丝缎长发', nameEn: 'Satin Straight', price: 199, tone: 'rose' },
+  { id: 'curly', nameZh: '云卷造型', nameEn: 'Cloud Waves', price: 249, tone: 'cyber' },
+  { id: 'bob', nameZh: '几何波波', nameEn: 'Sculpted Bob', price: 219, tone: 'rose' },
+  { id: 'ponytail', nameZh: '高束马尾', nameEn: 'High Ponytail', price: 179, tone: 'electric' },
+  { id: 'slicked-back', nameZh: '流线背梳', nameEn: 'Swept Back', price: 179, tone: 'silver' },
+  { id: 'mohawk', nameZh: '银羽冠脊', nameEn: 'Silver Crest', price: 299, tone: 'cyber' }
 ]
 
 const FOOTWEAR = [
@@ -216,9 +219,10 @@ const CFG = '/configurator'
 const ASSET_VERSION = '20260801c'
 const clothingSrc = (seriesId, outfitId) => `${CFG}/clothing/${seriesId}-${outfitId}.webp`
 const roboskinSrc = (tone) => `${CFG}/roboskin/${tone && tone !== 'none' ? tone : 'porcelain'}.png`
-const faceSrc = (maskId) => `${CFG}/personalization/faces/${maskId}.webp?v=${ASSET_VERSION}`
-const headwearSrc = (id) => `${CFG}/personalization/headwear/${id}.webp?v=${ASSET_VERSION}`
-const hairSrc = (id) => `${CFG}/personalization/hair/${id}.webp?v=${ASSET_VERSION}`
+const IDENTITY_IMAGES = '/images/robofit-v4'
+const faceSrc = (maskId) => `${IDENTITY_IMAGES}/face-${maskId}.webp`
+const headwearSrc = (id) => `${IDENTITY_IMAGES}/headwear-${id}.webp`
+const hairSrc = (id) => `${IDENTITY_IMAGES}/hair-${id}.webp`
 const footwearSrc = (id) => `${CFG}/extensions/footwear/${id}.webp?v=${ASSET_VERSION}`
 const carrySrc = (id) => `${CFG}/extensions/carry/${id}.webp?v=${ASSET_VERSION}`
 const identitySrc = (id) => `${CFG}/extensions/identity/${id}.webp?v=${ASSET_VERSION}`
@@ -609,10 +613,10 @@ function RoboFitConfigurator({
         )}
         {primaryMode === 'personalization' && activeSubcategory === 'headwear' && (
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
               {HEADWEAR.map((item) => <ImageChoiceCard key={item.id} active={headwearId === item.id} onClick={() => onHeadwearChange(item.id)} image={headwearSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
             </div>
-            <p className="text-[11px] leading-relaxed text-white/38">{T('选择模块化头舱时，系统会自动取消发型，避免结构冲突。', 'Selecting the modular head pod automatically removes hair to prevent a fit conflict.')}</p>
+            <p className="text-[11px] leading-relaxed text-white/38">{T('选择晶透头舱时，系统会自动取消发型，避免结构冲突。', 'Selecting the crystal canopy automatically removes hair to prevent a fit conflict.')}</p>
           </div>
         )}
         {primaryMode === 'personalization' && activeSubcategory === 'hair' && (
@@ -620,7 +624,7 @@ function RoboFitConfigurator({
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
               {HAIRS.map((item) => <ImageChoiceCard key={item.id} active={hairId === item.id} onClick={() => onHairChange(item.id)} image={hairSrc(item.id)} title={T(item.nameZh, item.nameEn)} />)}
             </div>
-            <p className="text-[11px] leading-relaxed text-white/38">{T('选择任一发型时，若当前佩戴模块化头舱，系统会自动切换为“标准原生”。', 'Choosing hair removes the modular head pod automatically when the two conflict.')}</p>
+            <p className="text-[11px] leading-relaxed text-white/38">{T('选择任一发型时，若当前佩戴晶透头舱，系统会自动切换为“原生状态”。', 'Choosing hair switches the crystal canopy back to the natural base when the two conflict.')}</p>
           </div>
         )}
         {primaryMode === 'personalization' && activeSubcategory === 'skin-custom' && (
