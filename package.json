@@ -9,13 +9,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test shared/*.test.js api/*.test.js api/_lib/*.test.js"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.0",
     "resend": "^6.19.0",
+    "stripe": "^22.6.2",
     "three": "^0.160.0"
   },
   "devDependencies": {

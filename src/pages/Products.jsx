@@ -51,24 +51,28 @@ const lines = [
     image: { labelZh: '高定机器人形象，霓虹渐变背景，奢华简洁', labelEn: 'Couture robot styling against a neon gradient backdrop — luxe and clean', hintZh: '同子系列分场景拍摄', hintEn: 'Scene-matched shots per sub-line', size: '800×600', filename: 'product-couture.webp' },
     subSeries: [
       {
+        id: 'home',
         nameZh: '居家系列', nameEn: 'Home Series',
         sceneZh: '机器人在家庭环境中执行日常任务（做饭、打扫、照顾老人）', sceneEn: 'For robots handling everyday household tasks — cooking, cleaning, eldercare',
         materialZh: '防静电、防污渍、防水（IPX4）功能性混纺面料；关节四向弹力材料；提供北欧简约 / 日式和风 / 美式休闲等多种风格', materialEn: 'Anti-static, stain- & water-resistant (IPX4) blended fabric; four-way stretch joints; Nordic-minimal, Japandi, American-casual styles',
         price: '$199 – $499', tone: 'blue', filename: 'product-home.webp'
       },
       {
+        id: 'professional',
         nameZh: '工装防护系列', nameEn: 'Professional Series',
         sceneZh: '机器人在餐厅、酒店、医院、仓库等商业环境中工作', sceneEn: 'For robots working in restaurants, hotels, hospitals, and warehouses',
         materialZh: '凯夫拉（Kevlar）耐磨层 + 防水防油涂层 + 阻燃处理；可印制企业 Logo 与员工编号，内置 RFID 芯片与反光条', materialEn: 'Kevlar wear layer + oil/water-repellent coating + flame-retardant treatment; brand logo & ID printing, embedded RFID chip and reflective strips',
         price: '$599 – $1,299', priceNoteZh: 'B2B 批量采购享折扣', priceNoteEn: 'Bulk B2B discounts available', tone: 'silver', filename: 'product-pro.webp'
       },
       {
+        id: 'couture',
         nameZh: '高定奢华系列', nameEn: 'Haute Couture Series',
         sceneZh: '高端家庭、展览展示、社交媒体打卡', sceneEn: 'High-end households, exhibitions, social-media moments',
         materialZh: '与顶级面料供应商合作，采用真丝、羊绒、皮革等奢华材料结合功能性涂层；与国际知名设计师（Dior / Hermès / D&G 等）联名，每季限量', materialEn: 'Luxury silk, cashmere & leather with functional coatings, sourced from top mills; seasonal limited collaborations with名designers like Dior, Hermès, D&G',
         price: '$2,000 – $20,000+', tone: 'rose', filename: 'subseries-haute-couture.jpeg'
       },
       {
+        id: 'collab',
         nameZh: 'IP 联名系列', nameEn: 'Collaboration Series',
         sceneZh: '粉丝经济、礼品市场、收藏市场', sceneEn: 'Fan economy, gifting market, collectors’ market',
         materialZh: '与漫威（钢铁侠战甲）、迪士尼（星球大战）、中国国漫，以及 Nike、Adidas、Supreme、Off-White 等潮牌展开限量联名', materialEn: 'Limited collabs with Marvel (Iron Man armor), Disney (Star Wars), Chinese animation IPs, and streetwear brands like Nike, Adidas, Supreme, Off-White',
@@ -104,10 +108,10 @@ const lines = [
     ],
     galleryHideCaptions: true,
     variantTable: [
-      { zh: '科技极简 Tech-Minimal', en: 'Tech-Minimal', descZh: '光滑金属质感面具，LED 灯带点缀', descEn: 'Smooth metallic mask accented with LED light strips', price: '$299 – $599' },
-      { zh: '超写实人脸 Realistic-Human', en: 'Realistic-Human', descZh: '医疗级硅胶制作，高度仿真', descEn: 'Medical-grade silicone, hyper-realistic finish', price: '$1,500 – $5,000' },
-      { zh: '动漫/流行文化 Anime & Pop Culture', en: 'Anime & Pop Culture', descZh: '高达、钢铁侠、各类动漫角色', descEn: 'Gundam, Iron Man, and other beloved characters', price: '$399 – $999' },
-      { zh: '定制肖像 Custom Portrait', en: 'Custom Portrait', descZh: '根据客户照片 3D 建模制作', descEn: '3D-modeled from the customer’s own photos', price: '$3,000 – $10,000' }
+      { orderSub: 'tech-minimal', zh: '科技极简 Tech-Minimal', en: 'Tech-Minimal', descZh: '光滑金属质感面具，LED 灯带点缀', descEn: 'Smooth metallic mask accented with LED light strips', price: '$299 – $599' },
+      { orderSub: 'realistic', zh: '超写实人脸 Realistic-Human', en: 'Realistic-Human', descZh: '医疗级硅胶制作，高度仿真', descEn: 'Medical-grade silicone, hyper-realistic finish', price: '$1,500 – $5,000' },
+      { orderSub: 'anime', zh: '动漫/流行文化 Anime & Pop Culture', en: 'Anime & Pop Culture', descZh: '高达、钢铁侠、各类动漫角色', descEn: 'Gundam, Iron Man, and other beloved characters', price: '$399 – $999' },
+      { orderSub: 'portrait', zh: '定制肖像 Custom Portrait', en: 'Custom Portrait', descZh: '根据客户照片 3D 建模制作', descEn: '3D-modeled from the customer’s own photos', price: '$3,000 – $10,000' }
     ]
   },
   {
@@ -135,9 +139,9 @@ const lines = [
       { filename: 'product-hair-curly.webp', labelZh: '卷发', labelEn: 'Curly' }
     ],
     variantTable: [
-      { zh: '基础款', en: 'Basic', descZh: '常见发型（短发、长发、卷发）', descEn: 'Common styles — short, long, curly', price: '$99 – $299' },
-      { zh: '精品款', en: 'Premium', descZh: '高品质真人发丝', descEn: 'Premium real human hair', price: '$499 – $1,499' },
-      { zh: '定制款', en: 'Custom', descZh: '根据客户指定发型/发色定制', descEn: 'Custom style and color to spec', price: '$299 – $999' }
+      { orderSub: 'basic', zh: '基础款', en: 'Basic', descZh: '常见发型（短发、长发、卷发）', descEn: 'Common styles — short, long, curly', price: '$99 – $299' },
+      { orderSub: 'premium', zh: '精品款', en: 'Premium', descZh: '高品质真人发丝', descEn: 'Premium real human hair', price: '$499 – $1,499' },
+      { orderSub: 'custom', zh: '定制款', en: 'Custom', descZh: '根据客户指定发型/发色定制', descEn: 'Custom style and color to spec', price: '$299 – $999' }
     ]
   },
   {
@@ -306,15 +310,23 @@ export default function Products() {
                     </div>
                   </div>
 
-                  <Link
-                    to="/robofit"
-                    className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3 text-sm font-semibold text-carbon-900 shadow-[0_0_24px_rgba(45,226,255,0.3)] transition-all duration-300 hover:shadow-[0_0_38px_rgba(45,226,255,0.5)] hover:-translate-y-0.5"
-                  >
-                    {T(`将 ${line.nameZh} 加入 RoboFit 试衣`, `Try ${line.nameEn} in RoboFit`)}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-                      <path d="M5 12h14M13 6l6 6-6 6" />
-                    </svg>
-                  </Link>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <Link
+                      to="/robofit"
+                      className="inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3 text-sm font-semibold text-carbon-900 shadow-[0_0_24px_rgba(45,226,255,0.3)] transition-all duration-300 hover:shadow-[0_0_38px_rgba(45,226,255,0.5)] hover:-translate-y-0.5"
+                    >
+                      {T(`将 ${line.nameZh} 加入 RoboFit 试衣`, `Try ${line.nameEn} in RoboFit`)}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </Link>
+                    <Link
+                      to={`/order?line=${line.id}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white/80 transition-colors hover:border-electric-400/50 hover:text-electric-200"
+                    >
+                      {T('支付定金', 'Pay deposit')}
+                    </Link>
+                  </div>
                 </Reveal>
               </div>
 
@@ -354,6 +366,9 @@ export default function Products() {
                             {(sub.priceNoteZh || sub.priceNoteEn) && (
                               <p className="mt-3 text-xs text-white/30">{T(sub.priceNoteZh, sub.priceNoteEn)}</p>
                             )}
+                            <Link to={`/order?line=robowear&sub=${sub.id}`} className="mt-4 inline-flex text-xs font-semibold text-electric-300 hover:text-electric-200">
+                              {T('支付此系列定金', 'Pay deposit for this series')}
+                            </Link>
                           </div>
                         </div>
                       </Reveal>
@@ -413,7 +428,14 @@ export default function Products() {
                             <tr key={row.zh} className={`border-t border-white/8 transition-colors hover:bg-white/[0.03] ${i % 2 === 1 ? 'bg-white/[0.015]' : ''}`}>
                               <td className="px-5 py-4 font-medium text-white/85">{T(row.zh, row.en)}</td>
                               <td className="px-5 py-4 text-white/50">{T(row.descZh, row.descEn)}</td>
-                              <td className="px-5 py-4 text-right font-display font-semibold text-electric-300">{row.price}</td>
+                              <td className="px-5 py-4 text-right">
+                                <span className="font-display font-semibold text-electric-300">{row.price}</span>
+                                {row.orderSub ? (
+                                  <Link to={`/order?line=${line.id}&sub=${row.orderSub}`} className="mt-1 block text-[11px] font-semibold text-white/40 hover:text-electric-300">
+                                    {T('支付定金', 'Pay deposit')}
+                                  </Link>
+                                ) : null}
+                              </td>
                             </tr>
                           ))}
                         </tbody>

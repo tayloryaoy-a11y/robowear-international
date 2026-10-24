@@ -9,6 +9,9 @@ import Technology from './pages/Technology.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import Community from './pages/Community.jsx'
+import Order from './pages/Order.jsx'
+import OrderSuccess from './pages/OrderSuccess.jsx'
+import OrderCancel from './pages/OrderCancel.jsx'
 
 // 路由切换时自动回到页面顶部
 function ScrollToTop() {
@@ -33,6 +36,9 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/order" element={<Order />} />
+          <Route path="/order/success" element={<OrderSuccess />} />
+          <Route path="/order/cancel" element={<OrderCancel />} />
         </Routes>
       </main>
       <Footer />

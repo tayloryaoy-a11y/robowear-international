@@ -23,6 +23,7 @@ export default function Navbar() {
   const navItems = [
     { to: '/', label: T('首页', 'Home') },
     { to: '/products', label: T('产品', 'Products') },
+    { to: '/order', label: T('下单', 'Order') },
     { to: '/robofit', label: T('RoboFit 定制平台', 'RoboFit Platform') },
     { to: '/technology', label: T('技术', 'Technology') },
     { to: '/about', label: T('关于我们', 'About') },
@@ -54,7 +55,7 @@ export default function Navbar() {
         {/* 桌面端导航 */}
         <nav className="hidden lg:flex items-center gap-7">
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} className={linkClass} end={item.to === '/'}>
+            <NavLink key={item.to} to={item.to} className={linkClass} end={item.to === '/' || item.to === '/order'}>
               {({ isActive }) => (
                 <>
                   {item.label}
@@ -107,7 +108,7 @@ export default function Navbar() {
       {/* 移动端下拉菜单 */}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${
-          mobileOpen ? 'max-h-[28rem] border-t border-white/10' : 'max-h-0'
+          mobileOpen ? 'max-h-[36rem] border-t border-white/10' : 'max-h-0'
         } bg-carbon-900/95 backdrop-blur-xl`}
       >
         <nav className="flex flex-col gap-1 px-5 py-4">
@@ -115,7 +116,7 @@ export default function Navbar() {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.to === '/' || item.to === '/order'}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 `rounded-lg px-3 py-3 text-sm font-medium transition-colors duration-200 ${

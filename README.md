@@ -15,6 +15,7 @@
 - **Three.js 0.160** — RoboFit 页面的实时 3D 试衣引擎（`OrbitControls` + 基础几何体拼接的人形机器人模型）
 - React `useState` / `useContext` 状态管理（**未使用** `localStorage` / `sessionStorage` 等浏览器持久化存储）
 - **Vercel Functions + Resend** — 联系表单服务端校验与邮件投递
+- **Stripe Checkout** — 产品定金（默认 30%）托管支付，成功页回读 Checkout Session
 - 自研轻量动画方案：`IntersectionObserver` 滚动揭示（`Reveal`）、`requestAnimationFrame` 数字动画（`CountUp`），未引入第三方动画库
 
 ## 本地运行 Getting Started
@@ -54,6 +55,7 @@ robowear-international/
 │   ├── components/
 │   │   ├── Navbar.jsx          # 导航栏（滚动渐变毛玻璃 + 响应式汉堡菜单）
 │   │   ├── Footer.jsx          # 页脚（产品线 / 全球据点 / 社媒）
+│   │   ├── DepositBreakdown.jsx# 定金 / 余款金额拆分
 │   │   ├── Reveal.jsx          # 滚动揭示动画容器（IntersectionObserver）
 │   │   ├── CountUp.jsx         # 数字滚动动画
 │   │   ├── PlaceholderImage.jsx# 统一风格的图片占位组件（见下方"图片替换指南"）
@@ -66,9 +68,17 @@ robowear-international/
 │       ├── RoboFit.jsx         # ★ RoboFit 3D 定制平台（核心旗舰页）
 │       ├── Technology.jsx      # 技术与材料（五项专利 + 学科交汇维恩图）
 │       ├── About.jsx           # 关于我们（使命愿景 / 创始人 / 商业模式 / 路线图 / 市场规模）
-│       └── Contact.jsx         # 联系我们（真实邮件投递 + 全球四地办公室）
+│       ├── Contact.jsx         # 联系我们（真实邮件投递 + 全球四地办公室）
+│       ├── Order.jsx           # 定金订单（产品选择 + Stripe Checkout）
+│       ├── OrderSuccess.jsx    # 支付成功回跳，核对 Checkout Session
+│       └── OrderCancel.jsx     # 取消结账回跳
+├── shared/
+│   └── orderCatalog.js         # 允许价目与 30% 定金计算（前后端共用）
 ├── api/
-│   └── contact.js              # Vercel 联系表单接口（Resend 邮件投递）
+│   ├── contact.js              # Vercel 联系表单接口（Resend 邮件投递）
+│   ├── checkout.js             # 创建 Stripe Checkout 定金会话
+│   ├── checkout-session.js     # 回读已支付的 Checkout Session
+│   └── stripe-webhook.js       # 可选：定金支付成功后通知团队
 ├── tailwind.config.js          # Tailwind 主题扩展（品牌色板、字体、动画关键帧）
 ├── postcss.config.js
 └── vite.config.js
@@ -125,6 +135,23 @@ RoboWear Website <website@forms.robowear.space>
 ```
 
 本地仅运行 `npm run dev` 时不会启动 Vercel Function；需要端到端调试接口时使用 Vercel 本地开发环境或部署预览。
+
+## 定金结账 Deposit Checkout
+
+`/order` 让买家选择产品线、子系列、机型和联系方式，并看到美元预估总额、30% 定金和发货前余款。点击「使用 Stripe 支付定金」会请求 `POST /api/checkout`。服务器只根据 `shared/orderCatalog.js` 里的允许价目重算金额，不接受浏览器传来的总价。
+
+Stripe Checkout Session **不传入** `payment_method_types`，这样卡片、Apple Pay、Google Pay 以及账户在 Dashboard 里打开的本地支付方式会按 Stripe 的动态支付方式展示。支付成功后浏览器回到 `/order/success?session_id=...`，页面调用 `GET /api/checkout-session` 核对金额与支付状态。取消则回到 `/order/cancel`。未配置 `STRIPE_SECRET_KEY` 时接口返回明确错误，不会假装支付成功。
+
+在 Vercel 的 Production 和 Preview 环境配置：
+
+- `SITE_URL`：站点源地址，例如 `https://www.robowear.space`（不要带路径）
+- `STRIPE_SECRET_KEY`：`sk_test_...` 或上线后的 `sk_live_...`
+- `STRIPE_WEBHOOK_SECRET`：仅在启用 `POST /api/stripe-webhook` 时需要
+- 已有的 `RESEND_API_KEY`：定金邮件沿用联系表单的收件人与发件人；没有该密钥时结账仍然可用
+
+Webhook 事件选择 `checkout.session.completed` 和 `checkout.session.async_payment_succeeded`，端点为 `https://<SITE_URL>/api/stripe-webhook`。在 Stripe Dashboard → Settings → Payment methods 中打开 Cards，并按目标市场打开钱包与本地方式；不要在代码里写死支付方式列表。Apple Pay 还需要在 Dashboard 登记生产域名。
+
+`npm test` 覆盖定金算术、价目校验和「缺少密钥时不得成功」的接口行为。`npm run dev` 本身不运行 `api/`。
 
 ## 注意事项 Notes
 
