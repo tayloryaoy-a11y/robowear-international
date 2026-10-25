@@ -89,16 +89,16 @@ const MATERIAL_STYLES = [
   { id: 'leather', nameZh: '皮革质感', nameEn: 'Leather', subZh: '复合涂层 · 醇厚质地', subEn: 'Layered coating, rich texture', addon: 300, swatch: 'bg-gradient-to-br from-amber-200/70 via-amber-700/50 to-amber-950/60' }
 ]
 
-// 02 个性化选配：面具类型（独立高清形象与统一产品摄影）
+// 02 个性化选配：面具类型（按形象原始设计设定，以地域／族裔与性别中性命名）
 const MASKS = [
-  { id: 'none', nameZh: '原生拟人', nameEn: 'Natural Base', price: 0, tone: 'silver' },
-  { id: 'tech-minimal', nameZh: '清和拟人', nameEn: 'Serene Human', price: 299, tone: 'electric' },
-  { id: 'geometric-mechanical', nameZh: '精工拟人', nameEn: 'Precision Human', price: 399, tone: 'cyber' },
-  { id: 'business-human', nameZh: '雅仕拟人', nameEn: 'Refined Human', price: 899, tone: 'electric' },
-  { id: 'warm-companion', nameZh: '暖棕微笑', nameEn: 'Warm Companion', price: 899, tone: 'rose' },
-  { id: 'anime-character', nameZh: '灵动角色', nameEn: 'Expressive Character', price: 399, tone: 'cyber' },
-  { id: 'brand-character', nameZh: '品牌缪斯', nameEn: 'Brand Muse', price: 699, tone: 'rose' },
-  { id: 'custom-portrait', nameZh: '中性肖像', nameEn: 'Androgynous Portrait', price: 1500, tone: 'electric' }
+  { id: 'none', nameZh: '东亚男性', nameEn: 'East Asian · Male', price: 0, tone: 'silver' },
+  { id: 'tech-minimal', nameZh: '东亚女性', nameEn: 'East Asian · Female', price: 299, tone: 'electric' },
+  { id: 'geometric-mechanical', nameZh: '中东男性', nameEn: 'Middle Eastern · Male', price: 399, tone: 'cyber' },
+  { id: 'business-human', nameZh: '欧洲男性', nameEn: 'European · Male', price: 899, tone: 'electric' },
+  { id: 'warm-companion', nameZh: '非洲裔女性', nameEn: 'African Descent · Female', price: 899, tone: 'rose' },
+  { id: 'anime-character', nameZh: '拉丁裔女性', nameEn: 'Latina', price: 399, tone: 'cyber' },
+  { id: 'brand-character', nameZh: '非裔拉丁女性', nameEn: 'Afro-Latina', price: 699, tone: 'rose' },
+  { id: 'custom-portrait', nameZh: '南亚中性形象', nameEn: 'South Asian · Androgynous', price: 1500, tone: 'electric' }
 ]
 
 const HEADWEAR = [
