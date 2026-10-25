@@ -1,124 +1,63 @@
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
-import { IconX, IconYouTube, IconTikTok, IconWeibo, IconInstagram } from './icons.jsx'
 
 export default function Footer() {
   const { T } = useLanguage()
-
   const productLines = [
-    { zh: 'Robo-Skin™ 智能皮肤', en: 'Robo-Skin™ Smart Skin' },
-    { zh: 'Robo-Wear™ 功能性服装', en: 'Robo-Wear™ Apparel' },
-    { zh: 'Robo-Face™ 面具系统', en: 'Robo-Face™ Masks' },
-    { zh: 'Robo-Hair™ 假发系统', en: 'Robo-Hair™ Wigs' },
-    { zh: 'Robo-Accessories™ 配件', en: 'Robo-Accessories™' }
-  ]
-
-  const social = [
-    { Icon: IconX, label: 'X (Twitter)' },
-    { Icon: IconYouTube, label: 'YouTube' },
-    { Icon: IconTikTok, label: 'TikTok' },
-    { Icon: IconWeibo, label: '微博 Weibo', href: 'https://weibo.com/u/6271428880' },
-    { Icon: IconInstagram, label: 'Instagram' }
+    { id: 'roboface', zh: 'Robo-Face™ 面部外观', en: 'Robo-Face™ Faces' },
+    { id: 'robohair', zh: 'Robo-Hair™ 发型与头饰', en: 'Robo-Hair™ Hair & Headwear' },
+    { id: 'robowear', zh: 'Robo-Wear™ 服装套装', en: 'Robo-Wear™ Apparel Sets' },
+    { id: 'accessories', zh: 'Robo-Accessories™ 配件', en: 'Robo-Accessories™' },
+    { id: 'roboskin', zh: 'Robo-Skin™ 软性外覆研发', en: 'Robo-Skin™ Cover R&D' }
   ]
 
   return (
     <footer className="relative border-t border-white/10 bg-carbon-900">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric-500/50 to-transparent" />
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10 py-16">
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* 公司信息 */}
-          <div className="lg:col-span-1">
+          <div>
             <Link to="/" className="inline-flex items-center">
-              <img src="/images/robowear/logo.svg" alt="RoboWear International" className="h-9 w-auto invert" />
+              <img src="/images/robowear/logo.svg" alt="RoboWear" className="h-9 w-auto invert" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
-              {T(
-                'RoboWear全球首个具身机器人外观定制平台。',
-                'RoboWear, the world’s first appearance-customization platform for embodied robots.'
-              )}
+              {T('为具身机器人定制服装套装与造型。', 'Appearance customization for embodied robots: apparel sets and styling.')}
             </p>
+            <p className="mt-4 text-xs leading-relaxed text-white/35">
+              {T('罗卜皮 · 成都羽腾集团 · 创立于 2026 年', 'RoboWear · Chengdu Yuteng Group · Founded 2026')}
+            </p>
+            {/* 【待确认】主体工商全称：罗卜皮机器人科技（成都）有限公司；确认前不作法律主体公示。 */}
           </div>
-
-          {/* 五大产品线链接 */}
           <div>
-            <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">
-              {T('产品体系', 'Product Lines')}
-            </h4>
+            <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">{T('产品与外观', 'Products & Looks')}</h4>
             <ul className="mt-5 space-y-3">
-              {productLines.map((p) => (
-                <li key={p.zh}>
-                  <Link to="/products" className="text-sm text-white/45 transition-colors hover:text-electric-300">
-                    {T(p.zh, p.en)}
-                  </Link>
+              {productLines.map((product) => (
+                <li key={product.id}>
+                  <Link to={`/products#${product.id}`} className="text-sm text-white/45 transition-colors hover:text-electric-300">{T(product.zh, product.en)}</Link>
                 </li>
               ))}
             </ul>
           </div>
-
-          {/* 联系方式 / 四地办公室 */}
           <div>
-            <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">
-              {T('全球据点', 'Global Offices')}
-            </h4>
-            <ul className="mt-5 space-y-4 text-sm text-white/45">
-              <li>
-                <span className="font-medium text-white/70">{T('成都', 'Chengdu')}</span>
-                <br />
-                {T('供应链与运营中心 · 中国四川', 'Supply chain & operations · Sichuan, China')}
-              </li>
-              <li>
-                <span className="font-medium text-white/70">{T('洛杉矶', 'Los Angeles')}</span>
-                <br />
-                {T('研发与品牌中心 · 美国加州', 'R&D & brand center · California, USA')}
-              </li>
-              <li>
-                <span className="font-medium text-white/70">{T('香港', 'Hong Kong')}</span>
-                <br />
-                {T('国际资本运作中心 · 中国香港', 'International capital operations center · Hong Kong, China')}
-              </li>
-              <li>
-                <span className="font-medium text-white/70">{T('北京', 'Beijing')}</span>
-                <br />
-                {T('产业资源整合中心 · 中国北京', 'Industry resource integration center · Beijing, China')}
-              </li>
+            <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">{T('探索与合作', 'Explore & Partner')}</h4>
+            <ul className="mt-5 space-y-3 text-sm text-white/45">
+              <li><Link to="/robofit" className="transition-colors hover:text-electric-300">{T('RoboFit 外观体验', 'RoboFit Look Builder')}</Link></li>
+              <li><Link to="/technology" className="transition-colors hover:text-electric-300">{T('材料与研发', 'Materials & R&D')}</Link></li>
+              <li><Link to="/community" className="transition-colors hover:text-electric-300">{T('设计师共创', 'Creator Co-creation')}</Link></li>
+              <li><Link to="/contact?type=partner" className="transition-colors hover:text-electric-300">{T('与我们合作', 'Partner with us')}</Link></li>
             </ul>
           </div>
-
-          {/* 商务联系 + 社媒 */}
           <div>
-            <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">
-              {T('保持联系', 'Stay Connected')}
-            </h4>
-            <a href="mailto:contact@robowear.space" className="mt-5 inline-block text-sm text-electric-300 transition-colors hover:text-electric-200">
-              contact@robowear.space
-            </a>
-            <p className="mt-2 text-sm text-white/45">+86 13458670416</p>
-            <div className="mt-5 flex items-center gap-2.5">
-              {social.map(({ Icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href ?? '#'}
-                  target={href ? '_blank' : undefined}
-                  rel={href ? 'noopener noreferrer' : undefined}
-                  aria-label={label}
-                  onClick={href ? undefined : (e) => e.preventDefault()}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/12 text-white/50 transition-all duration-300 hover:-translate-y-1 hover:border-electric-400/60 hover:text-electric-300"
-                >
-                  <Icon />
-                </a>
-              ))}
-            </div>
+            <h4 className="font-display text-sm font-semibold uppercase tracking-widest2 text-white/80">{T('保持联系', 'Stay Connected')}</h4>
+            <a href="mailto:contact@robowear.space" className="mt-5 inline-block break-all text-sm text-electric-300 transition-colors hover:text-electric-200">contact@robowear.space</a>
+            <a href="tel:+8613458670416" className="mt-2 block text-sm text-white/45">+86 13458670416</a>
+            <Link to="/contact?type=appearance" className="mt-5 inline-block text-sm text-white/65 transition-colors hover:text-electric-300">{T('获取报价评估', 'Request a quote')}</Link>
+            {/* Social links and office addresses stay hidden until ownership and locations are confirmed. */}
           </div>
         </div>
-
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/8 pt-8 text-xs text-white/35 sm:flex-row">
-          <p>
-            © {new Date().getFullYear()} RoboWear International Ltd. {T('版权所有', 'All rights reserved.')}
-          </p>
-          <p className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-electric-500 animate-pulseGlow" />
-            {T('总部：美国 · 洛杉矶 ｜ 中国 · 成都 ｜ 中国 · 香港 ｜ 中国 · 北京', 'HQ: Los Angeles, USA · Chengdu, China · Hong Kong, China · Beijing, China')}
-          </p>
+        <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/35 sm:flex-row sm:items-center">
+          <p>© 2026 RoboWear. {T('版权所有', 'All rights reserved.')}</p>
+          <p>{T('定制项目与合作询盘 · 一键下单在路线图中', 'Custom projects & partnerships · One-click order on the roadmap')}</p>
         </div>
       </div>
     </footer>

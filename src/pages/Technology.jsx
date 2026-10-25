@@ -1,73 +1,44 @@
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { IconThermal, IconSensor, IconMotion, IconCharge, IconCube3D } from '../components/icons.jsx'
 
-// 核心技术研发数据
-const PATENTS = [
+// R&D directions only. Reports, patent identifiers, and parameter posters require clearance before publication.
+const RESEARCH = [
   {
-    id: 'thermal-weave',
-    name: 'Thermal-Weave',
-    image: 'patent-thermal-weave.webp',
-    Icon: IconThermal,
-    tone: 'electric',
-    titleZh: '热感自适应纺织技术',
-    titleEn: 'Adaptive Thermal Textile',
-    descZh: '主动平衡透气与散热效率，确保服装层不会干扰机器人核心散热系统的稳定运行。',
-    descEn: 'Actively balances breathability and heat dissipation so apparel never interferes with a robot’s core thermal system.',
-    statZh: '局部温升降低 23%',
-    statEn: '23% lower localized heat buildup'
+    id: 'thermal-weave', name: 'Thermal design', Icon: IconThermal, tone: 'electric',
+    titleZh: '透气与散热路径', titleEn: 'Breathability & heat pathways',
+    problemZh: '外覆层可能改变机身周围的气流与热积聚。', problemEn: 'An outer layer can change airflow and heat buildup around a robot.',
+    descZh: '按用途选择材料，围绕散热口设计开口、间距与透气区域。', descEn: 'Choose materials for the use case and plan openings, clearances, and breathable zones around cooling paths.',
+    scopeZh: '需结合目标机型、环境与任务负载做热测试。', scopeEn: 'Thermal testing is required for the target platform, environment, and workload.'
   },
   {
-    id: 'sensor-pass',
-    name: 'Sensor-Pass',
-    image: 'patent-sensor-pass.webp',
-    Icon: IconSensor,
-    tone: 'cyber',
-    titleZh: '传感器穿透层技术',
-    titleEn: 'Sensor-Transparent Layering',
-    descZh: '特殊编织结构对红外、激光雷达与视觉信号近乎无衰减穿透，让服装与感知系统不再冲突。',
-    descEn: 'A specialized weave lets infrared, LiDAR, and vision signals pass through with minimal attenuation.',
-    statZh: '信号衰减 < 2%',
-    statEn: '< 2% signal attenuation'
+    id: 'sensor-pass', name: 'Sensor workspace', Icon: IconSensor, tone: 'cyber',
+    titleZh: '传感器工作空间', titleEn: 'Sensor workspace',
+    problemZh: '服装与外观部件可能遮挡摄像头、雷达或其他传感器。', problemEn: 'Apparel and appearance modules can obstruct cameras, LiDAR, or other sensors.',
+    descZh: '围绕传感器布局保留工作空间，选择开孔、避让或材料验证路径。', descEn: 'Preserve sensor workspace through openings, clearance, or a material-validation path.',
+    scopeZh: '覆盖结构与材料需逐机型验证，不能默认信号可穿透。', scopeEn: 'Validate covers and materials per platform; signal transmission cannot be assumed.'
   },
   {
-    id: 'flexjoint',
-    name: 'FlexJoint',
-    image: 'patent-flexjoint.webp',
-    Icon: IconMotion,
-    tone: 'rose',
-    titleZh: '关节自适应剪裁系统',
-    titleEn: 'Adaptive Joint Tailoring System',
-    descZh: '基于关节运动范围的参数化剪裁算法，确保服装在大幅动作中实现零束缚、零滑移。',
-    descEn: 'Parametric cutting tuned to each joint’s range of motion — zero restriction, zero slippage during extreme movement.',
-    statZh: '兼容 240° 关节活动范围',
-    statEn: 'Supports 240° range of motion'
+    id: 'flexjoint', name: 'Joint tailoring', Icon: IconMotion, tone: 'rose',
+    titleZh: '关节行程与附加负载', titleEn: 'Joint travel & added load',
+    problemZh: '剪裁、重量与摩擦会影响动作空间。', problemEn: 'Cut, mass, and friction affect the space available for motion.',
+    descZh: '控制附加阻力与质量，围绕关节设计行程安排廓形、弹性与连接结构。', descEn: 'Limit added drag and mass; plan silhouette, flexibility, and attachment around designed joint travel.',
+    scopeZh: '需按机型完成动作检查、连接强度与磨损评估。', scopeEn: 'Check motion, attachment strength, and wear on the target platform.'
   },
   {
-    id: 'magcharge-port',
-    name: 'MagCharge-Port',
-    image: 'patent-magcharge.webp',
-    Icon: IconCharge,
-    tone: 'electric',
-    titleZh: '磁吸式充电接口兼容设计',
-    titleEn: 'Magnetic Charging-Port Compatibility',
-    descZh: '在对应位置预留磁吸通道与可视窗口，无需更衣即可完成自动对接与充电。',
-    descEn: 'Pre-aligned magnetic channels and viewing windows let robots dock and charge without undressing.',
-    statZh: '0 秒脱卸即可充电',
-    statEn: 'Zero undressing required to charge'
+    id: 'magcharge-port', name: 'Service access', Icon: IconCharge, tone: 'electric',
+    titleZh: '充电与检修通道', titleEn: 'Charging & maintenance access',
+    problemZh: '外观部件可能影响充电对接、急停与维护。', problemEn: 'Appearance parts can affect docking, emergency controls, and service access.',
+    descZh: '为接口、操作区与检修路径预留开口或可拆结构。', descEn: 'Plan openings or removable structures for connectors, controls, and maintenance paths.',
+    scopeZh: '按目标平台接口与安全要求确认设计，并逐项目评估合规。', scopeEn: 'Confirm platform interfaces and safety needs; assess compliance by market and use case.'
   },
   {
-    id: 'robofit-3d',
-    name: 'RoboFit-3D',
-    image: 'patent-robofit-3d.webp',
-    Icon: IconCube3D,
-    tone: 'cyber',
-    titleZh: '实时 3D 虚拟试衣引擎',
-    titleEn: 'Real-Time 3D Virtual Fitting Engine',
-    descZh: '基于 WebGL 的轻量化渲染引擎，让任何浏览器都能实现毫秒级的材质、颜色与剪裁预览。',
-    descEn: 'A lightweight WebGL engine that delivers millisecond-level material, color and cut previews in any browser.',
-    statZh: '平均渲染延迟 < 16ms',
-    statEn: '< 16ms average render latency'
+    id: 'robofit-reference', name: 'RoboFit reference', Icon: IconCube3D, tone: 'cyber',
+    titleZh: '外观选配与单品参考', titleEn: 'Appearance selection & item reference',
+    problemZh: '设计参考图不能替代完整组合试衣与实物适配。', problemEn: 'Design reference images cannot establish a combined fit or physical compatibility.',
+    descZh: '用选项、单品参考图与方案摘要记录需求，连接项目评估。', descEn: 'Capture intent through selections, item reference images, and a look summary for project review.',
+    scopeZh: '当前为外观参考；组合 3D 与一键下单列入后续路线图。', scopeEn: 'Appearance reference today; combined 3D and one-click ordering remain on the roadmap.'
   }
 ]
 
@@ -95,7 +66,7 @@ export default function Technology() {
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <Reveal>
             <span className="inline-flex items-center gap-2 rounded-full border border-electric-500/30 bg-electric-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-electric-300">
-              {T('技术与材料', 'Technology & Materials')}
+              {T('材料与研发', 'Materials & R&D')}
             </span>
           </Reveal>
           <Reveal delay={80}>
@@ -107,8 +78,8 @@ export default function Technology() {
           <Reveal delay={160}>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
               {T(
-                '我们不做"缩小版人类服装"，而是从机器人的关节结构、散热路径与传感器布局出发，正向设计每一寸面料与剪裁——这正是 RoboWear 核心技术研发的起点。',
-                'We don’t shrink human clothing to fit robots — we design every fiber and seam outward from a robot’s joints, thermal pathways, and sensor layout. That’s the origin of RoboWear’s core technology R&D.'
+                '从关节结构、散热路径与传感器布局出发，探索服装、软性外覆与造型的设计方法。每个项目的材料、结构与适配边界都需要结合目标机型验证。',
+                'Explore apparel, soft covers, and styling from a robot’s joints, thermal paths, and sensor layout. Materials, structure, and fit boundaries require validation for each target platform.'
               )}
             </p>
           </Reveal>
@@ -121,38 +92,23 @@ export default function Technology() {
           <Reveal>
             <h2 className="font-display text-2xl font-bold sm:text-3xl">{T('核心技术研发', 'Core Technology R&D')}</h2>
             <p className="mt-2 max-w-2xl text-sm text-white/45">
-              {T('每一项专利都直接回应一个机器人在真实世界中会遇到的工程难题。', 'Each patent directly answers an engineering challenge robots face in the real world.')}
+              {T('以下为研发方向与工程原则；具体性能与适配结论须结合目标机型和测试条件确认。', 'R&D directions and engineering principles. Performance and fit require platform-specific testing and conditions.')}
             </p>
           </Reveal>
 
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {PATENTS.map((patent, idx) => (
-              <Reveal key={patent.id} delay={idx * 80} className={idx === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}>
-                <div className={`hover-lift group h-full overflow-hidden rounded-2xl border ${toneClass[patent.tone]}`}>
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={`/images/robowear/${patent.image}`}
-                      alt={T(patent.titleZh, patent.titleEn)}
-                      loading="lazy"
-                      className="aspect-[5/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/90 via-carbon-900/10 to-transparent" />
-                    <span className={`absolute bottom-3 left-3 flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 backdrop-blur-sm ${iconBg[patent.tone]}`}>
-                      <patent.Icon width={20} height={20} />
-                    </span>
-                    <span className="absolute right-3 top-3 rounded-full border border-white/15 bg-carbon-900/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest2 text-white/60 backdrop-blur-sm">
-                      {T('专利技术', 'Patented')}
-                    </span>
+            {RESEARCH.map((topic, idx) => (
+              <Reveal key={topic.id} delay={idx * 80} className={idx === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}>
+                <div className={`hover-lift h-full rounded-2xl border p-6 ${toneClass[topic.tone]}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg[topic.tone]}`}><topic.Icon width={20} height={20} /></span>
+                    <span className="text-xs text-white/45">{T('研发方向', 'R&D direction')}</span>
                   </div>
-                  <div className="p-6">
-                  <h3 className="mt-0 font-display text-lg font-bold text-white">{patent.name}</h3>
-                  <p className="mt-0.5 text-sm font-medium text-white/50">{T(patent.titleZh, patent.titleEn)}</p>
-                  <p className="mt-3 text-sm leading-relaxed text-white/50">{T(patent.descZh, patent.descEn)}</p>
-                  <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-carbon-900/50 px-3 py-1.5 text-xs font-mono text-white/60">
-                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
-                    {T(patent.statZh, patent.statEn)}
-                  </div>
-                  </div>
+                  <h3 className="mt-5 font-display text-lg font-bold text-white">{T(topic.titleZh, topic.titleEn)}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-white/50">{T(topic.problemZh, topic.problemEn)}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-white/70">{T(topic.descZh, topic.descEn)}</p>
+                  <p className="mt-4 border-t border-white/10 pt-4 text-xs leading-relaxed text-white/45">{T(topic.scopeZh, topic.scopeEn)}</p>
+                  <p className="mt-4 text-xs font-medium text-electric-300">{T('按机型验证中 · 下一步：项目评估', 'Platform validation required · Next: project review')}</p>
                 </div>
               </Reveal>
             ))}
@@ -174,8 +130,8 @@ export default function Technology() {
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/50 sm:text-base">
               {T(
-                '材料科学决定了"能不能做出来"，机器人工程决定了"装不装得上"，时尚美学决定了"想不想拥有"。RoboWear 的研发团队同时坐在这三张桌子旁——任何一项技术，只有同时满足三方约束，才会进入我们的产品线。',
-                'Materials science decides whether something can be made; robotics engineering decides whether it can be worn; fashion aesthetics decides whether anyone would want it. Our R&D team sits at all three tables — a technology only ships once it satisfies all three.'
+                '材料、工程与美学共同约束外观设计。我们结合中国供应链资源与高校联合开发，围绕目标机型讨论可制造性、适配与视觉表达；验证范围在项目评估中明确。',
+                'Materials, engineering, and aesthetics shape every look. We combine China supply-chain resources with university co-development to explore manufacturability, fit, and visual expression. Validation scope is defined during project review.'
               )}
             </p>
             <ul className="mt-6 space-y-3 text-sm text-white/50">
@@ -192,6 +148,7 @@ export default function Technology() {
                 {T('时尚美学：色彩、剪裁、风格语言与文化共鸣', 'Fashion aesthetics: color, cut, style language, and cultural resonance')}
               </li>
             </ul>
+            <Link to="/contact?type=oem" className="mt-7 inline-flex rounded-full border border-electric-500/40 px-5 py-3 text-sm font-semibold text-electric-300">{T('讨论目标机型与项目', 'Discuss your platform & project')}</Link>
           </Reveal>
 
           <Reveal direction="right" delay={100}>

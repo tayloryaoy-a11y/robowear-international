@@ -1,27 +1,22 @@
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Reveal from '../components/Reveal.jsx'
 
 const pillars = [
   {
-    titleZh: '硬件 · 智能服装产品线',
-    titleEn: 'Hardware — Smart Apparel Lines',
-    descZh: 'Robo-Skin / Robo-Wear / Robo-Face / Robo-Hair / Robo-Accessories 五大产品线，构成最直接的现金流与品牌触点。',
-    descEn: 'Robo-Skin, Robo-Wear, Robo-Face, Robo-Hair and Robo-Accessories form the most direct cash flow and brand touchpoint.',
-    tone: 'electric'
+    titleZh: '外观设计与工程', titleEn: 'Looks with engineering constraints',
+    descZh: '从面部、发型与头饰到服装、软性外覆和配件，围绕目标机型讨论设计、打样与适配。',
+    descEn: 'Faces, hair and headwear, apparel, soft covers, and accessories — discussed through design, sampling, and platform-specific fit.', tone: 'electric'
   },
   {
-    titleZh: '平台 · RoboFit 3D 定制系统',
-    titleEn: 'Platform — RoboFit 3D Customization',
-    descZh: '实时 3D 试衣、设计师市场与 AI 设计助手三位一体，让创作、交易与社区在同一界面中发生。',
-    descEn: 'Real-time 3D fitting, a designer marketplace, and an AI assistant unite creation, commerce, and community in one place.',
-    tone: 'cyber'
+    titleZh: '供应链与校企共研', titleEn: 'Supply chain × university co-development',
+    descZh: '结合中国供应链的打样与制造资源、高校联合开发能力，围绕材料、结构和外观表达推进项目。',
+    descEn: 'Combine China supply-chain speed with university co-development to explore materials, structure, and visual expression.', tone: 'cyber'
   },
   {
-    titleZh: 'IP · 品牌与设计师生态',
-    titleEn: 'IP — Brand & Designer Ecosystem',
-    descZh: '联名款、限量发售与设计师版税体系，构筑长期的品牌资产与文化影响力。',
-    descEn: 'Collabs, limited drops, and a designer-royalty system build lasting brand equity and cultural influence.',
-    tone: 'rose'
+    titleZh: '定制项目与合作', titleEn: 'Custom projects & partnerships',
+    descZh: '欢迎制造商、品牌与创作者提出需求；先明确用途、机型、材料与验证边界，再评估方案和报价。',
+    descEn: 'OEMs, brands, and creators are welcome. Define the use case, platform, materials, and validation scope before a proposal and estimate.', tone: 'rose'
   }
 ]
 
@@ -48,8 +43,8 @@ export default function About() {
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-6 max-w-5xl font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl">
-              {T('我们正在成为', 'We are becoming ')}
-              <span className="text-gradient">{T('机器人时代的 Nike', 'the Nike of the Robotic Era')}</span>
+              {T('机器人外观，', 'Custom looks. ')}
+              <span className="text-gradient">{T('一起创造', 'Built together.')}</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
@@ -67,8 +62,8 @@ export default function About() {
                 <h3 className="font-display text-sm font-semibold uppercase tracking-widest2 text-cyber-300">{T('愿景', 'Vision')}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-white/55">
                   {T(
-                    '成为具身智能时代最具影响力的外观品牌与创作平台。',
-                    'Become the most influential appearance brand and creative platform of the embodied-AI era.'
+                    '探索家庭机器人个性化皮肤与服装，让外观表达与工程需求共同发展。',
+                    'Explore personalized skins and apparel for home robots, bringing visual expression and engineering needs together.'
                   )}
                 </p>
               </div>
@@ -83,13 +78,13 @@ export default function About() {
           <div className="group relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10">
             <img
               src="/images/robowear/about-runway.webp"
-              alt={T('一排机器人穿着不同 RoboWear 服装走上机器人时装周 T 台', 'A lineup of robots in different RoboWear looks walking the runway at Robot Fashion Week')}
+              alt={T('机器人外观与服装的秀场概念效果图', 'Concept render of robots in apparel and styled runway looks')}
               loading="lazy"
-              className="aspect-[8/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              className="aspect-[4/3] w-full object-cover transition-transform duration-700 sm:aspect-[8/3] group-hover:scale-[1.02]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-carbon-900/80 via-carbon-900/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-widest2 text-electric-300">{T('品牌愿景', 'Brand Vision')}</p>
+              <p className="text-xs font-semibold uppercase tracking-widest2 text-electric-300">{T('品牌愿景 · 设计效果图', 'Brand vision · Design render')}</p>
               <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base">
                 {T('当机器人穿上自己的服装走上 T 台——那便是 RoboWear 想象中的未来日常。', 'When robots walk the runway in clothes of their own — that’s the everyday future RoboWear imagines.')}
               </p>
@@ -146,22 +141,22 @@ export default function About() {
         </div>
       </section>
 
-      {/* ---------------- 三位一体商业模式 ---------------- */}
+      {/* ---------------- 能力与合作 ---------------- */}
       <section className="border-t border-white/10 bg-gradient-to-b from-carbon-900 to-carbon-800/30 py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <Reveal>
             <span className="inline-flex items-center gap-2 rounded-full border border-cyber-500/30 bg-cyber-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-cyber-300">
-              {T('商业模式', 'Business Model')}
+              {T('我们的方法', 'Our approach')}
             </span>
             <h2 className="mt-5 max-w-2xl font-display text-3xl font-bold leading-snug sm:text-4xl">
-              {T('硬件 × 平台 × IP', 'Hardware × Platform × IP')}
+              {T('设计 × 供应链 × 共研', 'Design × supply chain × co-development')}
               <br />
-              {T('三位一体的增长飞轮', 'A three-part growth flywheel')}
+              {T('从外观想法到可评估的方案', 'From a look to a project proposal')}
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/50 sm:max-w-5xl sm:text-base">
               {T(
-                '硬件带来现金流与用户触点，平台沉淀数据与社区网络，IP 沉淀长期品牌资产——三者相互反哺，构成了 RoboWear 的护城河。',
-                'Hardware drives cash flow and touchpoints, the platform compounds data and community, and IP builds lasting brand equity — together they reinforce one another to form RoboWear’s moat.'
+                'RoboWear（罗卜皮）隶属成都羽腾集团，创立于 2026 年。我们关注具身机器人穿戴，以外观定制、设计打样和合作询盘连接客户、制造商与创作者。',
+                'Founded in 2026 within Chengdu Yuteng Group, RoboWear focuses on embodied robot wearables. Appearance customization, design sampling, and project inquiries connect customers, manufacturers, and creators.'
               )}
             </p>
           </Reveal>
@@ -179,13 +174,15 @@ export default function About() {
           </div>
 
           <Reveal delay={120}>
-            <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-carbon-900/40 p-2 sm:p-4">
-              <img
-                src="/images/robowear/business-model.svg"
-                alt={T('硬件 + 数字平台 + IP 生态三位一体商业模式示意图', 'Infographic of the hardware + digital platform + IP ecosystem business-model flywheel')}
-                loading="lazy"
-                className="aspect-[5/3] w-full rounded-2xl object-contain"
-              />
+            <div className="mt-10 rounded-2xl border border-white/10 bg-carbon-900/40 p-6 sm:p-8">
+              <h3 className="font-display text-xl font-semibold">{T('路线图：一键下单', 'On the roadmap: one-click order')}</h3>
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/55">
+                {T('当前可浏览外观、生成选配摘要并提交报价评估。未来计划连接选配、订单意向与支付；家庭机器人个性化皮肤与服装是中长期探索方向，约 2027 年中后期窗口仍取决于研发与市场进展。', 'Today, explore looks, generate a selection summary, and request an estimate. Future ordering will connect configuration, order intent, and payment. Personalized skins and apparel for home robots are a mid-term direction, with an approximate mid-to-late 2027 window subject to development and market progress.')}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-4">
+                <Link to="/contact?type=partner" className="rounded-full bg-gradient-to-r from-electric-500 to-cyber-500 px-6 py-3 text-sm font-semibold text-carbon-900">{T('与我们合作', 'Partner with us')}</Link>
+                <Link to="/community" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white/75">{T('设计师共创', 'Creator Co-creation')}</Link>
+              </div>
             </div>
           </Reveal>
         </div>

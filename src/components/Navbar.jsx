@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
@@ -6,6 +6,8 @@ export default function Navbar() {
   const { lang, toggleLang, T } = useLanguage()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const menuButton = useRef(null)
+  const mobileNav = useRef(null)
 
   // 滚动监听：导航栏从透明渐变为半透明毛玻璃
   useEffect(() => {
@@ -20,14 +22,25 @@ export default function Navbar() {
     setMobileOpen(false)
   }, [lang])
 
+  useEffect(() => {
+    if (!mobileOpen) return
+    mobileNav.current?.querySelector('a')?.focus()
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setMobileOpen(false)
+        menuButton.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [mobileOpen])
+
   const navItems = [
-    { to: '/', label: T('首页', 'Home') },
-    { to: '/products', label: T('产品', 'Products') },
-    { to: '/robofit', label: T('RoboFit 定制平台', 'RoboFit Platform') },
-    { to: '/technology', label: T('技术', 'Technology') },
-    { to: '/about', label: T('关于我们', 'About') },
-    { to: '/contact', label: T('联系', 'Contact') },
-    { to: '/community', label: T('社区', 'Community') }
+    { to: '/products', label: T('产品与外观', 'Products & Looks') },
+    { to: '/robofit', label: T('RoboFit 外观体验', 'RoboFit Look Builder') },
+    { to: '/technology', label: T('材料与研发', 'Materials & R&D') },
+    { to: '/about', label: T('关于', 'About') },
+    { to: '/contact', label: T('联系', 'Contact') }
   ]
 
   const linkClass = ({ isActive }) =>
@@ -52,7 +65,7 @@ export default function Navbar() {
         </Link>
 
         {/* 桌面端导航 */}
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav aria-label={T('主导航', 'Main navigation')} className="hidden xl:flex items-center gap-5">
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} className={linkClass} end={item.to === '/'}>
               {({ isActive }) => (
@@ -93,9 +106,12 @@ export default function Navbar() {
 
           {/* 移动端汉堡菜单按钮 */}
           <button
-            className="lg:hidden flex h-9 w-9 flex-col items-center justify-center gap-1.5 rounded-lg border border-white/15"
+            ref={menuButton}
+            className="xl:hidden flex h-9 w-9 flex-col items-center justify-center gap-1.5 rounded-lg border border-white/15"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
             <span className={`block h-[1.5px] w-5 bg-white transition-all duration-300 ${mobileOpen ? 'translate-y-[6px] rotate-45' : ''}`} />
             <span className={`block h-[1.5px] w-5 bg-white transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
@@ -106,11 +122,11 @@ export default function Navbar() {
 
       {/* 移动端下拉菜单 */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${
-          mobileOpen ? 'max-h-[28rem] border-t border-white/10' : 'max-h-0'
-        } bg-carbon-900/95 backdrop-blur-xl`}
+        id="mobile-navigation"
+        hidden={!mobileOpen}
+        className="xl:hidden border-t border-white/10 bg-carbon-900/95 backdrop-blur-xl"
       >
-        <nav className="flex flex-col gap-1 px-5 py-4">
+        <nav ref={mobileNav} aria-label={T('移动导航', 'Mobile navigation')} className="flex flex-col gap-1 px-5 py-4">
           {navItems.map((item) => (
             <NavLink
               key={item.to}

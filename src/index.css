@@ -92,3 +92,10 @@ h1, h2, h3, h4, .font-display {
 .input-field::placeholder {
   color: rgba(255, 255, 255, 0.35);
 }
+
+.input-field option { background-color: #17171a; color: #fff; }
+:focus-visible { outline: 2px solid #2DE2FF; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
