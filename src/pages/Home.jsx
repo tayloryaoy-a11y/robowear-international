@@ -64,7 +64,8 @@ const productLines = [
     price: '$89 – $1,499',
     flagship: false,
     tone: 'silver',
-    image: 'product-hair-long.webp'
+    image: '/images/robofit-v4/hair-long-straight.webp',
+    imageFit: 'contain'
   },
   {
     id: 'accessories',
@@ -76,7 +77,8 @@ const productLines = [
     price: '$49 – $1,299',
     flagship: false,
     tone: 'blue',
-    image: 'product-acc-backpack.webp'
+    image: '/configurator/extensions/carry/utility.webp',
+    imageFit: 'contain'
   }
 ]
 
@@ -287,10 +289,10 @@ export default function Home() {
                 >
                   <div className="relative overflow-hidden border-b border-white/10">
                     <img
-                      src={`/images/robowear/${p.image}`}
+                      src={p.image.startsWith('/') ? p.image : `/images/robowear/${p.image}`}
                       alt={T(`${p.nameZh} ${p.subZh} 产品视觉`, `${p.nameZh} ${p.subEn} product visual`)}
                       loading="lazy"
-                      className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                      className={`aspect-[16/10] w-full ${p.imageFit === 'contain' ? 'object-contain' : 'object-cover'} transition-transform duration-700 group-hover:scale-[1.04]`}
                     />
                     {/* 角落柔光遮罩：统一视觉层次，避免素材自带文字与卡片信息互相干扰 */}
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-carbon-900/65 via-carbon-900/0 to-transparent" />
